@@ -47,6 +47,20 @@ export default function SchedulePage() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoadingData, setIsLoadingData] = useState(false);
+  const [cleaners, setCleaners] = useState<{ id: CleanerPreference; name: string; rating?: number }[]>(
+    FALLBACK_CLEANERS.map(c => ({ id: c.id as CleanerPreference, name: c.name, rating: c.rating }))
+  );
+  const [frequencies, setFrequencies] = useState<FrequencyType[]>(
+    FALLBACK_FREQUENCIES.map(f => f.id as FrequencyType)
+  );
+  const [frequencyDiscounts, setFrequencyDiscounts] = useState<Record<FrequencyType, string>>({
+    "one-time": "",
+    "weekly": "Save 15%",
+    "bi-weekly": "Save 10%",
+    "monthly": "Save 5%",
+  });
+  const [defaultCity, setDefaultCity] = useState("Cape Town");
 
   // Fetch dynamic data on mount
   useEffect(() => {

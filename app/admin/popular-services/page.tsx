@@ -40,7 +40,7 @@ export default function AdminPopularServicesPage() {
     const result = await addPopularService(addForm.name, addForm.slug);
     
     if (result.success) {
-      setAddForm({ name: "", slug: "" });
+      setAddForm({ name: "", slug: "", description: "" });
       setShowAddForm(false);
       loadServices();
     } else {
@@ -117,11 +117,13 @@ export default function AdminPopularServicesPage() {
   function handleNameChange(value: string, isEdit: boolean = false) {
     if (isEdit) {
       setEditForm({
+        ...editForm,
         name: value,
         slug: generateSlug(value),
       });
     } else {
       setAddForm({
+        ...addForm,
         name: value,
         slug: generateSlug(value),
       });
