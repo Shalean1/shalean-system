@@ -1,786 +1,593 @@
-[00:00:16.265] Server  LOG      ✓ Ready in 11.6s
-[00:00:50.432] Server  LOG      ○ Compiling / ...
-[00:02:31.815] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:02:32.929] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:02:33.710] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:02:33.732] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:02:39.079] Server  WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+[00:00:04.201] Server  LOG      ✓ Ready in 3.1s
+[00:00:44.668] Server  LOG      ○ Compiling / ...
+[00:00:57.997] Server  WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:02:50.413] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:02:55.984] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+[00:01:02.633] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:04.631] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:06.564] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:02:59.250] Server  LOG      ○ Compiling /_not-found/page ...
-[00:03:22.972] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:03:23.035] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:03:23.087] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:03:23.105] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:03:37.783] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:03:37.802] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:03:45.474] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:03:53.176] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:03:53.248] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:03:53.397] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:03:53.464] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:03:55.647] Server  LOG      ○ Compiling /booking/quote ...
-[00:09:48.281] Server  ERROR    ⨯ ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
+[00:01:06.999] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:07.685] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:01:07.894] Server  LOG      ○ Compiling /manifest.json ...
+[00:02:51.628] Server  LOG      ✓ Compiled in 3.7s
+[00:03:00.357] Server  LOG      ✓ Compiled in 1373ms
+[00:03:03.088] Server  LOG      ✓ Compiled in 1280ms
+[00:03:05.630] Server  LOG      ✓ Compiled in 1772ms
+[00:11:55.583] Server  LOG      ✓ Compiled in 6.3s
+[00:12:32.134] Server  LOG      ○ Compiling /booking/quote ...
+[00:14:59.004] Server  LOG      ○ Compiling /booking/service/[type]/details ...
+[00:15:08.031] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:15:08.501] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
 
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
 
-Import traces:
-  Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
 
-  Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <RedirectErrorBoundary router={{...}}>
+      <InnerLayoutRouter url="/booking/s..." tree={[...]} params={{type:"stan..."}} cacheNode={{lazyData:null, ...}} ...>
+        <SegmentViewNode type="page" pagePath="booking/se...">
+          <SegmentTrieNode>
+          <ClientPageRoot Component={function ServiceDetailsPage} serverProvidedParams={{...}}>
+            <ServiceDetailsPage params={Promise} searchParams={Promise}>
+              <div className="container ...">
+                <div className="max-w-7xl ...">
+                  <div>
+                  <div>
+                  <div className="grid grid-...">
+                    <div>
+                    <div className="lg:col-span-1">
+                      <PriceSummary service="standard" frequency="one-time" priceBreakdown={{basePrice:250, ...}} ...>
+                        <div className="bg-white b...">
+                          <h2>
+                          <div>
+                          <div className="border-t b...">
+                            <div className="flex justi...">
+                              <span>
+                              <span className="font-medium text-gray-900">
++                               R 250.00
+-                               R 250,00
+                            ...
+        ...
+      ...
+
+[00:15:21.513] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:16:40.831] Server  LOG      ✓ Compiled in 3.6s
+[00:16:44.863] Server  LOG      ✓ Compiled in 3.5s
+[00:16:48.516] Server  LOG      ✓ Compiled in 1055ms
+[00:16:57.596] Server  LOG      ✓ Compiled in 866ms
+[00:16:57.609] Browser ERROR   uncaughtError: ReferenceError: isMounted is not defined
+[00:16:57.974] Browser ERROR   uncaughtError: ReferenceError: isMounted is not defined
+[00:16:59.941] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:17:00.063] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:17:00.094] Server  LOG      ✓ Compiled in 2s
+[00:17:04.960] Server  LOG      ○ Compiling /manifest.webmanifest ...
+[00:17:10.840] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:17:12.608] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:17:54.917] Server  LOG      ○ Compiling /booking/service/[type]/schedule ...
+[00:20:02.386] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:22:04.270] Server  LOG      ✓ Compiled in 2.2s
+[00:22:20.655] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:22:21.092] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
+      <RedirectBoundary>
+        <RedirectErrorBoundary router={{...}}>
+          <InnerLayoutRouter url="/booking/s..." tree={[...]} params={{type:"stan..."}} cacheNode={{lazyData:null, ...}} ...>
+            <SegmentViewNode type="page" pagePath="booking/se...">
+              <SegmentTrieNode>
+              <ClientPageRoot Component={function ServiceDetailsPage} serverProvidedParams={{...}}>
+                <ServiceDetailsPage params={Promise} searchParams={Promise}>
+                  <div className="container ...">
+                    <div className="max-w-7xl ...">
+                      <div>
+                      <div>
+                      <div className="grid grid-...">
+                        <div className="lg:col-spa...">
+                          <section>
+                          <section>
+                          <section className="bg-white b...">
+                            <h2>
+                            <div className="grid grid-...">
+                              <button>
+                              <button>
+                              <button
+                                type="button"
+                                onClick={function onClick}
++                               className="p-4 border-2 rounded-full transition-all border-blue-500 bg-blue-50"
+-                               className="p-4 border-2 rounded-full transition-all border-gray-200 hover:border-gray-..."
+                                title="Inside Cabinets"
+                              >
+                                <Boxes className="w-6 h-6 mx...">
+                                  <svg
+                                    ref={null}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width={24}
+                                    height={24}
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth={2}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
++                                   className="lucide lucide-boxes w-6 h-6 mx-auto text-blue-500"
+-                                   className="lucide lucide-boxes w-6 h-6 mx-auto text-gray-400"
+                                    aria-hidden="true"
+                                  >
+                              <button
+                                type="button"
+                                onClick={function onClick}
++                               className="p-4 border-2 rounded-full transition-all border-blue-500 bg-blue-50"
+-                               className="p-4 border-2 rounded-full transition-all border-gray-200 hover:border-gray-..."
+                                title="Interior Windows"
+                              >
+                                <Grid3x3 className="w-6 h-6 mx...">
+                                  <svg
+                                    ref={null}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width={24}
+                                    height={24}
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth={2}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
++                                   className="lucide lucide-grid3x3 lucide-grid-3x3 w-6 h-6 mx-auto text-blue-500"
+-                                   className="lucide lucide-grid3x3 lucide-grid-3x3 w-6 h-6 mx-auto text-gray-400"
+                                    aria-hidden="true"
+                                  >
+                              <button
+                                type="button"
+                                onClick={function onClick}
++                               className="p-4 border-2 rounded-full transition-all border-blue-500 bg-blue-50"
+-                               className="p-4 border-2 rounded-full transition-all border-gray-200 hover:border-gray-..."
+                                title="Interior Walls"
+                              >
+                                <Paintbrush className="w-6 h-6 mx...">
+                                  <svg
+                                    ref={null}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width={24}
+                                    height={24}
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth={2}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
++                                   className="lucide lucide-paintbrush w-6 h-6 mx-auto text-blue-500"
+-                                   className="lucide lucide-paintbrush w-6 h-6 mx-auto text-gray-400"
+                                    aria-hidden="true"
+                                  >
+                              ...
+                          <section className="bg-white b...">
+                            <h2>
+                            <div className="grid grid-...">
+                              <div>
+                              <div>
+                                <label>
+                                <div className="relative">
+                                  <ChevronDown>
+                                  <select
+                                    id="scheduledTime"
+                                    value="09:00"
+                                    onChange={function handleTimeChange}
++                                   disabled={false}
+-                                   disabled=""
++                                   className={"w-full px-4 pr-10 py-3 border rounded-lg focus:outline-none focus:rin..."}
+-                                   className="w-full px-4 pr-10 py-3 border rounded-lg focus:outline-none focus:ring-..."
+                                  >
+                                    <option value="">
++                                     Select a time
+-                                     Select date first
+                                    ...
+                          ...
+                        ...
+            ...
+          ...
+
+[00:22:47.646] Server  LOG      ✓ Compiled in 2.1s
+[00:22:56.894] Server  LOG      ✓ Compiled in 2.1s
+[00:23:01.759] Server  LOG      ✓ Compiled in 950ms
+[00:27:29.353] Server  LOG        Reload env: .env.local
+[00:27:32.257] Server  LOG      ✓ Compiled in 1652ms
+[00:29:59.396] Server  LOG      ✓ Compiled in 3.8s
+[00:32:09.297] Server  LOG      ✓ Compiled in 4s
+[00:32:12.203] Server  LOG      ✓ Compiled in 1564ms
+[00:33:17.089] Server  LOG      ○ Compiling /booking/service/[type]/review ...
+[00:36:17.909] Server  LOG      ✓ Compiled in 3.3s
+[00:36:22.060] Server  LOG      ✓ Compiled in 1197ms
+[00:36:22.306] Browser ERROR   The final argument passed to %s changed size between renders. The order and size of this array must remain constant.
+
+Previous: %s
+Incoming: %s useEffect [] [, standard]
+[00:36:52.343] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:36:52.344] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <RedirectBoundary>
+      <RedirectErrorBoundary router={{...}}>
+        <InnerLayoutRouter url="/booking/s..." tree={[...]} params={{type:"stan..."}} cacheNode={{lazyData:null, ...}} ...>
+          <SegmentViewNode type="page" pagePath="booking/se...">
+            <SegmentTrieNode>
+            <ClientPageRoot Component={function ReviewPage} serverProvidedParams={{...}}>
+              <ReviewPage params={Promise} searchParams={Promise}>
+                <div className="container ...">
+                  <div className="max-w-7xl ...">
+                    <div>
+                    <h1>
+                    <p>
+                    <div className="grid grid-...">
+                      <div className="lg:col-spa...">
+                        <section className="bg-white b...">
+                          <div>
+                          <div className="space-y-2">
+                            <p>
+                            <p>
+                              <strong>
++                             5
+-                             0
+                            ...
+                        ...
+                      ...
+          ...
+        ...
+
+[00:37:18.094] Server  LOG      ✓ Compiled in 2s
+[00:37:23.010] Server  LOG      ✓ Compiled in 504ms
+[00:37:35.625] Server  LOG      ✓ Compiled in 2.1s
+[00:37:41.957] Server  LOG      ✓ Compiled in 554ms
+[00:37:43.741] Server  LOG      ✓ Compiled in 1015ms
+[00:37:48.373] Server  LOG      ✓ Compiled in 715ms
+[00:37:54.935] Server  LOG      ✓ Compiled in 1084ms
+[00:40:03.075] Server  LOG      ✓ Compiled in 6.8s
+[00:40:23.540] Browser LOG     Payment window closed
+[00:40:39.527] Browser LOG     Payment successful: {"message":"Approved","redirecturl":"?trxref=shalean-1765612652267-g8fo2js&reference=shalean-1765612652267-g8fo2js","reference":"shalean-1765612652267-g8fo2js","status":"success","trans":"5631323607","transaction":"5631323607","trxref":"shalean-1765612652267-g8fo2js"}
+[00:40:42.723] Server  LOG      ○ Compiling /booking/service/[type]/confirmation ...
+[00:40:44.367] Server  ERROR    ⨯ ./lib/storage/bookings.ts:2:1
+Module not found: Can't resolve 'fs'
+  1 | import { Booking } from "../types/booking";
+> 2 | import { promises as fs } from "fs";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import path from "path";
+  4 |
+  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
 
 
-
-./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
-
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
-
-Import traces:
-  Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-
-
-[00:09:50.115] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
-
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
-
-Import traces:
-  Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:09:50.118] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
-
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
-
-Import traces:
-  Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:09:51.763] Server  LOG      ○ Compiling /_error ...
-[00:10:29.000] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
-
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
-
-Import traces:
-  Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:10:29.019] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
-
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
-
-Import traces:
-  Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:10:29.031] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
-
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
-
-Import traces:
-  Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:10:29.031] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
-
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
-
-Import traces:
-  Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:10:52.815] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
-
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
-
-Import traces:
-  Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:10:52.816] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
-
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
-
-Import traces:
-  Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:11:18.711] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
-
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
-
-Import traces:
-  Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:11:18.716] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
-
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
 
 Import traces:
   Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
+    ./lib/storage/bookings.ts [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
   Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:11:18.775] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
+    ./lib/storage/bookings.ts [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:40:45.727] Browser ERROR   ./lib/storage/bookings.ts:2:1
+Module not found: Can't resolve 'fs'
+  1 | import { Booking } from "../types/booking";
+> 2 | import { promises as fs } from "fs";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import path from "path";
+  4 |
+  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
 
 Import traces:
   Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
+    ./lib/storage/bookings.ts [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
   Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:11:18.775] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
+    ./lib/storage/bookings.ts [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+https://nextjs.org/docs/messages/module-not-found
+[00:40:47.404] Server  LOG      ○ Compiling /_error ...
+[00:40:47.728] Browser ERROR   ./lib/storage/bookings.ts:2:1
+Module not found: Can't resolve 'fs'
+  1 | import { Booking } from "../types/booking";
+> 2 | import { promises as fs } from "fs";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import path from "path";
+  4 |
+  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
 
 Import traces:
   Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
+    ./lib/storage/bookings.ts [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
   Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:11:26.159] Browser ERROR   uncaughtError: Error: ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
+    ./lib/storage/bookings.ts [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+https://nextjs.org/docs/messages/module-not-found
+[00:40:47.729] Browser ERROR   ./lib/storage/bookings.ts:2:1
+Module not found: Can't resolve 'fs'
+  1 | import { Booking } from "../types/booking";
+> 2 | import { promises as fs } from "fs";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import path from "path";
+  4 |
+  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
 
 Import traces:
   Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
+    ./lib/storage/bookings.ts [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
   Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
+    ./lib/storage/bookings.ts [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
-
-[00:11:30.437] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
-
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+https://nextjs.org/docs/messages/module-not-found
+[00:40:47.729] Browser ERROR   ./lib/storage/bookings.ts:2:1
+Module not found: Can't resolve 'fs'
+  1 | import { Booking } from "../types/booking";
+> 2 | import { promises as fs } from "fs";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import path from "path";
+  4 |
+  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
 
 Import traces:
   Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
+    ./lib/storage/bookings.ts [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
   Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:11:30.437] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
+    ./lib/storage/bookings.ts [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+https://nextjs.org/docs/messages/module-not-found
+[00:40:49.172] Browser ERROR   ./lib/storage/bookings.ts:2:1
+Module not found: Can't resolve 'fs'
+  1 | import { Booking } from "../types/booking";
+> 2 | import { promises as fs } from "fs";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import path from "path";
+  4 |
+  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
 
 Import traces:
   Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
+    ./lib/storage/bookings.ts [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
   Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:11:35.814] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
+    ./lib/storage/bookings.ts [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+https://nextjs.org/docs/messages/module-not-found
+[00:40:49.172] Browser ERROR   ./lib/storage/bookings.ts:2:1
+Module not found: Can't resolve 'fs'
+  1 | import { Booking } from "../types/booking";
+> 2 | import { promises as fs } from "fs";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import path from "path";
+  4 |
+  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
 
 Import traces:
   Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
+    ./lib/storage/bookings.ts [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
   Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:11:35.814] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
+    ./lib/storage/bookings.ts [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+https://nextjs.org/docs/messages/module-not-found
+[00:40:50.117] Browser ERROR   ./lib/storage/bookings.ts:2:1
+Module not found: Can't resolve 'fs'
+  1 | import { Booking } from "../types/booking";
+> 2 | import { promises as fs } from "fs";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import path from "path";
+  4 |
+  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
 
 Import traces:
   Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
+    ./lib/storage/bookings.ts [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
   Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:11:43.402] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
+    ./lib/storage/bookings.ts [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+https://nextjs.org/docs/messages/module-not-found
+[00:40:50.119] Browser ERROR   ./lib/storage/bookings.ts:2:1
+Module not found: Can't resolve 'fs'
+  1 | import { Booking } from "../types/booking";
+> 2 | import { promises as fs } from "fs";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import path from "path";
+  4 |
+  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
 
 Import traces:
   Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
+    ./lib/storage/bookings.ts [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
   Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:11:43.403] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
+    ./lib/storage/bookings.ts [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+https://nextjs.org/docs/messages/module-not-found
+[00:40:51.184] Browser ERROR   uncaughtError: Error: ./lib/storage/bookings.ts:2:1
+Module not found: Can't resolve 'fs'
+  1 | import { Booking } from "../types/booking";
+> 2 | import { promises as fs } from "fs";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import path from "path";
+  4 |
+  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
+
+
 
 Import traces:
   Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
+    ./lib/storage/bookings.ts [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
   Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:11:53.763] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
+    ./lib/storage/bookings.ts [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:40:51.741] Browser ERROR   ./lib/storage/bookings.ts:2:1
+Module not found: Can't resolve 'fs'
+  1 | import { Booking } from "../types/booking";
+> 2 | import { promises as fs } from "fs";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import path from "path";
+  4 |
+  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
 
 Import traces:
   Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
+    ./lib/storage/bookings.ts [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
   Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:11:53.763] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
+    ./lib/storage/bookings.ts [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+https://nextjs.org/docs/messages/module-not-found
+[00:40:51.741] Browser ERROR   ./lib/storage/bookings.ts:2:1
+Module not found: Can't resolve 'fs'
+  1 | import { Booking } from "../types/booking";
+> 2 | import { promises as fs } from "fs";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import path from "path";
+  4 |
+  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
 
 Import traces:
   Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
+    ./lib/storage/bookings.ts [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
   Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:11:54.633] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
+    ./lib/storage/bookings.ts [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+https://nextjs.org/docs/messages/module-not-found
+[00:40:51.742] Browser ERROR   ./lib/storage/bookings.ts:2:1
+Module not found: Can't resolve 'fs'
+  1 | import { Booking } from "../types/booking";
+> 2 | import { promises as fs } from "fs";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import path from "path";
+  4 |
+  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
 
 Import traces:
   Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
+    ./lib/storage/bookings.ts [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
   Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:11:54.633] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
+    ./lib/storage/bookings.ts [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
+    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
 
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
-
-Import traces:
-  Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:12:23.455] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator, ChevronDown } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
-
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
-
-Import traces:
-  Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:12:23.456] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator, ChevronDown } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
-
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
-
-Import traces:
-  Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:12:24.761] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator, ChevronDown } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
-
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
-
-Import traces:
-  Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:12:24.761] Browser ERROR   ./app/booking/quote/page.tsx:5:1
-Export Window doesn't exist in target module
-  3 | import { useState } from "react";
-  4 | import Link from "next/link";
-> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator, ChevronDown } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-  7 |
-  8 | // Location options from sitemap
-
-The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
-Did you mean to import Wind?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
-
-Import traces:
-  Client Component Browser:
-    ./app/booking/quote/page.tsx [Client Component Browser]
-    ./app/booking/quote/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/booking/quote/page.tsx [Client Component SSR]
-    ./app/booking/quote/page.tsx [Server Component]
-[00:13:40.972] Server  LOG      ✓ Compiled in 3.9s
-[00:13:45.353] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:13:45.385] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:13:46.036] Server  ERROR   C:\Users\27825\shalean-system\.next\dev\server\chunks\ssr\app_345063af._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:13:46.048] Server  ERROR   C:\Users\27825\shalean-system\.next\dev\server\chunks\ssr\[turbopack]_runtime.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:13:46.068] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:13:46.072] Server  ERROR    ⨯ ReferenceError: Square is not defined
-[00:13:49.391] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:13:49.821] Browser ERROR   uncaughtError: ReferenceError: Square is not defined
-[00:14:06.863] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:14:06.869] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:14:07.068] Server  ERROR   C:\Users\27825\shalean-system\.next\dev\server\chunks\ssr\app_345063af._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:14:07.071] Server  ERROR   C:\Users\27825\shalean-system\.next\dev\server\chunks\ssr\[turbopack]_runtime.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:14:07.080] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:14:07.083] Server  ERROR    ⨯ ReferenceError: Square is not defined
-[00:14:08.096] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:14:08.350] Browser ERROR   uncaughtError: ReferenceError: Square is not defined
-[00:14:31.275] Server  LOG      ✓ Compiled in 811ms
-[00:14:31.288] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:14:31.292] Server  WARN     ⚠ Fast Refresh had to perform a full reload when ./app/booking/quote/page.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-[00:14:31.297] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:14:32.457] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:14:32.464] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:14:32.898] Server  ERROR   C:\Users\27825\shalean-system\.next\dev\server\chunks\ssr\app_345063af._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:14:32.946] Server  ERROR   C:\Users\27825\shalean-system\.next\dev\server\chunks\ssr\[turbopack]_runtime.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:14:32.962] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:14:32.997] Server  ERROR    ⨯ ReferenceError: Grid is not defined
-[00:14:34.740] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:14:35.041] Browser ERROR   uncaughtError: ReferenceError: Grid is not defined
-[00:14:45.258] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:14:45.259] Server  WARN     ⚠ Fast Refresh had to perform a full reload when ./app/booking/quote/page.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-[00:14:45.261] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:14:45.347] Server  LOG      ✓ Compiled in 1787ms
-[00:14:46.758] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:14:46.760] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:14:49.126] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:14:49.456] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:14:49.458] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:14:49.462] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:14:49.469] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:17:28.300] Server  LOG      ✓ Compiled in 4.1s
-[00:17:28.988] Browser ERROR   uncaughtError: ReferenceError: usePathname is not defined
-[00:17:44.105] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:17:44.135] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:17:44.591] Server  ERROR   C:\Users\27825\shalean-system\.next\dev\server\chunks\ssr\[root-of-the-server]__3eae01e9._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:17:44.593] Server  ERROR    ⨯ ReferenceError: usePathname is not defined
-[00:17:46.249] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:17:46.626] Browser ERROR   uncaughtError: ReferenceError: usePathname is not defined
-[00:18:12.828] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:18:14.379] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:18:14.397] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:18:17.209] Server  LOG      ✓ Compiled in 4.4s
-[00:18:17.294] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:18:17.987] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:18:17.994] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:18:23.424] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:18:27.274] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:18:27.292] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:18:27.327] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:18:27.352] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} className=... children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-[00:19:44.684] Server  LOG      ✓ Compiled in 2.5s
-[00:27:54.242] Server  LOG      ✓ Compiled in 2.9s
+https://nextjs.org/docs/messages/module-not-found
+[00:42:17.795] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:42:17.802] Server  WARN     ⚠ Fast Refresh had to perform a full reload when ./node_modules/next/dist/shared/lib/router/router.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:42:17.808] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:42:21.361] Server  LOG      ✓ Compiled in 13.3s
+[00:42:46.536] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:42:57.980] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:45:03.655] Server  LOG      ✓ Compiled in 4.9s
+[00:45:32.349] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:45:41.242] Server  LOG      ✓ Compiled in 1999ms
+[00:46:31.497] Server  LOG      ✓ Compiled in 2.9s
+[00:46:42.806] Server  LOG      ○ Compiling /_not-found/page ...
+[00:47:04.067] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:49:53.534] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:51:02.409] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:59:56.793] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:14:06.709] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [70, 70, 70, 70, 75]. Please update your config to [70, 70, 70, 70, 75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[01:16:03.013] Server  WARN     ⚠ Fast Refresh had to perform a full reload when ./node_modules/next/dist/client/image-component.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[01:16:03.057] Server  LOG      ✓ Compiled in 7.4s
+[01:16:11.254] Server  WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [70, 70, 70, 70, 70, 70, 70, 70, 75]. Please update your config to [70, 70, 70, 70, 70, 70, 70, 70, 75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[01:16:15.427] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:16:17.547] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [70, 70, 70, 70, 70, 70, 70, 70, 75]. Please update your config to [70, 70, 70, 70, 70, 70, 70, 70, 75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[01:20:19.775] Server  LOG      ✓ Compiled in 10.8s
+[01:20:21.190] Server  WARN     ⚠ Fast Refresh had to perform a full reload when ./node_modules/next/dist/client/image-component.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[01:20:30.211] Server  WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 75]. Please update your config to [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[01:20:36.037] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:20:36.738] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 75]. Please update your config to [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[01:28:16.977] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:34:32.262] Server  LOG      ✓ Compiled in 18.3s
+[01:40:11.180] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 75]. Please update your config to [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities

@@ -14,6 +14,7 @@ const popularCategories = [
 
 export default function Hero() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +22,11 @@ export default function Hero() {
     if (searchQuery.trim()) {
       window.location.href = `#services?q=${encodeURIComponent(searchQuery)}`;
     }
+  };
+
+  const handleBookCleaning = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsBookingModalOpen(true);
   };
 
   return (
@@ -67,13 +73,13 @@ export default function Hero() {
                     aria-label="Search for cleaning services"
                   />
                 </div>
-                <button
-                  type="submit"
+                <Link
+                  href="/booking/service/standard/details"
                   className="px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors shadow-lg flex items-center justify-center gap-2 text-base"
                 >
                   <Search className="w-5 h-5" />
                   Book cleaning today
-                </button>
+                </Link>
               </div>
             </form>
 

@@ -6,6 +6,18 @@
     "[project]/app/booking/quote/page": [
       "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
     ],
+    "[project]/app/booking/service/[type]/confirmation/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    ],
+    "[project]/app/booking/service/[type]/details/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    ],
+    "[project]/app/booking/service/[type]/review/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    ],
+    "[project]/app/booking/service/[type]/schedule/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    ],
     "[project]/app/page": [
       "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
     ]

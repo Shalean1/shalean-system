@@ -1,5 +1,50 @@
 {
   "node": {
+    "40e9bf61d5f2910b45eaa2f1d39a058a67b07b1069": {
+      "workers": {
+        "app/auth/forgot-password/page": {
+          "moduleId": 31999,
+          "async": false,
+          "exportedName": "forgotPassword",
+          "filename": "app/actions/auth.ts"
+        }
+      },
+      "layer": {
+        "app/auth/forgot-password/page": "action-browser"
+      },
+      "filename": "app/actions/auth.ts",
+      "exportedName": "forgotPassword"
+    },
+    "4080f711adf29a307db24b9d7233d2d25aed95b373": {
+      "workers": {
+        "app/auth/login/page": {
+          "moduleId": 27327,
+          "async": false,
+          "exportedName": "login",
+          "filename": "app/actions/auth.ts"
+        }
+      },
+      "layer": {
+        "app/auth/login/page": "action-browser"
+      },
+      "filename": "app/actions/auth.ts",
+      "exportedName": "login"
+    },
+    "40a577ccc636436ef4218d7e5c5bad08d406021b57": {
+      "workers": {
+        "app/auth/signup/page": {
+          "moduleId": 94935,
+          "async": false,
+          "exportedName": "signup",
+          "filename": "app/actions/auth.ts"
+        }
+      },
+      "layer": {
+        "app/auth/signup/page": "action-browser"
+      },
+      "filename": "app/actions/auth.ts",
+      "exportedName": "signup"
+    },
     "4082e1437c66b37ee322fc3ae1ca05963ba2431301": {
       "workers": {
         "app/booking/quote/page": {
@@ -14,6 +59,36 @@
       },
       "filename": "app/actions/submit-quote.ts",
       "exportedName": "submitQuote"
+    },
+    "60852d5b0dac77e1f3066a9680e343bc84f50b5071": {
+      "workers": {
+        "app/booking/service/[type]/review/page": {
+          "moduleId": 88945,
+          "async": false,
+          "exportedName": "initializePayment",
+          "filename": "app/actions/payment.ts"
+        }
+      },
+      "layer": {
+        "app/booking/service/[type]/review/page": "action-browser"
+      },
+      "filename": "app/actions/payment.ts",
+      "exportedName": "initializePayment"
+    },
+    "60c9e31e8f42726a26a28221bc516422397ccd1255": {
+      "workers": {
+        "app/booking/service/[type]/review/page": {
+          "moduleId": 88945,
+          "async": false,
+          "exportedName": "submitBooking",
+          "filename": "app/actions/submit-booking.ts"
+        }
+      },
+      "layer": {
+        "app/booking/service/[type]/review/page": "action-browser"
+      },
+      "filename": "app/actions/submit-booking.ts",
+      "exportedName": "submitBooking"
     }
   },
   "edge": {},

@@ -1,5 +1,11 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
   "/booking/quote/page": "app/booking/quote/page.js",
+  "/booking/service/[type]/confirmation/page": "app/booking/service/[type]/confirmation/page.js",
+  "/booking/service/[type]/details/page": "app/booking/service/[type]/details/page.js",
+  "/booking/service/[type]/review/page": "app/booking/service/[type]/review/page.js",
+  "/booking/service/[type]/schedule/page": "app/booking/service/[type]/schedule/page.js",
+  "/manifest.json/route": "app/manifest.json/route.js",
+  "/manifest.webmanifest/route": "app/manifest.webmanifest/route.js",
   "/page": "app/page.js"
 }

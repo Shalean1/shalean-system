@@ -44,12 +44,52 @@
   },
   "dynamicRoutes": [
     {
+      "page": "/api/bookings/[reference]",
+      "regex": "^/api/bookings/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPreference": "nxtPreference"
+      },
+      "namedRegex": "^/api/bookings/(?<nxtPreference>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/areas/[location]",
       "regex": "^/areas/([^/]+?)(?:/)?$",
       "routeKeys": {
         "nxtPlocation": "nxtPlocation"
       },
       "namedRegex": "^/areas/(?<nxtPlocation>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/booking/service/[type]/confirmation",
+      "regex": "^/booking/service/([^/]+?)/confirmation(?:/)?$",
+      "routeKeys": {
+        "nxtPtype": "nxtPtype"
+      },
+      "namedRegex": "^/booking/service/(?<nxtPtype>[^/]+?)/confirmation(?:/)?$"
+    },
+    {
+      "page": "/booking/service/[type]/details",
+      "regex": "^/booking/service/([^/]+?)/details(?:/)?$",
+      "routeKeys": {
+        "nxtPtype": "nxtPtype"
+      },
+      "namedRegex": "^/booking/service/(?<nxtPtype>[^/]+?)/details(?:/)?$"
+    },
+    {
+      "page": "/booking/service/[type]/review",
+      "regex": "^/booking/service/([^/]+?)/review(?:/)?$",
+      "routeKeys": {
+        "nxtPtype": "nxtPtype"
+      },
+      "namedRegex": "^/booking/service/(?<nxtPtype>[^/]+?)/review(?:/)?$"
+    },
+    {
+      "page": "/booking/service/[type]/schedule",
+      "regex": "^/booking/service/([^/]+?)/schedule(?:/)?$",
+      "routeKeys": {
+        "nxtPtype": "nxtPtype"
+      },
+      "namedRegex": "^/booking/service/(?<nxtPtype>[^/]+?)/schedule(?:/)?$"
     },
     {
       "page": "/guides/[id]",
@@ -88,16 +128,52 @@
       "namedRegex": "^/_not\\-found(?:/)?$"
     },
     {
+      "page": "/api/payment/callback",
+      "regex": "^/api/payment/callback(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/payment/callback(?:/)?$"
+    },
+    {
+      "page": "/auth/forgot-password",
+      "regex": "^/auth/forgot\\-password(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/auth/forgot\\-password(?:/)?$"
+    },
+    {
+      "page": "/auth/login",
+      "regex": "^/auth/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/auth/login(?:/)?$"
+    },
+    {
+      "page": "/auth/signup",
+      "regex": "^/auth/signup(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/auth/signup(?:/)?$"
+    },
+    {
       "page": "/booking/quote",
       "regex": "^/booking/quote(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/booking/quote(?:/)?$"
     },
     {
+      "page": "/booking/quote/confirmation",
+      "regex": "^/booking/quote/confirmation(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/booking/quote/confirmation(?:/)?$"
+    },
+    {
       "page": "/guides",
       "regex": "^/guides(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/guides(?:/)?$"
+    },
+    {
+      "page": "/manifest.json",
+      "regex": "^/manifest\\.json(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/manifest\\.json(?:/)?$"
     },
     {
       "page": "/manifest.webmanifest",

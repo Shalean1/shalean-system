@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Grid, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator, ChevronDown } from "lucide-react";
+import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Grid, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator, ChevronDown, FileText } from "lucide-react";
 import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
 
 // Location options from sitemap
@@ -61,6 +62,7 @@ const additionalServices = [
 ];
 
 export default function QuotePage() {
+  const router = useRouter();
   const [formData, setFormData] = useState<QuoteFormData>({
     firstName: "",
     lastName: "",
@@ -72,6 +74,7 @@ export default function QuotePage() {
     bedrooms: 0,
     bathrooms: 1,
     additionalServices: [],
+    note: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -163,35 +166,20 @@ export default function QuotePage() {
       const result = await submitQuote(formData);
 
       if (result.success) {
-        setSubmitStatus({ type: "success", message: result.message });
-        // Reset form after successful submission
-        setTimeout(() => {
-          setFormData({
-            firstName: "",
-            lastName: "",
-            email: "",
-            phone: "",
-            location: "",
-            customLocation: "",
-            service: null,
-            bedrooms: 0,
-            bathrooms: 1,
-            additionalServices: [],
-          });
-          setSubmitStatus(null);
-        }, 5000);
+        // Redirect to confirmation page
+        router.push("/booking/quote/confirmation");
       } else {
         setSubmitStatus({ type: "error", message: result.message });
         if (result.errors) {
           setErrors(result.errors);
         }
+        setIsSubmitting(false);
       }
     } catch (error) {
       setSubmitStatus({
         type: "error",
         message: "An unexpected error occurred. Please try again.",
       });
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -229,14 +217,14 @@ export default function QuotePage() {
                 <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-semibold">
                   2
                 </div>
-                <span className="text-sm font-medium text-gray-500">Schedule & Cleaner</span>
+                <span className="text-sm font-medium text-gray-500">Contact Info</span>
               </div>
               <div className="w-12 h-0.5 bg-gray-300"></div>
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-semibold">
                   3
                 </div>
-                <span className="text-sm font-medium text-gray-500">Contact & Review</span>
+                <span className="text-sm font-medium text-gray-500">Review & Submit</span>
               </div>
             </div>
 
@@ -271,7 +259,7 @@ export default function QuotePage() {
               <div className="w-6 h-6 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-xs font-semibold">
                 2
               </div>
-              <span className="text-xs font-medium text-gray-500">Schedule</span>
+              <span className="text-xs font-medium text-gray-500">Contact</span>
             </div>
             <div className="w-8 h-0.5 bg-gray-300"></div>
             <div className="flex items-center gap-2">
@@ -598,6 +586,34 @@ export default function QuotePage() {
                         </button>
                       );
                     })}
+                  </div>
+                </section>
+
+                {/* Section 5: Additional Notes */}
+                <section className="bg-white border border-gray-200 rounded-xl p-6">
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">
+                    5. Additional Notes (Optional)
+                  </h2>
+                  <div>
+                    <label htmlFor="note" className="block text-sm font-medium text-gray-700 mb-2">
+                      Any additional information or special requests?
+                    </label>
+                    <div className="relative">
+                      <FileText className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                      <textarea
+                        id="note"
+                        value={formData.note || ""}
+                        onChange={(e) => handleInputChange("note", e.target.value)}
+                        rows={4}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
+                          errors.note ? "border-red-500" : "border-gray-300"
+                        }`}
+                        placeholder="Tell us about any special requirements, preferred times, or other details that might help us provide a better quote..."
+                      />
+                    </div>
+                    {errors.note && (
+                      <p className="mt-1 text-sm text-red-600">{errors.note}</p>
+                    )}
                   </div>
                 </section>
               </div>

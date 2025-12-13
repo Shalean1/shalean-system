@@ -16,8 +16,13 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  // Hide header on /booking/quote page
-  if (pathname === "/booking/quote") {
+  // Hide header on booking form pages and auth pages
+  if (
+    pathname === "/booking/quote" ||
+    pathname === "/booking/quote/confirmation" ||
+    pathname?.startsWith("/booking/service/") ||
+    pathname?.startsWith("/auth")
+  ) {
     return null;
   }
 
@@ -49,6 +54,12 @@ export default function Header() {
 
           {/* Right Side Actions - Desktop */}
           <div className="hidden md:flex items-center gap-4 flex-shrink-0">
+            <Link
+              href="/auth/login"
+              className="px-4 py-2 bg-white hover:bg-gray-50 text-gray-900 font-medium rounded-lg transition-colors border border-gray-300 text-sm"
+            >
+              Login
+            </Link>
             <Link
               href="/booking/quote"
               className="px-4 py-2 bg-white hover:bg-gray-50 text-gray-900 font-medium rounded-lg transition-colors border border-gray-300 text-sm"
@@ -93,6 +104,13 @@ export default function Header() {
                 </Link>
               ))}
               <div className="flex flex-col gap-3 pt-2 border-t border-gray-200">
+                <Link
+                  href="/auth/login"
+                  className="px-6 py-2 bg-white hover:bg-gray-50 text-gray-900 font-medium rounded-lg transition-colors border border-gray-300 text-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Login
+                </Link>
                 <Link
                   href="/booking/quote"
                   className="px-6 py-2 bg-white hover:bg-gray-50 text-gray-900 font-medium rounded-lg transition-colors border border-gray-300 text-center"

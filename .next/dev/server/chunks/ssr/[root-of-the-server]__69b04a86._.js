@@ -509,6 +509,35 @@ const metadata = {
     verification: {
         google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || ""
     },
+    icons: {
+        icon: [
+            {
+                url: "/favicon.svg",
+                type: "image/svg+xml"
+            },
+            {
+                url: "/favicon.ico",
+                sizes: "any"
+            },
+            {
+                url: "/favicon-16x16.png",
+                sizes: "16x16",
+                type: "image/png"
+            },
+            {
+                url: "/favicon-32x32.png",
+                sizes: "32x32",
+                type: "image/png"
+            }
+        ],
+        apple: [
+            {
+                url: "/apple-touch-icon.png",
+                sizes: "180x180",
+                type: "image/png"
+            }
+        ]
+    },
     other: {
         "geo.region": "ZA-WC",
         "geo.placename": "Cape Town",
@@ -531,7 +560,7 @@ function RootLayout({ children }) {
                         }
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
-                        lineNumber: 113,
+                        lineNumber: 124,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
@@ -539,7 +568,53 @@ function RootLayout({ children }) {
                         href: "/manifest.json"
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
-                        lineNumber: 118,
+                        lineNumber: 129,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
+                        rel: "icon",
+                        href: "/favicon.svg",
+                        type: "image/svg+xml"
+                    }, void 0, false, {
+                        fileName: "[project]/app/layout.tsx",
+                        lineNumber: 130,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
+                        rel: "icon",
+                        href: "/favicon.ico",
+                        sizes: "any"
+                    }, void 0, false, {
+                        fileName: "[project]/app/layout.tsx",
+                        lineNumber: 131,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
+                        rel: "icon",
+                        href: "/favicon-16x16.png",
+                        type: "image/png",
+                        sizes: "16x16"
+                    }, void 0, false, {
+                        fileName: "[project]/app/layout.tsx",
+                        lineNumber: 132,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
+                        rel: "icon",
+                        href: "/favicon-32x32.png",
+                        type: "image/png",
+                        sizes: "32x32"
+                    }, void 0, false, {
+                        fileName: "[project]/app/layout.tsx",
+                        lineNumber: 133,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
+                        rel: "apple-touch-icon",
+                        href: "/apple-touch-icon.png"
+                    }, void 0, false, {
+                        fileName: "[project]/app/layout.tsx",
+                        lineNumber: 134,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("meta", {
@@ -547,7 +622,7 @@ function RootLayout({ children }) {
                         content: "#10b981"
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
-                        lineNumber: 119,
+                        lineNumber: 135,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("meta", {
@@ -555,13 +630,13 @@ function RootLayout({ children }) {
                         content: "width=device-width, initial-scale=1, maximum-scale=5"
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
-                        lineNumber: 120,
+                        lineNumber: 136,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/layout.tsx",
-                lineNumber: 112,
+                lineNumber: 123,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("body", {
@@ -569,20 +644,20 @@ function RootLayout({ children }) {
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Header$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
-                        lineNumber: 125,
+                        lineNumber: 141,
                         columnNumber: 9
                     }, this),
                     children
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/layout.tsx",
-                lineNumber: 122,
+                lineNumber: 138,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/layout.tsx",
-        lineNumber: 111,
+        lineNumber: 122,
         columnNumber: 5
     }, this);
 }

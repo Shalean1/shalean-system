@@ -1,5 +1,7 @@
 "use server";
 
+import { sendQuoteEmail, sendCustomerConfirmationEmail } from "@/lib/email";
+
 export interface QuoteFormData {
   firstName: string;
   lastName: string;
@@ -11,6 +13,7 @@ export interface QuoteFormData {
   bedrooms: number;
   bathrooms: number;
   additionalServices: string[];
+  note?: string;
 }
 
 export interface SubmitQuoteResult {
@@ -70,22 +73,25 @@ export async function submitQuote(
   }
 
   try {
-    // TODO: Integrate with email service (SendGrid, Resend, etc.)
-    // TODO: Store in database if needed
-    
-    // For now, log the submission (in production, this would send an email)
+    // Log the submission for debugging
     console.log("Quote Request Received:", {
       ...data,
       submittedAt: new Date().toISOString(),
     });
 
-    // Simulate email sending
-    // In production, replace this with actual email service:
-    // await sendEmail({
-    //   to: 'support@shalean.com',
-    //   subject: `New Quote Request from ${data.firstName} ${data.lastName}`,
-    //   body: formatQuoteEmail(data),
-    // });
+    // Send notification email to business
+    await sendQuoteEmail(data);
+    console.log("Business notification email sent successfully");
+
+    // Send confirmation email to customer
+    try {
+      await sendCustomerConfirmationEmail(data);
+      console.log("Customer confirmation email sent successfully");
+    } catch (customerEmailError) {
+      // Log error but don't fail the entire submission if customer email fails
+      console.error("Failed to send customer confirmation email (non-critical):", customerEmailError);
+      // Still return success since the business was notified
+    }
 
     return {
       success: true,
@@ -93,9 +99,20 @@ export async function submitQuote(
     };
   } catch (error) {
     console.error("Error submitting quote:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    console.error("Error details:", {
+      message: errorMessage,
+      stack: errorStack,
+      error: JSON.stringify(error, Object.getOwnPropertyNames(error)),
+    });
+    
+    // Return more specific error message to help with debugging
     return {
       success: false,
-      message: "An error occurred while submitting your quote. Please try again.",
+      message: errorMessage.includes("RESEND_API_KEY") 
+        ? "Email service is not configured. Please contact support."
+        : `An error occurred: ${errorMessage}`,
     };
   }
 }
