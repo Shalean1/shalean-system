@@ -10,24 +10,15 @@ import PriceSummary from "@/components/booking/PriceSummary";
 import ProgressIndicator from "@/components/booking/ProgressIndicator";
 import { BookingFormData, CleanerPreference, FrequencyType } from "@/lib/types/booking";
 import { calculatePrice } from "@/lib/pricing";
+import {
+  getCleaners,
+  getFrequencyOptions,
+  getSystemSetting,
+  FALLBACK_CLEANERS,
+  FALLBACK_FREQUENCIES,
+} from "@/lib/supabase/booking-data";
 
 const STORAGE_KEY = "shalean_booking_data";
-
-const cleaners = [
-  { id: "no-preference" as CleanerPreference, name: "No preference", rating: undefined },
-  { id: "natasha-m" as CleanerPreference, name: "Natasha M.", rating: 4.7 },
-  { id: "estery-p" as CleanerPreference, name: "Estery P.", rating: 4.6 },
-  { id: "beaul" as CleanerPreference, name: "Beaul", rating: 3.1 },
-];
-
-const frequencies: FrequencyType[] = ["one-time", "weekly", "bi-weekly", "monthly"];
-
-const frequencyDiscounts: Record<FrequencyType, string> = {
-  "one-time": "",
-  weekly: "Save 15%",
-  "bi-weekly": "Save 10%",
-  monthly: "Save 5%",
-};
 
 export default function SchedulePage() {
   const router = useRouter();
@@ -56,6 +47,52 @@ export default function SchedulePage() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Fetch dynamic data on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoadingData(true);
+        
+        // Fetch cleaners
+        const cleanersData = await getCleaners();
+        if (cleanersData.length > 0) {
+          setCleaners(
+            cleanersData.map(cleaner => ({
+              id: cleaner.cleaner_id as CleanerPreference,
+              name: cleaner.name,
+              rating: cleaner.rating || undefined,
+            }))
+          );
+        }
+        
+        // Fetch frequency options
+        const frequencyOptionsData = await getFrequencyOptions();
+        if (frequencyOptionsData.length > 0) {
+          setFrequencies(frequencyOptionsData.map(f => f.frequency_id as FrequencyType));
+          
+          const discounts: Record<FrequencyType, string> = {} as any;
+          frequencyOptionsData.forEach(f => {
+            discounts[f.frequency_id as FrequencyType] = f.display_label || "";
+          });
+          setFrequencyDiscounts(discounts);
+        }
+        
+        // Fetch default city
+        const cityData = await getSystemSetting("default_city");
+        if (cityData) {
+          setDefaultCity(cityData);
+        }
+      } catch (error) {
+        console.error("Error loading dynamic data:", error);
+        // Keep using fallback data
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     // Load from localStorage
@@ -222,7 +259,7 @@ export default function SchedulePage() {
                     <input
                       type="text"
                       id="city"
-                      value={formData.city || "Cape Town"}
+                      value={formData.city || defaultCity}
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, city: e.target.value }))
                       }

@@ -1,64 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Grid, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator, ChevronDown, FileText } from "lucide-react";
 import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+import { 
+  getServiceLocations, 
+  getAdditionalServices,
+  FALLBACK_LOCATIONS,
+  FALLBACK_EXTRAS,
+  type ServiceLocation,
+  type AdditionalService
+} from "@/lib/supabase/booking-data";
 
-// Location options from sitemap
-const locations = [
-  "Sea Point",
-  "Camps Bay",
-  "Claremont",
-  "Green Point",
-  "V&A Waterfront",
-  "Constantia",
-  "Newlands",
-  "Rondebosch",
-  "Observatory",
-  "Woodstock",
-  "City Bowl",
-  "Gardens",
-  "Tamboerskloof",
-  "Oranjezicht",
-  "Vredehoek",
-  "Devils Peak",
-  "Mouille Point",
-  "Three Anchor Bay",
-  "Bantry Bay",
-  "Fresnaye",
-  "Bakoven",
-  "Llandudno",
-  "Hout Bay",
-  "Wynberg",
-  "Kenilworth",
-  "Plumstead",
-  "Diep River",
-  "Bergvliet",
-  "Tokai",
-  "Steenberg",
-  "Muizenberg",
-  "Kalk Bay",
-  "Fish Hoek",
-  "Simons Town",
-];
+// Icon mapping for additional services
+const iconMap: Record<string, any> = {
+  Refrigerator,
+  ChefHat,
+  Boxes,
+  Grid,
+  Paintbrush,
+  Shirt,
+};
 
 const services = [
   { id: "standard-cleaning", name: "Standard Cleaning", icon: Home },
   { id: "deep-cleaning", name: "Deep Cleaning", icon: Star },
   { id: "moving-cleaning", name: "Moving Cleaning", icon: Package },
   { id: "airbnb-cleaning", name: "Airbnb Cleaning", icon: Calendar },
-];
-
-const additionalServices = [
-  { id: "inside-fridge", name: "Inside Fridge", icon: Refrigerator },
-  { id: "inside-oven", name: "Inside Oven", icon: ChefHat },
-  { id: "inside-cabinets", name: "Inside Cabinets", icon: Boxes },
-  { id: "interior-windows", name: "Interior Windows", icon: Grid },
-  { id: "interior-walls", name: "Interior Walls", icon: Paintbrush },
-  { id: "ironing", name: "Ironing", icon: Shirt },
-  { id: "laundry", name: "Laundry", icon: Shirt },
 ];
 
 export default function QuotePage() {
@@ -80,6 +50,47 @@ export default function QuotePage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  
+  // Dynamic data from Supabase
+  const [locations, setLocations] = useState<string[]>(FALLBACK_LOCATIONS);
+  const [additionalServices, setAdditionalServices] = useState<Array<{ id: string; name: string; icon: any }>>(
+    FALLBACK_EXTRAS.map(extra => ({ ...extra, icon: iconMap[extra.icon] || Shirt }))
+  );
+  const [isLoadingData, setIsLoadingData] = useState(true);
+
+  // Fetch dynamic data on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoadingData(true);
+        
+        // Fetch locations
+        const locationsData = await getServiceLocations();
+        if (locationsData.length > 0) {
+          setLocations(locationsData.map(loc => loc.name));
+        }
+        
+        // Fetch additional services
+        const additionalServicesData = await getAdditionalServices();
+        if (additionalServicesData.length > 0) {
+          setAdditionalServices(
+            additionalServicesData.map(service => ({
+              id: service.service_id,
+              name: service.name,
+              icon: iconMap[service.icon_name || "Shirt"] || Shirt,
+            }))
+          );
+        }
+      } catch (error) {
+        console.error("Error loading dynamic data:", error);
+        // Keep using fallback data
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleInputChange = (field: keyof QuoteFormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -94,7 +105,16 @@ export default function QuotePage() {
   };
 
   const handleServiceSelect = (serviceId: string) => {
-    handleInputChange("service", serviceId);
+    // Map quote page service IDs to booking form types
+    const serviceTypeMap: Record<string, string> = {
+      "standard-cleaning": "standard",
+      "deep-cleaning": "deep",
+      "moving-cleaning": "move-in-out",
+      "airbnb-cleaning": "airbnb"
+    };
+    
+    const serviceType = serviceTypeMap[serviceId] || "standard";
+    router.push(`/booking/service/${serviceType}/details`);
   };
 
   const handleAdditionalServiceToggle = (serviceId: string) => {

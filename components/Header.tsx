@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import AdminLink from "./AdminLink";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -54,6 +55,7 @@ export default function Header() {
 
           {/* Right Side Actions - Desktop */}
           <div className="hidden md:flex items-center gap-4 flex-shrink-0">
+            <AdminLink />
             <Link
               href="/auth/login"
               className="px-4 py-2 bg-white hover:bg-gray-50 text-gray-900 font-medium rounded-lg transition-colors border border-gray-300 text-sm"
@@ -61,7 +63,7 @@ export default function Header() {
               Login
             </Link>
             <Link
-              href="/booking/quote"
+              href="/booking/service/standard/details"
               className="px-4 py-2 bg-white hover:bg-gray-50 text-gray-900 font-medium rounded-lg transition-colors border border-gray-300 text-sm"
             >
               Get Free Quote
@@ -112,7 +114,7 @@ export default function Header() {
                   Login
                 </Link>
                 <Link
-                  href="/booking/quote"
+                  href="/booking/service/standard/details"
                   className="px-6 py-2 bg-white hover:bg-gray-50 text-gray-900 font-medium rounded-lg transition-colors border border-gray-300 text-center"
                   onClick={() => setIsMenuOpen(false)}
                 >

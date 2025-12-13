@@ -1,4 +1,20 @@
 {
-  "node": {},
+  "node": {
+    "0023f5fc03e5e698d5759b6678cf9e348d9cc4d005": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/popular-services.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getPopularServices",
+          "filename": "app/actions/popular-services.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "exportedName": "getPopularServices",
+      "filename": "app/actions/popular-services.ts"
+    }
+  },
   "edge": {}
 }

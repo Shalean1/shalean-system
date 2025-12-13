@@ -1,5 +1,8 @@
 "use server";
 
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+
 export interface LoginFormData {
   email: string;
   password: string;
@@ -46,20 +49,23 @@ export async function login(
   }
 
   try {
-    // TODO: Implement actual authentication logic
-    // - Check user credentials against database
-    // - Create session/token
-    // - Return success with user data
-    
-    console.log("Login attempt:", {
+    const supabase = await createClient();
+
+    const { error } = await supabase.auth.signInWithPassword({
       email: data.email,
-      timestamp: new Date().toISOString(),
+      password: data.password,
     });
 
-    // Placeholder response
+    if (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+
     return {
       success: true,
-      message: "Login successful! (Backend integration pending)",
+      message: "Login successful!",
     };
   } catch (error) {
     console.error("Error during login:", error);
@@ -107,24 +113,38 @@ export async function signup(
   }
 
   try {
-    // TODO: Implement actual signup logic
-    // - Check if user already exists
-    // - Hash password
-    // - Create user in database
-    // - Create session/token
-    // - Send verification email (optional)
-    
-    console.log("Signup attempt:", {
+    const supabase = await createClient();
+
+    const { data: authData, error } = await supabase.auth.signUp({
       email: data.email,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      timestamp: new Date().toISOString(),
+      password: data.password,
+      options: {
+        data: {
+          first_name: data.firstName,
+          last_name: data.lastName,
+          full_name: `${data.firstName} ${data.lastName}`,
+        },
+      },
     });
 
-    // Placeholder response
+    if (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+
+    // Check if email confirmation is required
+    if (authData.user && !authData.session) {
+      return {
+        success: true,
+        message: "Account created! Please check your email to verify your account.",
+      };
+    }
+
     return {
       success: true,
-      message: "Account created successfully! (Backend integration pending)",
+      message: "Account created successfully!",
     };
   } catch (error) {
     console.error("Error during signup:", error);
@@ -156,18 +176,19 @@ export async function forgotPassword(
   }
 
   try {
-    // TODO: Implement actual password reset logic
-    // - Check if user exists
-    // - Generate reset token
-    // - Store token with expiration
-    // - Send password reset email with token link
-    
-    console.log("Password reset request:", {
-      email: data.email,
-      timestamp: new Date().toISOString(),
+    const supabase = await createClient();
+
+    const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/reset-password`,
     });
 
-    // Placeholder response
+    if (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+
     return {
       success: true,
       message: "If an account exists with this email, you will receive password reset instructions.",
@@ -181,4 +202,43 @@ export async function forgotPassword(
       message: `Password reset failed: ${errorMessage}`,
     };
   }
+}
+
+/**
+ * Logout the current user
+ */
+export async function logout(): Promise<AuthResult> {
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+
+    return {
+      success: true,
+      message: "Logged out successfully",
+    };
+  } catch (error) {
+    console.error("Error during logout:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    
+    return {
+      success: false,
+      message: `Logout failed: ${errorMessage}`,
+    };
+  }
+}
+
+/**
+ * Get the current user
+ */
+export async function getCurrentUser() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  return user;
 }

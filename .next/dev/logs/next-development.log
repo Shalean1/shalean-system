@@ -1,82 +1,62 @@
-[00:00:04.201] Server  LOG      ✓ Ready in 3.1s
-[00:00:44.668] Server  LOG      ○ Compiling / ...
-[00:00:57.997] Server  WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+[00:00:10.923] Server  LOG      ○ Compiling middleware ...
+[00:00:13.726] Server  WARN     ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[00:00:14.833] Server  LOG      ✓ Ready in 13.6s
+[00:04:18.680] Server  LOG      ○ Compiling / ...
+[00:05:08.352] Server  WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:01:02.633] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:01:04.631] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:01:06.564] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+[00:05:20.845] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:21.628] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:01:06.999] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:01:07.685] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+[00:05:26.370] Server  LOG      ○ Compiling /manifest.json ...
+[00:05:27.516] Server  ERROR   Error fetching popular services: {}
+[00:06:34.748] Server  LOG      ✓ Compiled in 23.6s
+[00:06:40.267] Server  WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:01:07.894] Server  LOG      ○ Compiling /manifest.json ...
-[00:02:51.628] Server  LOG      ✓ Compiled in 3.7s
-[00:03:00.357] Server  LOG      ✓ Compiled in 1373ms
-[00:03:03.088] Server  LOG      ✓ Compiled in 1280ms
-[00:03:05.630] Server  LOG      ✓ Compiled in 1772ms
-[00:11:55.583] Server  LOG      ✓ Compiled in 6.3s
-[00:12:32.134] Server  LOG      ○ Compiling /booking/quote ...
-[00:14:59.004] Server  LOG      ○ Compiling /booking/service/[type]/details ...
-[00:15:08.031] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:15:08.501] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-https://react.dev/link/hydration-mismatch
-
-  ...
-    <RedirectErrorBoundary router={{...}}>
-      <InnerLayoutRouter url="/booking/s..." tree={[...]} params={{type:"stan..."}} cacheNode={{lazyData:null, ...}} ...>
-        <SegmentViewNode type="page" pagePath="booking/se...">
-          <SegmentTrieNode>
-          <ClientPageRoot Component={function ServiceDetailsPage} serverProvidedParams={{...}}>
-            <ServiceDetailsPage params={Promise} searchParams={Promise}>
-              <div className="container ...">
-                <div className="max-w-7xl ...">
-                  <div>
-                  <div>
-                  <div className="grid grid-...">
-                    <div>
-                    <div className="lg:col-span-1">
-                      <PriceSummary service="standard" frequency="one-time" priceBreakdown={{basePrice:250, ...}} ...>
-                        <div className="bg-white b...">
-                          <h2>
-                          <div>
-                          <div className="border-t b...">
-                            <div className="flex justi...">
-                              <span>
-                              <span className="font-medium text-gray-900">
-+                               R 250.00
--                               R 250,00
-                            ...
-        ...
-      ...
-
-[00:15:21.513] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:16:40.831] Server  LOG      ✓ Compiled in 3.6s
-[00:16:44.863] Server  LOG      ✓ Compiled in 3.5s
-[00:16:48.516] Server  LOG      ✓ Compiled in 1055ms
-[00:16:57.596] Server  LOG      ✓ Compiled in 866ms
-[00:16:57.609] Browser ERROR   uncaughtError: ReferenceError: isMounted is not defined
-[00:16:57.974] Browser ERROR   uncaughtError: ReferenceError: isMounted is not defined
-[00:16:59.941] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:17:00.063] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:17:00.094] Server  LOG      ✓ Compiled in 2s
-[00:17:04.960] Server  LOG      ○ Compiling /manifest.webmanifest ...
-[00:17:10.840] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:17:12.608] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:17:54.917] Server  LOG      ○ Compiling /booking/service/[type]/schedule ...
-[00:20:02.386] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+[00:06:47.578] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:07:14.972] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:22:04.270] Server  LOG      ✓ Compiled in 2.2s
-[00:22:20.655] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:22:21.092] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+[00:07:27.321] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:07:29.682] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:12:42.552] Server  LOG      ✓ Compiled in 10.9s
+[00:12:55.777] Server  LOG      ○ Compiling /_not-found/page ...
+[00:21:45.669] Server  WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:21:47.962] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:21:48.356] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:25:15.947] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:25:18.608] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:28:03.063] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:28:03.754] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:30:09.604] Server  LOG      ✓ Compiled in 3.5s
+[00:32:49.817] Server  LOG      ✓ Compiled in 8.2s
+[00:33:07.440] Server  WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:33:09.224] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:33:09.568] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:34:58.986] Server  LOG      ✓ Compiled in 7.1s
+[00:35:07.756] Server  LOG      ✓ Compiled in 2.5s
+[00:38:15.854] Server  LOG      ✓ Compiled in 4.7s
+[00:38:37.839] Server  WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:38:39.823] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:38:40.488] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:40:17.584] Server  LOG      ✓ Compiled in 4.6s
+[00:40:35.423] Server  LOG      ○ Compiling /auth/signup ...
+[00:40:43.926] Server  WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:40:51.088] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:40:52.137] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:44:20.728] Server  LOG      ✓ Compiled in 2.5s
+[00:46:47.603] Server  LOG      ○ Compiling /booking/service/[type]/details ...
+[00:46:56.802] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:46:57.546] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
 
 - A server/client branch `if (typeof window !== 'undefined')`.
 - Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
@@ -206,388 +186,52 @@ https://react.dev/link/hydration-mismatch
             ...
           ...
 
-[00:22:47.646] Server  LOG      ✓ Compiled in 2.1s
-[00:22:56.894] Server  LOG      ✓ Compiled in 2.1s
-[00:23:01.759] Server  LOG      ✓ Compiled in 950ms
-[00:27:29.353] Server  LOG        Reload env: .env.local
-[00:27:32.257] Server  LOG      ✓ Compiled in 1652ms
-[00:29:59.396] Server  LOG      ✓ Compiled in 3.8s
-[00:32:09.297] Server  LOG      ✓ Compiled in 4s
-[00:32:12.203] Server  LOG      ✓ Compiled in 1564ms
-[00:33:17.089] Server  LOG      ○ Compiling /booking/service/[type]/review ...
-[00:36:17.909] Server  LOG      ✓ Compiled in 3.3s
-[00:36:22.060] Server  LOG      ✓ Compiled in 1197ms
-[00:36:22.306] Browser ERROR   The final argument passed to %s changed size between renders. The order and size of this array must remain constant.
-
-Previous: %s
-Incoming: %s useEffect [] [, standard]
-[00:36:52.343] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:36:52.344] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-https://react.dev/link/hydration-mismatch
-
-  ...
-    <RedirectBoundary>
-      <RedirectErrorBoundary router={{...}}>
-        <InnerLayoutRouter url="/booking/s..." tree={[...]} params={{type:"stan..."}} cacheNode={{lazyData:null, ...}} ...>
-          <SegmentViewNode type="page" pagePath="booking/se...">
-            <SegmentTrieNode>
-            <ClientPageRoot Component={function ReviewPage} serverProvidedParams={{...}}>
-              <ReviewPage params={Promise} searchParams={Promise}>
-                <div className="container ...">
-                  <div className="max-w-7xl ...">
-                    <div>
-                    <h1>
-                    <p>
-                    <div className="grid grid-...">
-                      <div className="lg:col-spa...">
-                        <section className="bg-white b...">
-                          <div>
-                          <div className="space-y-2">
-                            <p>
-                            <p>
-                              <strong>
-+                             5
--                             0
-                            ...
-                        ...
-                      ...
-          ...
-        ...
-
-[00:37:18.094] Server  LOG      ✓ Compiled in 2s
-[00:37:23.010] Server  LOG      ✓ Compiled in 504ms
-[00:37:35.625] Server  LOG      ✓ Compiled in 2.1s
-[00:37:41.957] Server  LOG      ✓ Compiled in 554ms
-[00:37:43.741] Server  LOG      ✓ Compiled in 1015ms
-[00:37:48.373] Server  LOG      ✓ Compiled in 715ms
-[00:37:54.935] Server  LOG      ✓ Compiled in 1084ms
-[00:40:03.075] Server  LOG      ✓ Compiled in 6.8s
-[00:40:23.540] Browser LOG     Payment window closed
-[00:40:39.527] Browser LOG     Payment successful: {"message":"Approved","redirecturl":"?trxref=shalean-1765612652267-g8fo2js&reference=shalean-1765612652267-g8fo2js","reference":"shalean-1765612652267-g8fo2js","status":"success","trans":"5631323607","transaction":"5631323607","trxref":"shalean-1765612652267-g8fo2js"}
-[00:40:42.723] Server  LOG      ○ Compiling /booking/service/[type]/confirmation ...
-[00:40:44.367] Server  ERROR    ⨯ ./lib/storage/bookings.ts:2:1
-Module not found: Can't resolve 'fs'
-  1 | import { Booking } from "../types/booking";
-> 2 | import { promises as fs } from "fs";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 | import path from "path";
-  4 |
-  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
-
-
-
-Import traces:
-  Client Component Browser:
-    ./lib/storage/bookings.ts [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./lib/storage/bookings.ts [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[00:40:45.727] Browser ERROR   ./lib/storage/bookings.ts:2:1
-Module not found: Can't resolve 'fs'
-  1 | import { Booking } from "../types/booking";
-> 2 | import { promises as fs } from "fs";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 | import path from "path";
-  4 |
-  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
-
-Import traces:
-  Client Component Browser:
-    ./lib/storage/bookings.ts [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./lib/storage/bookings.ts [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-[00:40:47.404] Server  LOG      ○ Compiling /_error ...
-[00:40:47.728] Browser ERROR   ./lib/storage/bookings.ts:2:1
-Module not found: Can't resolve 'fs'
-  1 | import { Booking } from "../types/booking";
-> 2 | import { promises as fs } from "fs";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 | import path from "path";
-  4 |
-  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
-
-Import traces:
-  Client Component Browser:
-    ./lib/storage/bookings.ts [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./lib/storage/bookings.ts [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-[00:40:47.729] Browser ERROR   ./lib/storage/bookings.ts:2:1
-Module not found: Can't resolve 'fs'
-  1 | import { Booking } from "../types/booking";
-> 2 | import { promises as fs } from "fs";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 | import path from "path";
-  4 |
-  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
-
-Import traces:
-  Client Component Browser:
-    ./lib/storage/bookings.ts [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./lib/storage/bookings.ts [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-[00:40:47.729] Browser ERROR   ./lib/storage/bookings.ts:2:1
-Module not found: Can't resolve 'fs'
-  1 | import { Booking } from "../types/booking";
-> 2 | import { promises as fs } from "fs";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 | import path from "path";
-  4 |
-  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
-
-Import traces:
-  Client Component Browser:
-    ./lib/storage/bookings.ts [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./lib/storage/bookings.ts [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-[00:40:49.172] Browser ERROR   ./lib/storage/bookings.ts:2:1
-Module not found: Can't resolve 'fs'
-  1 | import { Booking } from "../types/booking";
-> 2 | import { promises as fs } from "fs";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 | import path from "path";
-  4 |
-  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
-
-Import traces:
-  Client Component Browser:
-    ./lib/storage/bookings.ts [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./lib/storage/bookings.ts [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-[00:40:49.172] Browser ERROR   ./lib/storage/bookings.ts:2:1
-Module not found: Can't resolve 'fs'
-  1 | import { Booking } from "../types/booking";
-> 2 | import { promises as fs } from "fs";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 | import path from "path";
-  4 |
-  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
-
-Import traces:
-  Client Component Browser:
-    ./lib/storage/bookings.ts [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./lib/storage/bookings.ts [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-[00:40:50.117] Browser ERROR   ./lib/storage/bookings.ts:2:1
-Module not found: Can't resolve 'fs'
-  1 | import { Booking } from "../types/booking";
-> 2 | import { promises as fs } from "fs";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 | import path from "path";
-  4 |
-  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
-
-Import traces:
-  Client Component Browser:
-    ./lib/storage/bookings.ts [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./lib/storage/bookings.ts [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-[00:40:50.119] Browser ERROR   ./lib/storage/bookings.ts:2:1
-Module not found: Can't resolve 'fs'
-  1 | import { Booking } from "../types/booking";
-> 2 | import { promises as fs } from "fs";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 | import path from "path";
-  4 |
-  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
-
-Import traces:
-  Client Component Browser:
-    ./lib/storage/bookings.ts [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./lib/storage/bookings.ts [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-[00:40:51.184] Browser ERROR   uncaughtError: Error: ./lib/storage/bookings.ts:2:1
-Module not found: Can't resolve 'fs'
-  1 | import { Booking } from "../types/booking";
-> 2 | import { promises as fs } from "fs";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 | import path from "path";
-  4 |
-  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
-
-
-
-Import traces:
-  Client Component Browser:
-    ./lib/storage/bookings.ts [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./lib/storage/bookings.ts [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[00:40:51.741] Browser ERROR   ./lib/storage/bookings.ts:2:1
-Module not found: Can't resolve 'fs'
-  1 | import { Booking } from "../types/booking";
-> 2 | import { promises as fs } from "fs";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 | import path from "path";
-  4 |
-  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
-
-Import traces:
-  Client Component Browser:
-    ./lib/storage/bookings.ts [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./lib/storage/bookings.ts [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-[00:40:51.741] Browser ERROR   ./lib/storage/bookings.ts:2:1
-Module not found: Can't resolve 'fs'
-  1 | import { Booking } from "../types/booking";
-> 2 | import { promises as fs } from "fs";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 | import path from "path";
-  4 |
-  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
-
-Import traces:
-  Client Component Browser:
-    ./lib/storage/bookings.ts [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./lib/storage/bookings.ts [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-[00:40:51.742] Browser ERROR   ./lib/storage/bookings.ts:2:1
-Module not found: Can't resolve 'fs'
-  1 | import { Booking } from "../types/booking";
-> 2 | import { promises as fs } from "fs";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 | import path from "path";
-  4 |
-  5 | const BOOKINGS_FILE = path.join(process.cwd(), "data", "bookings.json");
-
-Import traces:
-  Client Component Browser:
-    ./lib/storage/bookings.ts [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component Browser]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./lib/storage/bookings.ts [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Client Component SSR]
-    ./app/booking/service/[type]/confirmation/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-[00:42:17.795] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:42:17.802] Server  WARN     ⚠ Fast Refresh had to perform a full reload when ./node_modules/next/dist/shared/lib/router/router.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-[00:42:17.808] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:42:21.361] Server  LOG      ✓ Compiled in 13.3s
-[00:42:46.536] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:42:57.980] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:45:03.655] Server  LOG      ✓ Compiled in 4.9s
-[00:45:32.349] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:45:41.242] Server  LOG      ✓ Compiled in 1999ms
-[00:46:31.497] Server  LOG      ✓ Compiled in 2.9s
-[00:46:42.806] Server  LOG      ○ Compiling /_not-found/page ...
-[00:47:04.067] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:49:53.534] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:51:02.409] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:59:56.793] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[01:14:06.709] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [70, 70, 70, 70, 75]. Please update your config to [70, 70, 70, 70, 75, 90].
+[00:49:51.283] Server  LOG      ✓ Compiled in 6.8s
+[00:50:40.755] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[01:16:03.013] Server  WARN     ⚠ Fast Refresh had to perform a full reload when ./node_modules/next/dist/client/image-component.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-[01:16:03.057] Server  LOG      ✓ Compiled in 7.4s
-[01:16:11.254] Server  WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [70, 70, 70, 70, 70, 70, 70, 70, 75]. Please update your config to [70, 70, 70, 70, 70, 70, 70, 70, 75, 90].
+[00:51:15.497] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:54:16.333] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:54:33.925] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[01:16:15.427] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[01:16:17.547] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [70, 70, 70, 70, 70, 70, 70, 70, 75]. Please update your config to [70, 70, 70, 70, 70, 70, 70, 70, 75, 90].
+[00:54:46.709] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:55:37.499] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[01:20:19.775] Server  LOG      ✓ Compiled in 10.8s
-[01:20:21.190] Server  WARN     ⚠ Fast Refresh had to perform a full reload when ./node_modules/next/dist/client/image-component.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-[01:20:30.211] Server  WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 75]. Please update your config to [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 75, 90].
+[00:55:59.174] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:56:11.891] Server  WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[01:20:36.037] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[01:20:36.738] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 75]. Please update your config to [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 75, 90].
+[00:56:12.740] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:56:13.390] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[01:28:16.977] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[01:34:32.262] Server  LOG      ✓ Compiled in 18.3s
-[01:40:11.180] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 75]. Please update your config to [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 75, 90].
+[00:56:21.066] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:56:29.544] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:56:37.880] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:57:45.256] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:58:41.506] Server  LOG      ✓ Compiled in 7.3s
+[01:01:47.359] Server  LOG      ✓ Compiled in 9s
+[01:01:55.745] Server  LOG      ✓ Compiled in 209ms
+[01:01:59.621] Server  LOG      ✓ Compiled in 299ms
+[01:03:40.252] Server  WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[01:03:42.423] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:03:42.823] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[01:04:06.792] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:05:26.113] Server  LOG      ✓ Compiled in 4.3s
+[01:06:13.981] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[01:07:08.241] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:08:30.736] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[01:18:07.300] Server  LOG      ✓ Compiled in 8s
+[01:20:11.222] Server  LOG      ✓ Compiled in 6s
+[01:28:31.721] Server  LOG      ✓ Compiled in 1472ms
+[01:28:32.429] Browser ERROR   uncaughtError: ReferenceError: extras is not defined
+[01:28:42.965] Server  LOG      ✓ Compiled in 9.1s
+[01:28:43.156] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[01:29:03.435] Server  LOG      ○ Compiling /manifest.webmanifest ...
+[01:29:16.485] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:29:32.865] Server  LOG      ✓ Compiled in 10.2s
+[01:29:36.710] Browser ERROR   Error fetching additional services: {"code":"PGRST205","details":null,"hint":"Perhaps you meant the table 'public.popular_services'","message":"Could not find the table 'public.additional_services' in the schema cache"}
+[01:29:37.526] Browser ERROR   Error fetching time slots: {"code":"PGRST205","details":null,"hint":null,"message":"Could not find the table 'public.time_slots' in the schema cache"}

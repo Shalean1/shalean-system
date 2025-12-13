@@ -6,6 +6,8 @@ const BASE_PRICES: Record<ServiceType, number> = {
   deep: 400,
   "move-in-out": 500,
   airbnb: 350,
+  office: 300,
+  holiday: 450,
 };
 
 // Price per bedroom (in ZAR)
@@ -108,6 +110,8 @@ export function getServiceName(service: ServiceType): string {
     deep: "Deep Cleaning",
     "move-in-out": "Move In / Out",
     airbnb: "Airbnb Cleaning",
+    office: "Office Cleaning",
+    holiday: "Holiday Cleaning",
   };
   return names[service];
 }

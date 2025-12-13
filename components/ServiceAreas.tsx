@@ -77,12 +77,12 @@ export default function ServiceAreas() {
             <p className="text-gray-600 mb-4">
               Don't see your area? We may still be able to help!
             </p>
-            <a
-              href="tel:+27871535250"
+            <Link
+              href="/booking/service/standard/details"
               className="inline-block px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors shadow-lg"
             >
-              Contact Us to Check Availability
-            </a>
+              Book Now
+            </Link>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-export type ServiceType = "standard" | "deep" | "move-in-out" | "airbnb";
+export type ServiceType = "standard" | "deep" | "move-in-out" | "airbnb" | "office" | "holiday";
 
 export type FrequencyType = "one-time" | "weekly" | "bi-weekly" | "monthly";
 

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Star } from "lucide-react";
 
 const testimonials = [
@@ -99,12 +100,12 @@ export default function Testimonials() {
           <p className="text-gray-600 mb-4">
             Join hundreds of satisfied customers across Cape Town
           </p>
-          <a
-            href="tel:+27871535250"
+          <Link
+            href="/booking/service/standard/details"
             className="inline-block px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors shadow-lg"
           >
             Book Your Cleaning Service Today
-          </a>
+          </Link>
         </div>
       </div>
     </section>

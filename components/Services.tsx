@@ -108,10 +108,10 @@ export default function Services() {
         {/* CTA */}
         <div className="text-center mt-12">
           <Link
-            href="/#services"
+            href="/booking/service/standard/details"
             className="inline-block px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors shadow-lg"
           >
-            View All Services
+            Book a Service
           </Link>
         </div>
       </div>

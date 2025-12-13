@@ -1,7 +1,7 @@
 "use client";
 
 import { ServiceType } from "@/lib/types/booking";
-import { Home, Star, Package, Calendar } from "lucide-react";
+import { Home, Star, Package, Calendar, Briefcase, Gift } from "lucide-react";
 
 interface ServiceCardProps {
   service: ServiceType;
@@ -14,6 +14,8 @@ const serviceIcons: Record<ServiceType, typeof Home> = {
   deep: Star,
   "move-in-out": Package,
   airbnb: Calendar,
+  office: Briefcase,
+  holiday: Gift,
 };
 
 const serviceNames: Record<ServiceType, string> = {
@@ -21,6 +23,8 @@ const serviceNames: Record<ServiceType, string> = {
   deep: "Deep Cleaning",
   "move-in-out": "Move In / Out",
   airbnb: "Airbnb Cleaning",
+  office: "Office Cleaning",
+  holiday: "Holiday Cleaning",
 };
 
 export default function ServiceCard({ service, isSelected, onClick }: ServiceCardProps) {

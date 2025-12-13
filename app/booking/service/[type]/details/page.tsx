@@ -19,38 +19,24 @@ import PriceSummary from "@/components/booking/PriceSummary";
 import ProgressIndicator from "@/components/booking/ProgressIndicator";
 import { BookingFormData, ServiceType } from "@/lib/types/booking";
 import { calculatePrice, formatPrice } from "@/lib/pricing";
+import {
+  getAdditionalServices,
+  getTimeSlots,
+  FALLBACK_EXTRAS,
+  FALLBACK_TIME_SLOTS,
+} from "@/lib/supabase/booking-data";
 
-const services: ServiceType[] = ["standard", "deep", "move-in-out", "airbnb"];
+// Icon mapping for additional services
+const iconMap: Record<string, any> = {
+  Refrigerator,
+  ChefHat,
+  Boxes,
+  Grid,
+  Paintbrush,
+  Shirt,
+};
 
-const extras = [
-  { id: "inside-fridge", name: "Inside Fridge", icon: Refrigerator },
-  { id: "inside-oven", name: "Inside Oven", icon: ChefHat },
-  { id: "inside-cabinets", name: "Inside Cabinets", icon: Boxes },
-  { id: "interior-windows", name: "Interior Windows", icon: Grid },
-  { id: "interior-walls", name: "Interior Walls", icon: Paintbrush },
-  { id: "laundry", name: "Laundry & Ironing", icon: Shirt },
-];
-
-const timeSlots = [
-  "08:00",
-  "08:30",
-  "09:00",
-  "09:30",
-  "10:00",
-  "10:30",
-  "11:00",
-  "11:30",
-  "12:00",
-  "12:30",
-  "13:00",
-  "13:30",
-  "14:00",
-  "14:30",
-  "15:00",
-  "15:30",
-  "16:00",
-  "16:30",
-];
+const services: ServiceType[] = ["standard", "deep", "move-in-out", "airbnb", "office", "holiday"];
 
 const STORAGE_KEY = "shalean_booking_data";
 
@@ -66,35 +52,80 @@ export default function ServiceDetailsPage() {
       deep: "deep",
       "move-in-out": "move-in-out",
       airbnb: "airbnb",
+      office: "office",
+      holiday: "holiday",
     };
     return mapping[serviceTypeFromUrl] || "standard";
   };
 
-  const [formData, setFormData] = useState<Partial<BookingFormData>>(() => {
-    // Load from localStorage if available
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try {
-          return JSON.parse(saved);
-        } catch {
-          // Ignore parse errors
-        }
-      }
-    }
-    return {
-      service: getServiceType(),
-      bedrooms: 2,
-      bathrooms: 1,
-      extras: [],
-      scheduledDate: null,
-      scheduledTime: null,
-      frequency: "one-time",
-      cleanerPreference: "no-preference",
-    };
+  const [formData, setFormData] = useState<Partial<BookingFormData>>({
+    service: getServiceType(),
+    bedrooms: 2,
+    bathrooms: 1,
+    extras: [],
+    scheduledDate: null,
+    scheduledTime: null,
+    frequency: "one-time",
+    cleanerPreference: "no-preference",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isClient, setIsClient] = useState(false);
+  
+  // Dynamic data from Supabase
+  const [extras, setExtras] = useState<Array<{ id: string; name: string; icon: any }>>(
+    FALLBACK_EXTRAS.map(extra => ({ ...extra, icon: iconMap[extra.icon] || Shirt }))
+  );
+  const [timeSlots, setTimeSlots] = useState<string[]>(FALLBACK_TIME_SLOTS);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+
+  // Fetch dynamic data on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoadingData(true);
+        
+        // Fetch additional services
+        const additionalServicesData = await getAdditionalServices();
+        if (additionalServicesData.length > 0) {
+          setExtras(
+            additionalServicesData.map(service => ({
+              id: service.service_id,
+              name: service.name,
+              icon: iconMap[service.icon_name || "Shirt"] || Shirt,
+            }))
+          );
+        }
+        
+        // Fetch time slots
+        const timeSlotsData = await getTimeSlots();
+        if (timeSlotsData.length > 0) {
+          setTimeSlots(timeSlotsData.map(slot => slot.time_value));
+        }
+      } catch (error) {
+        console.error("Error loading dynamic data:", error);
+        // Keep using fallback data
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Load from localStorage after component mounts (client-side only)
+  useEffect(() => {
+    setIsClient(true);
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const parsedData = JSON.parse(saved);
+        setFormData(parsedData);
+      } catch {
+        // Ignore parse errors
+      }
+    }
+  }, []);
 
   useEffect(() => {
     // Set service from URL if not already set
@@ -104,11 +135,11 @@ export default function ServiceDetailsPage() {
   }, [serviceTypeFromUrl]);
 
   useEffect(() => {
-    // Save to localStorage
-    if (typeof window !== "undefined") {
+    // Save to localStorage (only after client-side hydration)
+    if (isClient) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
     }
-  }, [formData]);
+  }, [formData, isClient]);
 
   const priceBreakdown = calculatePrice(formData as Partial<BookingFormData>);
 

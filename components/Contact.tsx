@@ -16,7 +16,7 @@ export default function Contact() {
 
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-shadow border border-gray-200 text-center">
-            <div className="bg-[#D1FAE5] w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+            <div className="bg-[#DBEAFE] w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
               <Phone className="w-8 h-8 text-[#0C53ED]" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
@@ -31,21 +31,21 @@ export default function Contact() {
           </div>
 
           <div className="bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-shadow border border-gray-200 text-center">
-            <div className="bg-[#D1FAE5] w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
-              <Mail className="w-8 h-8 text-[#10B981]" />
+            <div className="bg-[#DBEAFE] w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+              <Mail className="w-8 h-8 text-[#0C53ED]" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Email</h3>
             <a
               href="mailto:support@shalean.com"
-              className="text-[#10B981] hover:text-[#14B8A6] font-semibold text-lg break-all"
+              className="text-[#0C53ED] hover:text-[#0A3FC7] font-semibold text-lg break-all"
             >
               support@shalean.com
             </a>
           </div>
 
           <div className="bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-shadow border border-gray-200 text-center">
-            <div className="bg-[#D1FAE5] w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
-              <MapPin className="w-8 h-8 text-[#14B8A6]" />
+            <div className="bg-[#DBEAFE] w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+              <MapPin className="w-8 h-8 text-[#0C53ED]" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               Address
@@ -60,7 +60,7 @@ export default function Contact() {
           </div>
         </div>
 
-        <div className="mt-12 max-w-4xl mx-auto bg-gradient-to-r from-[#D1FAE5] to-[#D1FAE5] p-8 rounded-lg border border-[#10B981]/30">
+        <div className="mt-12 max-w-4xl mx-auto bg-gradient-to-r from-[#DBEAFE] to-[#DBEAFE] p-8 rounded-lg border border-[#0C53ED]/30">
           <div className="flex items-start gap-4">
             <Clock className="w-6 h-6 text-[#0C53ED] mt-1 flex-shrink-0" />
             <div>

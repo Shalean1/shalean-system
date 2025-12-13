@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { CheckCircle } from "lucide-react";
 
 const benefits = [
@@ -48,12 +49,12 @@ export default function HowItWorks() {
 
               {/* CTA Button */}
               <div className="pt-4">
-                <a
-                  href="tel:+27871535250"
+                <Link
+                  href="/booking/service/standard/details"
                   className="inline-block px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors shadow-lg"
                 >
                   Book Your Clean Today
-                </a>
+                </Link>
               </div>
             </div>
 

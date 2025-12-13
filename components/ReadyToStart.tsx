@@ -29,7 +29,7 @@ export default function ReadyToStart() {
                 Start enjoying a cleaner home.
               </p>
               <Link
-                href="tel:+27871535250"
+                href="/auth/signup"
                 className="inline-block px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors shadow-lg"
               >
                 Sign up
