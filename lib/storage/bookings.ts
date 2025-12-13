@@ -1,4 +1,4 @@
-import { Booking } from "../types/booking";
+import { Booking } from "@/lib/types/booking";
 import { promises as fs } from "fs";
 import path from "path";
 
