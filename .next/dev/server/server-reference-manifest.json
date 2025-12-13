@@ -1,0 +1,21 @@
+{
+  "node": {
+    "400714db36d17b229241d310238feaddfc72e4afe0": {
+      "workers": {
+        "app/booking/quote/page": {
+          "moduleId": "[project]/.next-internal/server/app/booking/quote/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/submit-quote.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "submitQuote",
+          "filename": "app/actions/submit-quote.ts"
+        }
+      },
+      "layer": {
+        "app/booking/quote/page": "action-browser"
+      },
+      "filename": "app/actions/submit-quote.ts",
+      "exportedName": "submitQuote"
+    }
+  },
+  "edge": {},
+  "encryptionKey": "qeuru3bJcTj8T0MooJzkEOHL1iTC6AlH8WIRbhCJr0s="
+}

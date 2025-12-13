@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/27825/shalean-system/app/booking/quote/layout.tsx"],"sourcesContent":["import type { Metadata } from \"next\";\r\n\r\nexport const metadata: Metadata = {\r\n  title: \"Get Your Free Cleaning Quote | Shalean Cleaning Services\",\r\n  description: \"Request a free personalized quote for professional cleaning services in Cape Town. Select your service, home details, and additional services.\",\r\n  keywords: [\r\n    \"cleaning quote Cape Town\",\r\n    \"free cleaning quote\",\r\n    \"cleaning services quote\",\r\n    \"professional cleaning quote\",\r\n  ],\r\n};\r\n\r\nexport default function QuoteLayout({\r\n  children,\r\n}: {\r\n  children: React.ReactNode;\r\n}) {\r\n  return <>{children}</>;\r\n}\r\n"],"names":[],"mappings":";;;;;;;;AAEO,MAAM,WAAqB;IAChC,OAAO;IACP,aAAa;IACb,UAAU;QACR;QACA;QACA;QACA;KACD;AACH;AAEe,SAAS,YAAY,EAClC,QAAQ,EAGT;IACC,qBAAO;kBAAG;;AACZ"}}]
+}

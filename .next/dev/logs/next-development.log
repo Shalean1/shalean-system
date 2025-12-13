@@ -1,0 +1,786 @@
+[00:00:16.265] Server  LOG      ✓ Ready in 11.6s
+[00:00:50.432] Server  LOG      ○ Compiling / ...
+[00:02:31.815] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:02:32.929] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:02:33.710] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:02:33.732] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:02:39.079] Server  WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:02:50.413] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:02:55.984] Browser WARN    Image with src "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:02:59.250] Server  LOG      ○ Compiling /_not-found/page ...
+[00:03:22.972] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:03:23.035] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:03:23.087] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:03:23.105] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:03:37.783] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:03:37.802] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:03:45.474] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:03:53.176] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:03:53.248] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:03:53.397] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:03:53.464] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:03:55.647] Server  LOG      ○ Compiling /booking/quote ...
+[00:09:48.281] Server  ERROR    ⨯ ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+
+
+
+./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+
+
+[00:09:50.115] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:09:50.118] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:09:51.763] Server  LOG      ○ Compiling /_error ...
+[00:10:29.000] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:10:29.019] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:10:29.031] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:10:29.031] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:10:52.815] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:10:52.816] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:11:18.711] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:11:18.716] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:11:18.775] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:11:18.775] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:11:26.159] Browser ERROR   uncaughtError: Error: ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+
+
+[00:11:30.437] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:11:30.437] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:11:35.814] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:11:35.814] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:11:43.402] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:11:43.403] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:11:53.763] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:11:53.763] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:11:54.633] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:11:54.633] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:12:23.455] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator, ChevronDown } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:12:23.456] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator, ChevronDown } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:12:24.761] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator, ChevronDown } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:12:24.761] Browser ERROR   ./app/booking/quote/page.tsx:5:1
+Export Window doesn't exist in target module
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Window, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator, ChevronDown } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
+  7 |
+  8 | // Location options from sitemap
+
+The export Window was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Wind?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/booking/quote/page.tsx [Client Component Browser]
+    ./app/booking/quote/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/booking/quote/page.tsx [Client Component SSR]
+    ./app/booking/quote/page.tsx [Server Component]
+[00:13:40.972] Server  LOG      ✓ Compiled in 3.9s
+[00:13:45.353] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:13:45.385] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:13:46.036] Server  ERROR   C:\Users\27825\shalean-system\.next\dev\server\chunks\ssr\app_345063af._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:13:46.048] Server  ERROR   C:\Users\27825\shalean-system\.next\dev\server\chunks\ssr\[turbopack]_runtime.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:13:46.068] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:13:46.072] Server  ERROR    ⨯ ReferenceError: Square is not defined
+[00:13:49.391] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:13:49.821] Browser ERROR   uncaughtError: ReferenceError: Square is not defined
+[00:14:06.863] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:06.869] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:14:07.068] Server  ERROR   C:\Users\27825\shalean-system\.next\dev\server\chunks\ssr\app_345063af._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:07.071] Server  ERROR   C:\Users\27825\shalean-system\.next\dev\server\chunks\ssr\[turbopack]_runtime.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:07.080] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:07.083] Server  ERROR    ⨯ ReferenceError: Square is not defined
+[00:14:08.096] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:14:08.350] Browser ERROR   uncaughtError: ReferenceError: Square is not defined
+[00:14:31.275] Server  LOG      ✓ Compiled in 811ms
+[00:14:31.288] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:14:31.292] Server  WARN     ⚠ Fast Refresh had to perform a full reload when ./app/booking/quote/page.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:14:31.297] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:14:32.457] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:32.464] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:14:32.898] Server  ERROR   C:\Users\27825\shalean-system\.next\dev\server\chunks\ssr\app_345063af._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:32.946] Server  ERROR   C:\Users\27825\shalean-system\.next\dev\server\chunks\ssr\[turbopack]_runtime.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:32.962] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:32.997] Server  ERROR    ⨯ ReferenceError: Grid is not defined
+[00:14:34.740] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:14:35.041] Browser ERROR   uncaughtError: ReferenceError: Grid is not defined
+[00:14:45.258] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:14:45.259] Server  WARN     ⚠ Fast Refresh had to perform a full reload when ./app/booking/quote/page.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:14:45.261] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:14:45.347] Server  LOG      ✓ Compiled in 1787ms
+[00:14:46.758] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:46.760] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:14:49.126] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:14:49.456] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:49.458] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:14:49.462] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:49.469] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:17:28.300] Server  LOG      ✓ Compiled in 4.1s
+[00:17:28.988] Browser ERROR   uncaughtError: ReferenceError: usePathname is not defined
+[00:17:44.105] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:17:44.135] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:17:44.591] Server  ERROR   C:\Users\27825\shalean-system\.next\dev\server\chunks\ssr\[root-of-the-server]__3eae01e9._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:17:44.593] Server  ERROR    ⨯ ReferenceError: usePathname is not defined
+[00:17:46.249] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:17:46.626] Browser ERROR   uncaughtError: ReferenceError: usePathname is not defined
+[00:18:12.828] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:18:14.379] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:18:14.397] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:18:17.209] Server  LOG      ✓ Compiled in 4.4s
+[00:18:17.294] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:18:17.987] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:18:17.994] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:18:23.424] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:18:27.274] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:18:27.292] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:18:27.327] Server  ERROR   C:\Users\27825\shalean-system\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:18:27.352] Server  ERROR    ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+[00:19:44.684] Server  LOG      ✓ Compiled in 2.5s
+[00:27:54.242] Server  LOG      ✓ Compiled in 2.9s
