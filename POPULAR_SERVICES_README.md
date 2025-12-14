@@ -175,3 +175,8 @@ Consider adding:
 For issues or questions, refer to:
 - Supabase documentation: https://supabase.com/docs
 - Next.js documentation: https://nextjs.org/docs
+
+
+
+
+

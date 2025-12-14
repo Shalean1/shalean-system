@@ -42,3 +42,8 @@ export function useAuth() {
   const { user, loading } = useUser();
   return { isAuthenticated: !!user, user, loading };
 }
+
+
+
+
+

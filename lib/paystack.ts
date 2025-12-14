@@ -96,3 +96,21 @@ export async function verifyPayment(reference: string, secretKey: string): Promi
     return false;
   }
 }
+
+/**
+ * Verify Paystack webhook signature
+ * Paystack signs webhooks using HMAC SHA512 with your secret key
+ */
+export function verifyWebhookSignature(
+  rawBody: string,
+  signature: string,
+  secretKey: string
+): boolean {
+  const crypto = require("crypto");
+  const hash = crypto
+    .createHmac("sha512", secretKey)
+    .update(rawBody)
+    .digest("hex");
+  
+  return hash === signature;
+}

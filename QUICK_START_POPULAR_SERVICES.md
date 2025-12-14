@@ -88,3 +88,8 @@ Or simply navigate to your Supabase project → SQL Editor → New Query, paste 
 ## 📚 Full Documentation
 
 For complete details, see: `POPULAR_SERVICES_README.md`
+
+
+
+
+

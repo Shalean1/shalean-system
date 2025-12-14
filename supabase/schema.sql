@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   
   -- Pricing & Discount
   discount_code TEXT,
+  tip_amount DECIMAL(10, 2) DEFAULT 0,
   total_amount DECIMAL(10, 2) NOT NULL,
   
   -- Status
@@ -67,18 +68,22 @@ CREATE INDEX IF NOT EXISTS idx_bookings_created_at ON bookings(created_at DESC);
 ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Users can view their own bookings
+DROP POLICY IF EXISTS "Users can view own bookings" ON bookings;
 CREATE POLICY "Users can view own bookings" ON bookings
   FOR SELECT
   USING (
     auth.jwt() ->> 'email' = contact_email
   );
 
--- Policy: Users can create bookings
+-- Policy: Anyone can create bookings (anonymous or authenticated)
+DROP POLICY IF EXISTS "Users can create bookings" ON bookings;
 CREATE POLICY "Users can create bookings" ON bookings
   FOR INSERT
+  TO authenticated, anon
   WITH CHECK (true);
 
 -- Policy: Users can update their own bookings
+DROP POLICY IF EXISTS "Users can update own bookings" ON bookings;
 CREATE POLICY "Users can update own bookings" ON bookings
   FOR UPDATE
   USING (
@@ -91,6 +96,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   first_name TEXT,
   last_name TEXT,
   full_name TEXT,
+  email TEXT,
   phone TEXT,
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -99,19 +105,25 @@ CREATE TABLE IF NOT EXISTS profiles (
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Users can view their own profile
+DROP POLICY IF EXISTS "Users can view own profile" ON profiles;
 CREATE POLICY "Users can view own profile" ON profiles
   FOR SELECT
   USING (auth.uid() = id);
 
 -- Policy: Users can update their own profile
+DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
 CREATE POLICY "Users can update own profile" ON profiles
   FOR UPDATE
   USING (auth.uid() = id);
 
 -- Policy: Users can insert their own profile
+DROP POLICY IF EXISTS "Users can insert own profile" ON profiles;
 CREATE POLICY "Users can insert own profile" ON profiles
   FOR INSERT
   WITH CHECK (auth.uid() = id);
+
+-- Create index on email in profiles for faster lookups
+CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
 
 -- Function to create profile on user signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -178,11 +190,13 @@ CREATE INDEX IF NOT EXISTS idx_popular_services_active ON popular_services(is_ac
 ALTER TABLE popular_services ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Anyone can view active popular services
+DROP POLICY IF EXISTS "Anyone can view active popular services" ON popular_services;
 CREATE POLICY "Anyone can view active popular services" ON popular_services
   FOR SELECT
   USING (is_active = true);
 
 -- Policy: Only authenticated users can manage popular services (admin)
+DROP POLICY IF EXISTS "Authenticated users can manage popular services" ON popular_services;
 CREATE POLICY "Authenticated users can manage popular services" ON popular_services
   FOR ALL
   USING (auth.role() = 'authenticated');
@@ -201,3 +215,5 @@ INSERT INTO popular_services (name, slug, display_order) VALUES
   ('Deep Cleaning', 'deep-cleaning', 3),
   ('Move-In Cleaning', 'move-in-cleaning', 4)
 ON CONFLICT (name) DO NOTHING;
+
+

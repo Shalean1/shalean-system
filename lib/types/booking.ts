@@ -4,6 +4,40 @@ export type FrequencyType = "one-time" | "weekly" | "bi-weekly" | "monthly";
 
 export type CleanerPreference = "no-preference" | "natasha-m" | "estery-p" | "beaul";
 
+/**
+ * Valid cleaner preference values
+ */
+const VALID_CLEANER_PREFERENCES: CleanerPreference[] = [
+  "no-preference",
+  "natasha-m",
+  "estery-p",
+  "beaul",
+];
+
+/**
+ * Normalize and validate cleaner preference value
+ * Ensures the value is always one of the valid options
+ */
+export function normalizeCleanerPreference(
+  value: any
+): CleanerPreference {
+  // Handle null, undefined, or empty string
+  if (!value || typeof value !== "string") {
+    return "no-preference";
+  }
+
+  // Trim whitespace
+  const trimmed = value.trim().toLowerCase();
+
+  // Check if it's a valid preference
+  if (VALID_CLEANER_PREFERENCES.includes(trimmed as CleanerPreference)) {
+    return trimmed as CleanerPreference;
+  }
+
+  // Default to no-preference for any invalid value
+  return "no-preference";
+}
+
 export interface BookingFormData {
   // Step 1: Service & Details
   service: ServiceType;
@@ -28,6 +62,7 @@ export interface BookingFormData {
   email: string;
   phone: string;
   discountCode?: string;
+  tip?: number;
 }
 
 export interface Booking extends BookingFormData {
@@ -48,5 +83,6 @@ export interface PriceBreakdown {
   frequencyDiscount: number;
   discountCodeDiscount: number;
   serviceFee: number;
+  tip: number;
   total: number;
 }

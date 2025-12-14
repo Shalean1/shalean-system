@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Tag, Users, Calendar, Settings } from "lucide-react";
 
@@ -118,3 +120,5 @@ export default function AdminDashboard() {
     </div>
   );
 }
+
+

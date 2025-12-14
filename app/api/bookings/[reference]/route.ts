@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getBookingByReference } from "../../../../lib/storage/bookings";
+import { getBookingByReference } from "../../../../lib/storage/bookings-supabase";
 
 /**
  * API route to fetch a booking by reference
@@ -40,3 +40,8 @@ export async function GET(
     );
   }
 }
+
+
+
+
+

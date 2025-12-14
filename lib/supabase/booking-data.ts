@@ -48,6 +48,7 @@ export interface Cleaner {
   display_order: number;
   is_active: boolean;
   is_available: boolean;
+  availability_days?: string[]; // Array of day names: ['monday', 'tuesday', etc.]
 }
 
 export interface FrequencyOption {
@@ -61,6 +62,16 @@ export interface FrequencyOption {
   is_active: boolean;
 }
 
+export interface ServiceTypePricing {
+  id: string;
+  service_type: string;
+  service_name: string;
+  base_price: number;
+  description?: string;
+  display_order: number;
+  is_active: boolean;
+}
+
 export interface SystemSetting {
   id: string;
   setting_key: string;
@@ -68,6 +79,14 @@ export interface SystemSetting {
   setting_type: string;
   description?: string;
   is_public: boolean;
+}
+
+export interface RoomPricing {
+  id: string;
+  service_type: string;
+  room_type: 'bedroom' | 'bathroom';
+  price_per_room: number;
+  is_active: boolean;
 }
 
 // ============================================================================
@@ -195,6 +214,55 @@ export async function getFrequencyOptions(): Promise<FrequencyOption[]> {
 }
 
 /**
+ * Fetch all active service type pricing
+ */
+export async function getServiceTypePricing(): Promise<ServiceTypePricing[]> {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('service_type_pricing')
+      .select('*')
+      .eq('is_active', true)
+      .order('display_order', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching service type pricing:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching service type pricing:', error);
+    return [];
+  }
+}
+
+/**
+ * Fetch a specific service type pricing by service type
+ */
+export async function getServiceTypePricingByType(serviceType: string): Promise<ServiceTypePricing | null> {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('service_type_pricing')
+      .select('*')
+      .eq('service_type', serviceType)
+      .eq('is_active', true)
+      .single();
+
+    if (error) {
+      console.error(`Error fetching service type pricing for ${serviceType}:`, error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error(`Error fetching service type pricing for ${serviceType}:`, error);
+    return null;
+  }
+}
+
+/**
  * Fetch a specific system setting by key
  */
 export async function getSystemSetting(key: string): Promise<string | null> {
@@ -271,6 +339,62 @@ export async function getAllSystemSettings(): Promise<SystemSetting[]> {
   }
 }
 
+/**
+ * Fetch all active room pricing
+ */
+export async function getRoomPricing(): Promise<RoomPricing[]> {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('room_pricing')
+      .select('*')
+      .eq('is_active', true);
+
+    if (error) {
+      console.error('Error fetching room pricing:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching room pricing:', error);
+    return [];
+  }
+}
+
+/**
+ * Fetch room pricing for a specific service type
+ */
+export async function getRoomPricingByServiceType(serviceType: string): Promise<{ bedroom: number; bathroom: number }> {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('room_pricing')
+      .select('*')
+      .eq('service_type', serviceType)
+      .eq('is_active', true);
+
+    if (error) {
+      console.error(`Error fetching room pricing for ${serviceType}:`, error);
+      return { bedroom: 30, bathroom: 40 }; // Fallback
+    }
+
+    const pricing = { bedroom: 30, bathroom: 40 }; // Defaults
+    data?.forEach((row) => {
+      if (row.room_type === 'bedroom') {
+        pricing.bedroom = Number(row.price_per_room);
+      } else if (row.room_type === 'bathroom') {
+        pricing.bathroom = Number(row.price_per_room);
+      }
+    });
+
+    return pricing;
+  } catch (error) {
+    console.error(`Error fetching room pricing for ${serviceType}:`, error);
+    return { bedroom: 30, bathroom: 40 }; // Fallback
+  }
+}
+
 // ============================================================================
 // FALLBACK DATA (for backward compatibility)
 // ============================================================================
@@ -313,3 +437,121 @@ export const FALLBACK_FREQUENCIES = [
   { id: "bi-weekly", name: "Bi-weekly", discount: "Save 10%" },
   { id: "monthly", name: "Monthly", discount: "Save 5%" },
 ];
+
+export const FALLBACK_SERVICE_PRICING = {
+  standard: 250,
+  deep: 400,
+  "move-in-out": 500,
+  airbnb: 350,
+  office: 300,
+  holiday: 450,
+};
+
+export const FALLBACK_ROOM_PRICING: Record<string, { bedroom: number; bathroom: number }> = {
+  standard: { bedroom: 20, bathroom: 30 },
+  deep: { bedroom: 180, bathroom: 250 },
+  "move-in-out": { bedroom: 160, bathroom: 220 },
+  airbnb: { bedroom: 18, bathroom: 26 },
+  office: { bedroom: 30, bathroom: 40 },
+  holiday: { bedroom: 30, bathroom: 40 },
+};
+
+// ============================================================================
+// DISCOUNT CODE FUNCTIONS
+// ============================================================================
+
+export interface DiscountCodeValidationResult {
+  is_valid: boolean;
+  discount_amount: number;
+  discount_type: string | null;
+  discount_value: number | null;
+  message: string;
+}
+
+/**
+ * Validate a discount code using the database function
+ * This should be called from a server action or API route
+ */
+export async function validateDiscountCode(
+  code: string,
+  orderTotal: number
+): Promise<DiscountCodeValidationResult> {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase.rpc('validate_discount_code', {
+      p_code: code,
+      p_order_total: orderTotal,
+    });
+
+    if (error) {
+      console.error('Error validating discount code:', error);
+      return {
+        is_valid: false,
+        discount_amount: 0,
+        discount_type: null,
+        discount_value: null,
+        message: 'Error validating discount code',
+      };
+    }
+
+    if (!data || data.length === 0) {
+      return {
+        is_valid: false,
+        discount_amount: 0,
+        discount_type: null,
+        discount_value: null,
+        message: 'Invalid discount code',
+      };
+    }
+
+    const result = data[0];
+    return {
+      is_valid: result.is_valid,
+      discount_amount: Number(result.discount_amount) || 0,
+      discount_type: result.discount_type,
+      discount_value: result.discount_value ? Number(result.discount_value) : null,
+      message: result.message || '',
+    };
+  } catch (error) {
+    console.error('Error validating discount code:', error);
+    return {
+      is_valid: false,
+      discount_amount: 0,
+      discount_type: null,
+      discount_value: null,
+      message: 'Error validating discount code',
+    };
+  }
+}
+
+/**
+ * Record discount code usage
+ */
+export async function recordDiscountCodeUsage(
+  code: string,
+  bookingReference: string,
+  userEmail: string,
+  discountAmount: number,
+  orderTotal: number
+): Promise<boolean> {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase.rpc('record_discount_code_usage', {
+      p_code: code,
+      p_booking_reference: bookingReference,
+      p_user_email: userEmail,
+      p_discount_amount: discountAmount,
+      p_order_total: orderTotal,
+    });
+
+    if (error) {
+      console.error('Error recording discount code usage:', error);
+      return false;
+    }
+
+    return data === true;
+  } catch (error) {
+    console.error('Error recording discount code usage:', error);
+    return false;
+  }
+}

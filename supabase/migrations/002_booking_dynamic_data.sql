@@ -97,7 +97,44 @@ CREATE INDEX IF NOT EXISTS idx_frequency_options_order ON frequency_options(disp
 CREATE INDEX IF NOT EXISTS idx_frequency_options_active ON frequency_options(is_active);
 
 -- ============================================================================
--- 6. SYSTEM SETTINGS
+-- 6. SERVICE TYPE PRICING
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS service_type_pricing (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  service_type TEXT NOT NULL UNIQUE, -- e.g., "standard", "deep", "move-in-out"
+  service_name TEXT NOT NULL,
+  base_price DECIMAL(10, 2) NOT NULL,
+  description TEXT,
+  display_order INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_service_type_pricing_order ON service_type_pricing(display_order);
+CREATE INDEX IF NOT EXISTS idx_service_type_pricing_active ON service_type_pricing(is_active);
+CREATE INDEX IF NOT EXISTS idx_service_type_pricing_type ON service_type_pricing(service_type);
+
+-- ============================================================================
+-- 7. ROOM PRICING (per room type for each service)
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS room_pricing (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  service_type TEXT NOT NULL, -- e.g., "standard", "deep", "move-in-out", "airbnb"
+  room_type TEXT NOT NULL, -- "bedroom" or "bathroom"
+  price_per_room DECIMAL(10, 2) NOT NULL,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(service_type, room_type)
+);
+
+CREATE INDEX IF NOT EXISTS idx_room_pricing_service ON room_pricing(service_type);
+CREATE INDEX IF NOT EXISTS idx_room_pricing_room_type ON room_pricing(room_type);
+CREATE INDEX IF NOT EXISTS idx_room_pricing_active ON room_pricing(is_active);
+
+-- ============================================================================
+-- 8. SYSTEM SETTINGS
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS system_settings (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -121,6 +158,8 @@ ALTER TABLE additional_services ENABLE ROW LEVEL SECURITY;
 ALTER TABLE time_slots ENABLE ROW LEVEL SECURITY;
 ALTER TABLE cleaners ENABLE ROW LEVEL SECURITY;
 ALTER TABLE frequency_options ENABLE ROW LEVEL SECURITY;
+ALTER TABLE service_type_pricing ENABLE ROW LEVEL SECURITY;
+ALTER TABLE room_pricing ENABLE ROW LEVEL SECURITY;
 ALTER TABLE system_settings ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
@@ -172,6 +211,24 @@ DROP POLICY IF EXISTS "Authenticated users can manage frequency options" ON freq
 CREATE POLICY "Authenticated users can manage frequency options" ON frequency_options
   FOR ALL USING (auth.role() = 'authenticated');
 
+-- Service Type Pricing
+DROP POLICY IF EXISTS "Anyone can view active service type pricing" ON service_type_pricing;
+CREATE POLICY "Anyone can view active service type pricing" ON service_type_pricing
+  FOR SELECT USING (is_active = true);
+
+DROP POLICY IF EXISTS "Authenticated users can manage service type pricing" ON service_type_pricing;
+CREATE POLICY "Authenticated users can manage service type pricing" ON service_type_pricing
+  FOR ALL USING (auth.role() = 'authenticated');
+
+-- Room Pricing
+DROP POLICY IF EXISTS "Anyone can view active room pricing" ON room_pricing;
+CREATE POLICY "Anyone can view active room pricing" ON room_pricing
+  FOR SELECT USING (is_active = true);
+
+DROP POLICY IF EXISTS "Authenticated users can manage room pricing" ON room_pricing;
+CREATE POLICY "Authenticated users can manage room pricing" ON room_pricing
+  FOR ALL USING (auth.role() = 'authenticated');
+
 -- System Settings
 DROP POLICY IF EXISTS "Anyone can view public settings" ON system_settings;
 CREATE POLICY "Anyone can view public settings" ON system_settings
@@ -207,6 +264,16 @@ CREATE TRIGGER update_cleaners_updated_at
 DROP TRIGGER IF EXISTS update_frequency_options_updated_at ON frequency_options;
 CREATE TRIGGER update_frequency_options_updated_at
   BEFORE UPDATE ON frequency_options
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_service_type_pricing_updated_at ON service_type_pricing;
+CREATE TRIGGER update_service_type_pricing_updated_at
+  BEFORE UPDATE ON service_type_pricing
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_room_pricing_updated_at ON room_pricing;
+CREATE TRIGGER update_room_pricing_updated_at
+  BEFORE UPDATE ON room_pricing
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 DROP TRIGGER IF EXISTS update_system_settings_updated_at ON system_settings;
@@ -264,7 +331,13 @@ INSERT INTO additional_services (service_id, name, description, icon_name, price
   ('interior-windows', 'Interior Windows', 'Cleaning interior windows', 'Grid', 100.00, 4),
   ('interior-walls', 'Interior Walls', 'Spot cleaning walls and removing marks', 'Paintbrush', 100.00, 5),
   ('ironing', 'Ironing', 'Professional ironing service', 'Shirt', 75.00, 6),
-  ('laundry', 'Laundry & Ironing', 'Complete laundry and ironing service', 'Shirt', 150.00, 7)
+  ('laundry', 'Laundry & Ironing', 'Complete laundry and ironing service', 'Shirt', 150.00, 7),
+  ('carpet-cleaning', 'Carpet Cleaning', 'Professional carpet cleaning service', 'Layers', 150.00, 8),
+  ('ceiling-cleaning', 'Ceiling Cleaning', 'Cleaning ceilings and removing cobwebs', 'Layers', 100.00, 9),
+  ('garage-cleaning', 'Garage Cleaning', 'Complete garage cleaning service', 'Car', 200.00, 10),
+  ('balcony-cleaning', 'Balcony Cleaning', 'Cleaning balconies and outdoor spaces', 'Home', 100.00, 11),
+  ('couch-cleaning', 'Couch Cleaning', 'Deep cleaning of couches and upholstery', 'Sofa', 150.00, 12),
+  ('exterior-windows', 'Exterior Windows', 'Cleaning exterior windows', 'Square', 150.00, 13)
 ON CONFLICT (service_id) DO NOTHING;
 
 -- Time Slots
@@ -304,6 +377,34 @@ INSERT INTO frequency_options (frequency_id, name, description, discount_percent
   ('bi-weekly', 'Bi-weekly', 'Cleaning service every two weeks', 10.00, 'Save 10%', 3),
   ('monthly', 'Monthly', 'Monthly recurring cleaning service', 5.00, 'Save 5%', 4)
 ON CONFLICT (frequency_id) DO NOTHING;
+
+-- Service Type Pricing (Base prices for each service type)
+INSERT INTO service_type_pricing (service_type, service_name, base_price, description, display_order) VALUES
+  ('standard', 'Standard Cleaning', 250.00, 'Regular cleaning service for homes', 1),
+  ('deep', 'Deep Cleaning', 400.00, 'Thorough deep cleaning service', 2),
+  ('move-in-out', 'Move In / Out', 500.00, 'Complete cleaning for move in/out', 3),
+  ('airbnb', 'Airbnb Cleaning', 350.00, 'Professional Airbnb turnover cleaning', 4),
+  ('office', 'Office Cleaning', 300.00, 'Commercial office cleaning', 5),
+  ('holiday', 'Holiday Cleaning', 450.00, 'Pre/post holiday deep cleaning', 6)
+ON CONFLICT (service_type) DO NOTHING;
+
+-- Room Pricing (Per bedroom and bathroom for each service type)
+INSERT INTO room_pricing (service_type, room_type, price_per_room) VALUES
+  -- Standard Cleaning
+  ('standard', 'bedroom', 20.00),
+  ('standard', 'bathroom', 30.00),
+  -- Deep Cleaning
+  ('deep', 'bedroom', 180.00),
+  ('deep', 'bathroom', 250.00),
+  -- Move In/Out Cleaning
+  ('move-in-out', 'bedroom', 160.00),
+  ('move-in-out', 'bathroom', 220.00),
+  -- Airbnb Cleaning
+  ('airbnb', 'bedroom', 18.00),
+  ('airbnb', 'bathroom', 26.00)
+ON CONFLICT (service_type, room_type) DO UPDATE SET
+  price_per_room = EXCLUDED.price_per_room,
+  updated_at = NOW();
 
 -- System Settings
 INSERT INTO system_settings (setting_key, setting_value, setting_type, description, is_public) VALUES

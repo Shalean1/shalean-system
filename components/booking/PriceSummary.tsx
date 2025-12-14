@@ -1,8 +1,15 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { PriceBreakdown } from "@/lib/types/booking";
 import { formatPrice, getServiceName, getFrequencyName } from "@/lib/pricing";
-import { ServiceType, FrequencyType } from "@/lib/types/booking";
+import { ServiceType, FrequencyType, CleanerPreference } from "@/lib/types/booking";
+
+interface Cleaner {
+  id: CleanerPreference;
+  name: string;
+  rating?: number;
+}
 
 interface PriceSummaryProps {
   service: ServiceType;
@@ -14,6 +21,8 @@ interface PriceSummaryProps {
   scheduledDate: string | null;
   scheduledTime: string | null;
   address?: string;
+  cleanerPreference?: CleanerPreference;
+  cleaners?: Cleaner[];
 }
 
 export default function PriceSummary({
@@ -26,7 +35,15 @@ export default function PriceSummary({
   scheduledDate,
   scheduledTime,
   address,
+  cleanerPreference,
+  cleaners,
 }: PriceSummaryProps) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const extrasNames: Record<string, string> = {
     "inside-fridge": "Inside Fridge",
     "inside-oven": "Inside Oven",
@@ -47,6 +64,17 @@ export default function PriceSummary({
       day: "numeric",
     });
   };
+
+  // Get selected cleaner name
+  const getSelectedCleanerName = (): string | null => {
+    if (!cleanerPreference || !cleaners || cleaners.length === 0) {
+      return null;
+    }
+    const selectedCleaner = cleaners.find((c) => c.id === cleanerPreference);
+    return selectedCleaner?.name || null;
+  };
+
+  const selectedCleanerName = getSelectedCleanerName();
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-6 sticky top-24">
@@ -83,11 +111,18 @@ export default function PriceSummary({
         </div>
 
         {extras.length > 0 && (
-          <div>
+          <div suppressHydrationWarning>
             <p className="text-sm text-gray-600 mb-1">Extras</p>
             <p className="font-medium text-gray-900 text-sm">
               {extras.map((id) => extrasNames[id] || id).join(", ")}
             </p>
+          </div>
+        )}
+
+        {selectedCleanerName && (
+          <div>
+            <p className="text-sm text-gray-600 mb-1">Cleaner</p>
+            <p className="font-medium text-gray-900">{selectedCleanerName}</p>
           </div>
         )}
       </div>
@@ -95,7 +130,9 @@ export default function PriceSummary({
       <div className="border-t border-gray-200 pt-4 space-y-2">
         <div className="flex justify-between text-sm">
           <span className="text-gray-600">Base Price</span>
-          <span className="font-medium text-gray-900">{formatPrice(priceBreakdown.basePrice)}</span>
+          <span className="font-medium text-gray-900" suppressHydrationWarning>
+            {isMounted ? formatPrice(priceBreakdown.basePrice) : `R ${priceBreakdown.basePrice.toFixed(2)}`}
+          </span>
         </div>
 
         {(bedrooms > 0 || bathrooms > 0) && (
@@ -103,20 +140,26 @@ export default function PriceSummary({
             <span className="text-gray-600">
               Bedrooms & Bathrooms ({bedrooms} bed, {bathrooms} {bathrooms === 1 ? "bath" : "baths"})
             </span>
-            <span className="font-medium text-gray-900">{formatPrice(priceBreakdown.roomPrice)}</span>
+            <span className="font-medium text-gray-900" suppressHydrationWarning>
+              {isMounted ? formatPrice(priceBreakdown.roomPrice) : `R ${priceBreakdown.roomPrice.toFixed(2)}`}
+            </span>
           </div>
         )}
 
         {priceBreakdown.extrasPrice > 0 && (
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Extras</span>
-            <span className="font-medium text-gray-900">{formatPrice(priceBreakdown.extrasPrice)}</span>
+            <span className="font-medium text-gray-900" suppressHydrationWarning>
+              {isMounted ? formatPrice(priceBreakdown.extrasPrice) : `R ${priceBreakdown.extrasPrice.toFixed(2)}`}
+            </span>
           </div>
         )}
 
         <div className="flex justify-between text-sm pt-2 border-t border-gray-200">
           <span className="text-gray-600">Subtotal</span>
-          <span className="font-medium text-gray-900">{formatPrice(priceBreakdown.subtotal)}</span>
+          <span className="font-medium text-gray-900" suppressHydrationWarning>
+            {isMounted ? formatPrice(priceBreakdown.subtotal) : `R ${priceBreakdown.subtotal.toFixed(2)}`}
+          </span>
         </div>
 
         {priceBreakdown.frequencyDiscount > 0 && (
@@ -124,18 +167,42 @@ export default function PriceSummary({
             <span>
               {getFrequencyName(frequency)} Discount ({Math.round((priceBreakdown.frequencyDiscount / priceBreakdown.subtotal) * 100)}%)
             </span>
-            <span className="font-medium">-{formatPrice(priceBreakdown.frequencyDiscount)}</span>
+            <span className="font-medium" suppressHydrationWarning>
+              -{isMounted ? formatPrice(priceBreakdown.frequencyDiscount) : `R ${priceBreakdown.frequencyDiscount.toFixed(2)}`}
+            </span>
+          </div>
+        )}
+
+        {priceBreakdown.discountCodeDiscount > 0 && (
+          <div className="flex justify-between text-sm text-green-600">
+            <span>Discount Code</span>
+            <span className="font-medium" suppressHydrationWarning>
+              -{isMounted ? formatPrice(priceBreakdown.discountCodeDiscount) : `R ${priceBreakdown.discountCodeDiscount.toFixed(2)}`}
+            </span>
           </div>
         )}
 
         <div className="flex justify-between text-sm">
           <span className="text-gray-600">Service Fee</span>
-          <span className="font-medium text-gray-900">{formatPrice(priceBreakdown.serviceFee)}</span>
+          <span className="font-medium text-gray-900" suppressHydrationWarning>
+            {isMounted ? formatPrice(priceBreakdown.serviceFee) : `R ${priceBreakdown.serviceFee.toFixed(2)}`}
+          </span>
         </div>
+
+        {priceBreakdown.tip > 0 && (
+          <div className="flex justify-between text-sm text-green-600">
+            <span>Tip</span>
+            <span className="font-medium" suppressHydrationWarning>
+              {isMounted ? formatPrice(priceBreakdown.tip) : `R ${priceBreakdown.tip.toFixed(2)}`}
+            </span>
+          </div>
+        )}
 
         <div className="flex justify-between pt-2 border-t-2 border-gray-300">
           <span className="text-lg font-bold text-gray-900">Total</span>
-          <span className="text-2xl font-bold text-blue-600">{formatPrice(priceBreakdown.total)}</span>
+          <span className="text-2xl font-bold text-blue-600" suppressHydrationWarning>
+            {isMounted ? formatPrice(priceBreakdown.total) : `R ${priceBreakdown.total.toFixed(2)}`}
+          </span>
         </div>
       </div>
     </div>

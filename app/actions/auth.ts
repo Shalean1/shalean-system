@@ -79,7 +79,8 @@ export async function login(
 }
 
 export async function signup(
-  data: SignupFormData
+  data: SignupFormData,
+  referralCode?: string
 ): Promise<AuthResult> {
   // Server-side validation
   const errors: Record<string, string> = {};
@@ -115,10 +116,13 @@ export async function signup(
   try {
     const supabase = await createClient();
 
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    
     const { data: authData, error } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
       options: {
+        emailRedirectTo: `${siteUrl}/auth/callback`,
         data: {
           first_name: data.firstName,
           last_name: data.lastName,
@@ -132,6 +136,33 @@ export async function signup(
         success: false,
         message: error.message,
       };
+    }
+
+    // Process referral code if provided
+    if (authData.user && referralCode && referralCode.trim()) {
+      try {
+        const { createServiceRoleClient } = await import("@/lib/supabase/server");
+        const supabaseAdmin = createServiceRoleClient();
+        
+        // Create referral relationship using database function
+        const { error: referralError } = await supabaseAdmin.rpc(
+          "create_referral_relationship",
+          {
+            p_referee_id: authData.user.id,
+            p_referral_code: referralCode.trim().toUpperCase(),
+          }
+        );
+
+        if (referralError) {
+          // Log error but don't fail signup if referral fails
+          console.error("Failed to create referral relationship:", referralError);
+        } else {
+          console.log("Referral relationship created successfully");
+        }
+      } catch (error) {
+        // Log error but don't fail signup if referral fails
+        console.error("Error processing referral code:", error);
+      }
     }
 
     // Check if email confirmation is required

@@ -237,3 +237,8 @@ Your app is now configured for Supabase. Follow the steps in `SUPABASE_QUICK_STA
 4. Start using authentication!
 
 Happy coding! 🚀
+
+
+
+
+

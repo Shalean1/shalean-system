@@ -3,39 +3,359 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { CheckCircle2, Mail, Phone, ArrowRight, ArrowLeft, Home } from "lucide-react";
-import { Booking } from "@/lib/types/booking";
+import { CheckCircle2, Mail, Phone, ArrowRight, ArrowLeft, Home, LayoutDashboard } from "lucide-react";
+import { Booking, PriceBreakdown, BookingFormData, ServiceType, FrequencyType, CleanerPreference, normalizeCleanerPreference } from "@/lib/types/booking";
 import { getServiceName, formatPrice, getFrequencyName } from "@/lib/pricing";
+import { useAuth } from "@/lib/hooks/useSupabase";
+import { submitBooking } from "@/app/actions/submit-booking";
 
 export default function ConfirmationPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const bookingRef = searchParams.get("ref");
+  const paymentRef = searchParams.get("ref"); // This is the payment reference from Paystack
   const [booking, setBooking] = useState<Booking | null>(null);
+  const [priceBreakdown, setPriceBreakdown] = useState<PriceBreakdown | null>(null);
   const [loading, setLoading] = useState(true);
+  const [submittingBooking, setSubmittingBooking] = useState(false);
+  const { isAuthenticated, loading: authLoading } = useAuth();
 
   useEffect(() => {
     const loadBooking = async () => {
-      // Try to load booking from localStorage first
+      // If payment reference is provided, first try to find booking by payment reference
+      if (paymentRef) {
+        try {
+          const response = await fetch(`/api/bookings/payment/${encodeURIComponent(paymentRef)}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.booking) {
+              const fetchedBooking = data.booking;
+              setBooking(fetchedBooking);
+              
+              // Calculate price breakdown for fetched booking
+              try {
+                const { calculatePrice, fetchPricingConfig } = await import("@/lib/pricing");
+                const { validateDiscountCode } = await import("@/app/actions/discount");
+                const pricingConfig = await fetchPricingConfig();
+                
+                // Calculate initial price breakdown (without discount code)
+                const initialPriceBreakdown = calculatePrice(fetchedBooking, pricingConfig, 0);
+                
+                // Validate and apply discount code if provided
+                let discountCodeAmount = 0;
+                if (fetchedBooking.discountCode && fetchedBooking.discountCode.trim()) {
+                  try {
+                    const discountResult = await validateDiscountCode(
+                      fetchedBooking.discountCode.trim(),
+                      initialPriceBreakdown.subtotal - initialPriceBreakdown.frequencyDiscount
+                    );
+                    if (discountResult.success) {
+                      discountCodeAmount = discountResult.discountAmount;
+                    }
+                  } catch (error) {
+                    console.error("Error validating discount code:", error);
+                  }
+                }
+                
+                // Calculate final price breakdown with discount code
+                const finalPriceBreakdown = calculatePrice(fetchedBooking, pricingConfig, discountCodeAmount);
+                setPriceBreakdown(finalPriceBreakdown);
+              } catch (error) {
+                console.error("Error calculating price breakdown:", error);
+              }
+              
+              setLoading(false);
+              return;
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching booking by payment reference:", error);
+        }
+
+        // Booking not found by payment reference - try to submit it using localStorage data or Paystack metadata
+        if (typeof window !== "undefined") {
+          let parsed: Partial<BookingFormData> = {};
+          let dataSource = "localStorage";
+          
+          // First, try to get data from localStorage
+          const saved = localStorage.getItem("shalean_booking_data");
+          if (saved) {
+            try {
+              parsed = JSON.parse(saved);
+              console.log("Parsed booking data from localStorage:", parsed);
+            } catch (error) {
+              console.error("Error parsing localStorage data:", error);
+            }
+          }
+          
+          // If address fields are missing, try to get them from Paystack payment metadata
+          if ((!parsed.streetAddress || !parsed.suburb || !parsed.city) && paymentRef) {
+            try {
+              console.log("Address fields missing, fetching from Paystack metadata...");
+              const paymentResponse = await fetch(`/api/payment/${encodeURIComponent(paymentRef)}`);
+              if (paymentResponse.ok) {
+                const paymentData = await paymentResponse.json();
+                console.log("Payment API response:", paymentData);
+                
+                if (paymentData.success && paymentData.transaction?.metadata) {
+                  const metadata = paymentData.transaction.metadata;
+                  console.log("Paystack metadata:", metadata);
+                  
+                  // Handle different metadata formats
+                  let metadataBookingData: any = null;
+                  
+                  // Try direct booking_data property
+                  if (metadata.booking_data) {
+                    try {
+                      metadataBookingData = typeof metadata.booking_data === 'string' 
+                        ? JSON.parse(metadata.booking_data) 
+                        : metadata.booking_data;
+                    } catch (parseError) {
+                      console.error("Error parsing booking_data from metadata:", parseError);
+                      // If parsing fails but it's already an object, use it directly
+                      if (typeof metadata.booking_data === 'object') {
+                        metadataBookingData = metadata.booking_data;
+                      }
+                    }
+                  }
+                  // Try if metadata itself is the booking data
+                  else if (metadata.streetAddress || metadata.suburb || metadata.city) {
+                    metadataBookingData = metadata;
+                  }
+                  // Try custom_fields array format (Paystack alternative format)
+                  else if (Array.isArray(metadata.custom_fields)) {
+                    const customFields: Record<string, any> = {};
+                    metadata.custom_fields.forEach((field: any) => {
+                      if (field.variable_name && field.value) {
+                        customFields[field.variable_name] = field.value;
+                      }
+                    });
+                    if (customFields.booking_data) {
+                      try {
+                        metadataBookingData = typeof customFields.booking_data === 'string'
+                          ? JSON.parse(customFields.booking_data)
+                          : customFields.booking_data;
+                      } catch (parseError) {
+                        console.error("Error parsing booking_data from custom_fields:", parseError);
+                        if (typeof customFields.booking_data === 'object') {
+                          metadataBookingData = customFields.booking_data;
+                        }
+                      }
+                    } else if (customFields.streetAddress || customFields.suburb || customFields.city) {
+                      metadataBookingData = customFields;
+                    }
+                  }
+                  
+                  if (metadataBookingData && typeof metadataBookingData === 'object') {
+                    console.log("Found booking data in Paystack metadata:", metadataBookingData);
+                    // Merge metadata data with localStorage data (metadata takes precedence for missing fields)
+                    parsed = {
+                      ...parsed,
+                      ...metadataBookingData,
+                      // Preserve any fields that exist in localStorage but not in metadata
+                      streetAddress: parsed.streetAddress || metadataBookingData.streetAddress,
+                      suburb: parsed.suburb || metadataBookingData.suburb,
+                      city: parsed.city || metadataBookingData.city,
+                      aptUnit: parsed.aptUnit || metadataBookingData.aptUnit,
+                    };
+                    dataSource = "Paystack metadata";
+                    console.log("Merged booking data:", parsed);
+                  } else {
+                    console.warn("Could not extract booking data from Paystack metadata structure:", metadata);
+                  }
+                } else {
+                  console.warn("No metadata found in payment transaction:", paymentData);
+                }
+              }
+            } catch (error) {
+              console.error("Error fetching payment metadata:", error);
+            }
+          }
+          
+          // Validate and normalize the form data before submission
+          // Ensure all required fields have proper defaults and are not null/undefined
+          const bookingData: BookingFormData = {
+            service: (parsed.service || "standard") as ServiceType,
+            frequency: (parsed.frequency || "one-time") as FrequencyType,
+            scheduledDate: (parsed.scheduledDate && typeof parsed.scheduledDate === "string" && parsed.scheduledDate.trim()) 
+              ? parsed.scheduledDate.trim() 
+              : (parsed.scheduledDate || null),
+            scheduledTime: (parsed.scheduledTime && typeof parsed.scheduledTime === "string" && parsed.scheduledTime.trim()) 
+              ? parsed.scheduledTime.trim() 
+              : (parsed.scheduledTime || null),
+            bedrooms: typeof parsed.bedrooms === "number" ? parsed.bedrooms : 0,
+            bathrooms: typeof parsed.bathrooms === "number" && parsed.bathrooms >= 1 ? parsed.bathrooms : 1,
+            extras: Array.isArray(parsed.extras) ? parsed.extras : [],
+            streetAddress: parsed.streetAddress?.trim() || "",
+            aptUnit: parsed.aptUnit?.trim() || undefined,
+            suburb: parsed.suburb?.trim() || "",
+            city: parsed.city?.trim() || "",
+            cleanerPreference: normalizeCleanerPreference(parsed.cleanerPreference),
+            specialInstructions: parsed.specialInstructions?.trim() || undefined,
+            firstName: parsed.firstName?.trim() || "",
+            lastName: parsed.lastName?.trim() || "",
+            email: parsed.email?.trim() || "",
+            phone: parsed.phone?.trim() || "",
+            discountCode: parsed.discountCode?.trim() || undefined,
+          };
+              
+              // Validate required fields before submitting
+              const missingFields: string[] = [];
+              if (!bookingData.service) missingFields.push("service");
+              if (!bookingData.scheduledDate) missingFields.push("scheduledDate");
+              if (!bookingData.scheduledTime) missingFields.push("scheduledTime");
+              if (!bookingData.streetAddress?.trim()) missingFields.push("streetAddress");
+              if (!bookingData.suburb?.trim()) missingFields.push("suburb");
+              if (!bookingData.city?.trim()) missingFields.push("city");
+              if (!bookingData.firstName?.trim()) missingFields.push("firstName");
+              if (!bookingData.lastName?.trim()) missingFields.push("lastName");
+              if (!bookingData.email?.trim()) missingFields.push("email");
+              if (!bookingData.phone?.trim()) missingFields.push("phone");
+              
+              if (missingFields.length > 0) {
+                console.error("Missing required fields:", missingFields);
+                console.error("Data source:", dataSource);
+                console.error("Parsed data:", parsed);
+                console.error("Normalized booking data:", bookingData);
+                
+                // If address fields are missing, redirect to schedule page to complete them
+                if (missingFields.some(field => ["streetAddress", "suburb", "city"].includes(field))) {
+                  alert(`Please complete your address details to finish your booking. You will be redirected to complete this information.`);
+                  // Redirect to schedule page to complete address
+                  router.push(`/booking/service/${parsed.service || "standard"}/schedule`);
+                  setLoading(false);
+                  setSubmittingBooking(false);
+                  return;
+                }
+                
+                alert(`Missing required fields: ${missingFields.join(", ")}. Please try booking again.`);
+                setLoading(false);
+                setSubmittingBooking(false);
+                return;
+              }
+              
+              // Log normalized data before submission
+              console.log("Submitting booking with normalized data:", bookingData);
+              
+              setSubmittingBooking(true);
+              
+              try {
+                // Submit the booking with payment reference
+                const result = await submitBooking(bookingData, paymentRef);
+                
+                if (result.success && result.bookingReference) {
+                  // Booking created successfully, fetch it
+                  try {
+                    const fetchResponse = await fetch(`/api/bookings/${encodeURIComponent(result.bookingReference)}`);
+                    if (fetchResponse.ok) {
+                      const fetchData = await fetchResponse.json();
+                      if (fetchData.success && fetchData.booking) {
+                        const newBooking = fetchData.booking;
+                        setBooking(newBooking);
+                        
+                        // Calculate price breakdown
+                        try {
+                          const { calculatePrice, fetchPricingConfig } = await import("@/lib/pricing");
+                          const { validateDiscountCode } = await import("@/app/actions/discount");
+                          const pricingConfig = await fetchPricingConfig();
+                          
+                          const initialPriceBreakdown = calculatePrice(newBooking, pricingConfig, 0);
+                          
+                          let discountCodeAmount = 0;
+                          if (newBooking.discountCode && newBooking.discountCode.trim()) {
+                            try {
+                              const discountResult = await validateDiscountCode(
+                                newBooking.discountCode.trim(),
+                                initialPriceBreakdown.subtotal - initialPriceBreakdown.frequencyDiscount
+                              );
+                              if (discountResult.success) {
+                                discountCodeAmount = discountResult.discountAmount;
+                              }
+                            } catch (error) {
+                              console.error("Error validating discount code:", error);
+                            }
+                          }
+                          
+                          const finalPriceBreakdown = calculatePrice(newBooking, pricingConfig, discountCodeAmount);
+                          setPriceBreakdown(finalPriceBreakdown);
+                        } catch (error) {
+                          console.error("Error calculating price breakdown:", error);
+                        }
+                        
+                        // Clear localStorage after successful booking
+                        localStorage.removeItem("shalean_booking_data");
+                        setLoading(false);
+                        setSubmittingBooking(false);
+                        return;
+                      }
+                    }
+                    // If fetch failed but booking was created, use the form data to display
+                    console.warn("Booking created but fetch failed, using form data");
+                  } catch (fetchError) {
+                    console.error("Error fetching created booking:", fetchError);
+                    // Booking was created, so we'll fall through to use form data
+                  }
+                } else {
+                  console.error("Failed to submit booking:", result.message);
+                  console.error("Validation errors:", result.errors);
+                  console.error("Submitted booking data:", bookingData);
+                  
+                  // Show detailed error to user
+                  const errorDetails = result.errors 
+                    ? Object.entries(result.errors).map(([field, message]) => `${field}: ${message}`).join("\n")
+                    : result.message || "Unknown error";
+                  alert(`Failed to create booking:\n\n${errorDetails}\n\nPlease contact support if this issue persists.`);
+                }
+              } catch (error) {
+                console.error("Error submitting booking:", error);
+              }
+              setSubmittingBooking(false);
+          }
+        }
+
+      // Fallback: Try to load booking from localStorage (for display purposes)
       if (typeof window !== "undefined") {
         const saved = localStorage.getItem("shalean_booking_data");
         if (saved) {
           try {
             const parsed = JSON.parse(saved);
-            // Calculate total amount
-            const { calculatePrice } = await import("@/lib/pricing");
-            const priceBreakdown = calculatePrice(parsed);
+            // Calculate total amount with dynamic pricing
+            const { calculatePrice, fetchPricingConfig } = await import("@/lib/pricing");
+            const { validateDiscountCode } = await import("@/app/actions/discount");
+            const pricingConfig = await fetchPricingConfig();
+            
+            // Calculate initial price breakdown (without discount code)
+            const initialPriceBreakdown = calculatePrice(parsed, pricingConfig, 0);
+            
+            // Validate and apply discount code if provided
+            let discountCodeAmount = 0;
+            if (parsed.discountCode && parsed.discountCode.trim()) {
+              try {
+                const discountResult = await validateDiscountCode(
+                  parsed.discountCode.trim(),
+                  initialPriceBreakdown.subtotal - initialPriceBreakdown.frequencyDiscount
+                );
+                if (discountResult.success) {
+                  discountCodeAmount = discountResult.discountAmount;
+                }
+              } catch (error) {
+                console.error("Error validating discount code:", error);
+              }
+            }
+            
+            // Calculate final price breakdown with discount code
+            const finalPriceBreakdown = calculatePrice(parsed, pricingConfig, discountCodeAmount);
             
             // Create a booking object for display
             const mockBooking: Partial<Booking> = {
               ...parsed,
-              bookingReference: bookingRef || "PENDING",
-              totalAmount: priceBreakdown.total,
-              paymentStatus: bookingRef ? "completed" : "pending",
-              status: bookingRef ? "confirmed" : "pending",
+              bookingReference: paymentRef || "PENDING",
+              totalAmount: finalPriceBreakdown.total,
+              paymentStatus: paymentRef ? "completed" : "pending",
+              status: paymentRef ? "confirmed" : "pending",
               createdAt: new Date().toISOString(),
             };
             setBooking(mockBooking as Booking);
+            setPriceBreakdown(finalPriceBreakdown);
             setLoading(false);
             return;
           } catch (error) {
@@ -43,29 +363,12 @@ export default function ConfirmationPage() {
           }
         }
       }
-
-      // If booking reference provided, try to fetch from server via API
-      if (bookingRef) {
-        try {
-          const response = await fetch(`/api/bookings/${encodeURIComponent(bookingRef)}`);
-          if (response.ok) {
-            const data = await response.json();
-            if (data.success && data.booking) {
-              setBooking(data.booking);
-              setLoading(false);
-              return;
-            }
-          }
-        } catch (error) {
-          console.error("Error fetching booking:", error);
-        }
-      }
       
       setLoading(false);
     };
 
     loadBooking();
-  }, [bookingRef]);
+  }, [paymentRef]);
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "Not scheduled";
@@ -214,6 +517,39 @@ export default function ConfirmationPage() {
                   {booking.totalAmount ? formatPrice(booking.totalAmount) : "N/A"}
                 </p>
                 <p className="text-xs text-green-600 mt-1">✓ Payment Confirmed</p>
+                
+                {/* Discount Information */}
+                {priceBreakdown && (priceBreakdown.frequencyDiscount > 0 || priceBreakdown.discountCodeDiscount > 0) && (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <p className="text-sm text-gray-600 mb-2">Discounts Applied</p>
+                    {priceBreakdown.frequencyDiscount > 0 && (
+                      <div className="mb-2">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-sm text-gray-700">
+                            {getFrequencyName(booking.frequency || "one-time")} Discount
+                          </span>
+                          <span className="text-sm font-medium text-green-600">
+                            -{formatPrice(priceBreakdown.frequencyDiscount)}
+                          </span>
+                        </div>
+                        <p className="text-xs text-green-600">✓ Frequency Discount Applied</p>
+                      </div>
+                    )}
+                    {priceBreakdown.discountCodeDiscount > 0 && (
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-sm text-gray-700">
+                            Discount Code {booking.discountCode ? `(${booking.discountCode.toUpperCase()})` : ""}
+                          </span>
+                          <span className="text-sm font-medium text-green-600">
+                            -{formatPrice(priceBreakdown.discountCodeDiscount)}
+                          </span>
+                        </div>
+                        <p className="text-xs text-green-600">✓ Discount Code Applied</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -282,9 +618,23 @@ export default function ConfirmationPage() {
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
+            <button
+              onClick={() => {
+                if (isAuthenticated) {
+                  router.push("/dashboard");
+                } else {
+                  router.push("/auth/login");
+                }
+              }}
+              disabled={authLoading}
+              className="flex-1 px-6 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white font-semibold rounded-lg transition-colors text-center flex items-center justify-center gap-2"
+            >
+              <LayoutDashboard className="w-5 h-5" />
+              {authLoading ? "Loading..." : isAuthenticated ? "View Dashboard" : "Sign In"}
+            </button>
             <Link
               href="/"
-              className="flex-1 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors text-center flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 bg-white hover:bg-gray-50 text-gray-900 font-semibold rounded-lg transition-colors border border-gray-300 text-center flex items-center justify-center gap-2"
             >
               Return to Home
               <ArrowRight className="w-5 h-5" />

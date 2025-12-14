@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { Booking } from "./types/booking";
-import { getServiceName, getFrequencyName, formatPrice } from "./pricing";
+import { getServiceName, getFrequencyName, formatPrice, calculatePrice, fetchPricingConfig } from "./pricing";
+import { validateDiscountCode } from "../app/actions/discount";
 
 export interface QuoteEmailData {
   firstName: string;
@@ -244,7 +245,7 @@ export async function sendCustomerConfirmationEmail(data: QuoteEmailData): Promi
 }
 
 // Booking email templates
-function formatBookingConfirmationEmail(booking: Booking): string {
+async function formatBookingConfirmationEmail(booking: Booking): Promise<string> {
   const serviceName = getServiceName(booking.service);
   const frequencyName = getFrequencyName(booking.frequency);
   const address = `${booking.streetAddress}${booking.aptUnit ? `, ${booking.aptUnit}` : ""}, ${booking.suburb}, ${booking.city}`;
@@ -273,6 +274,33 @@ function formatBookingConfirmationEmail(booking: Booking): string {
     : "Not scheduled";
   
   const scheduledTime = booking.scheduledTime || "Not specified";
+
+  // Calculate price breakdown to get discount information
+  let priceBreakdown = null;
+  try {
+    const pricingConfig = await fetchPricingConfig();
+    const initialPriceBreakdown = calculatePrice(booking, pricingConfig, 0);
+    
+    // Validate and apply discount code if provided
+    let discountCodeAmount = 0;
+    if (booking.discountCode && booking.discountCode.trim()) {
+      try {
+        const discountResult = await validateDiscountCode(
+          booking.discountCode.trim(),
+          initialPriceBreakdown.subtotal - initialPriceBreakdown.frequencyDiscount
+        );
+        if (discountResult.success) {
+          discountCodeAmount = discountResult.discountAmount;
+        }
+      } catch (error) {
+        console.error("Error validating discount code in email:", error);
+      }
+    }
+    
+    priceBreakdown = calculatePrice(booking, pricingConfig, discountCodeAmount);
+  } catch (error) {
+    console.error("Error calculating price breakdown in email:", error);
+  }
 
   return `
     <!DOCTYPE html>
@@ -327,6 +355,29 @@ function formatBookingConfirmationEmail(booking: Booking): string {
             <p><strong>Total Amount Paid:</strong> ${formatPrice(booking.totalAmount)}</p>
             ${booking.paymentReference ? `<p><strong>Payment Reference:</strong> ${booking.paymentReference}</p>` : ''}
             <p style="color: #28a745; font-weight: bold;">✓ Payment Confirmed</p>
+            ${priceBreakdown && (priceBreakdown.frequencyDiscount > 0 || priceBreakdown.discountCodeDiscount > 0) ? `
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+              <p style="margin-bottom: 10px;"><strong>Discounts Applied:</strong></p>
+              ${priceBreakdown.frequencyDiscount > 0 ? `
+              <div style="margin-bottom: 8px;">
+                <p style="margin: 0;">
+                  <span>${frequencyName} Discount:</span>
+                  <span style="color: #28a745; font-weight: bold; margin-left: 10px;">-${formatPrice(priceBreakdown.frequencyDiscount)}</span>
+                </p>
+                <p style="color: #28a745; font-size: 12px; margin: 5px 0 0 0;">✓ Frequency Discount Applied</p>
+              </div>
+              ` : ''}
+              ${priceBreakdown.discountCodeDiscount > 0 ? `
+              <div>
+                <p style="margin: 0;">
+                  <span>Discount Code ${booking.discountCode ? `(${booking.discountCode.toUpperCase()})` : ''}:</span>
+                  <span style="color: #28a745; font-weight: bold; margin-left: 10px;">-${formatPrice(priceBreakdown.discountCodeDiscount)}</span>
+                </p>
+                <p style="color: #28a745; font-size: 12px; margin: 5px 0 0 0;">✓ Discount Code Applied</p>
+              </div>
+              ` : ''}
+            </div>
+            ` : ''}
           </div>
           
           <div style="margin-top: 30px; padding: 15px; background-color: #e7f3ff; border-radius: 5px; border-left: 4px solid #0C53ED;">
@@ -460,7 +511,7 @@ export async function sendBookingConfirmationEmail(booking: Booking): Promise<vo
       from: fromEmail,
       to: toEmail,
       subject: `Booking Confirmation - ${booking.bookingReference} | Shalean Cleaning Services`,
-      html: formatBookingConfirmationEmail(booking),
+      html: await formatBookingConfirmationEmail(booking),
     });
 
     if (result.error) {
@@ -509,6 +560,192 @@ export async function sendBookingNotificationEmail(booking: Booking): Promise<vo
     console.error("Exception while sending booking notification email:", error);
     if (error instanceof Error) {
       throw new Error(`Failed to send booking notification email: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
+// Contact form email interfaces and functions
+export interface ContactEmailData {
+  name: string;
+  email: string;
+  phone?: string;
+  subject: string;
+  message: string;
+}
+
+function formatContactEmail(data: ContactEmailData): string {
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>New Contact Form Submission</title>
+      </head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background-color: #0C53ED; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
+          <h1 style="margin: 0;">New Contact Form Submission</h1>
+        </div>
+        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; border: 1px solid #e0e0e0;">
+          <h2 style="color: #0C53ED; margin-top: 0;">Contact Information</h2>
+          <p><strong>Name:</strong> ${data.name}</p>
+          <p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
+          ${data.phone ? `<p><strong>Phone:</strong> <a href="tel:${data.phone}">${data.phone}</a></p>` : ''}
+          
+          <h2 style="color: #0C53ED; margin-top: 30px;">Message</h2>
+          <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
+            <p><strong>Subject:</strong> ${data.subject}</p>
+            <p style="white-space: pre-wrap; margin-top: 15px;">${data.message}</p>
+          </div>
+          
+          <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
+            <p style="color: #666; font-size: 14px;">
+              This contact form submission was received from the Shalean Cleaning Services dashboard.
+            </p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
+function formatContactConfirmationEmail(data: ContactEmailData): string {
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Contact Form Confirmation</title>
+      </head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background-color: #0C53ED; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
+          <h1 style="margin: 0;">Thank You for Contacting Us!</h1>
+        </div>
+        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; border: 1px solid #e0e0e0;">
+          <p>Dear ${data.name},</p>
+          
+          <p>Thank you for reaching out to Shalean Cleaning Services. We have received your message and will get back to you as soon as possible.</p>
+          
+          <h2 style="color: #0C53ED; margin-top: 30px;">Your Message</h2>
+          <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
+            <p><strong>Subject:</strong> ${data.subject}</p>
+            <p style="white-space: pre-wrap; margin-top: 15px;">${data.message}</p>
+          </div>
+          
+          <p>Our team typically responds within 24 hours. If your inquiry is urgent, please call us at <strong>+27 87 153 5250</strong>.</p>
+          
+          <div style="margin-top: 30px; padding: 15px; background-color: #e7f3ff; border-radius: 5px; border-left: 4px solid #0C53ED;">
+            <p style="margin: 0;"><strong>Need Immediate Assistance?</strong></p>
+            <p style="margin: 5px 0 0 0;">Call us at <strong>+27 87 153 5250</strong> or email us at <strong>support@shalean.com</strong></p>
+          </div>
+          
+          <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
+            <p style="color: #666; font-size: 14px;">
+              Best regards,<br>
+              <strong>The Shalean Cleaning Services Team</strong>
+            </p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
+export async function sendContactEmail(data: ContactEmailData): Promise<void> {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY is not configured");
+  }
+
+  // Initialize Resend client with API key
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
+  const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+  
+  // When using Resend testing domain, only send to verified email address
+  // Otherwise, use the configured email or default to hello@shalean.com
+  const isTestingDomain = fromEmail.includes("@resend.dev");
+  const toEmail = isTestingDomain 
+    ? "hello@shalean.com" 
+    : (process.env.RESEND_TO_EMAIL || "hello@shalean.com");
+
+  console.log("Sending contact form notification email to business:", {
+    from: fromEmail,
+    to: toEmail,
+    customerEmail: data.email,
+    isTestingDomain,
+    apiKeyPresent: !!process.env.RESEND_API_KEY,
+    apiKeyPrefix: process.env.RESEND_API_KEY?.substring(0, 10),
+  });
+
+  try {
+    const result = await resend.emails.send({
+      from: fromEmail,
+      to: toEmail,
+      replyTo: data.email,
+      subject: `Contact Form: ${data.subject}`,
+      html: formatContactEmail(data),
+    });
+
+    if (result.error) {
+      console.error("Resend API error:", JSON.stringify(result.error, null, 2));
+      throw new Error(`Failed to send contact notification email: ${result.error.message || JSON.stringify(result.error)}`);
+    }
+
+    console.log("Contact notification email sent successfully:", result.data?.id);
+  } catch (error) {
+    console.error("Exception while sending contact notification email:", error);
+    if (error instanceof Error) {
+      throw new Error(`Failed to send contact notification email: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
+export async function sendContactConfirmationEmail(data: ContactEmailData): Promise<void> {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY is not configured");
+  }
+
+  // Initialize Resend client with API key
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
+  const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+  
+  // When using Resend testing domain, only send to verified email address
+  // Otherwise, send to the customer's email
+  const isTestingDomain = fromEmail.includes("@resend.dev");
+  const toEmail = isTestingDomain ? "hello@shalean.com" : data.email;
+
+  console.log("Sending contact confirmation email to customer:", {
+    from: fromEmail,
+    to: toEmail,
+    originalCustomerEmail: data.email,
+    isTestingDomain,
+    customerName: data.name,
+    apiKeyPresent: !!process.env.RESEND_API_KEY,
+    apiKeyPrefix: process.env.RESEND_API_KEY?.substring(0, 10),
+  });
+
+  try {
+    const result = await resend.emails.send({
+      from: fromEmail,
+      to: toEmail,
+      subject: `We've Received Your Message - Shalean Cleaning Services`,
+      html: formatContactConfirmationEmail(data),
+    });
+
+    if (result.error) {
+      console.error("Resend API error:", JSON.stringify(result.error, null, 2));
+      throw new Error(`Failed to send contact confirmation email: ${result.error.message || JSON.stringify(result.error)}`);
+    }
+
+    console.log("Contact confirmation email sent successfully:", result.data?.id);
+  } catch (error) {
+    console.error("Exception while sending contact confirmation email:", error);
+    if (error instanceof Error) {
+      throw new Error(`Failed to send contact confirmation email: ${error.message}`);
     }
     throw error;
   }

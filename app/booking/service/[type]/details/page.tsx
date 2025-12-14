@@ -13,12 +13,18 @@ import {
   ChevronDown,
   FileText,
   AlertCircle,
+  Layers,
+  Car,
+  Home,
+  Sofa,
+  Square,
 } from "lucide-react";
 import ServiceCard from "@/components/booking/ServiceCard";
 import PriceSummary from "@/components/booking/PriceSummary";
 import ProgressIndicator from "@/components/booking/ProgressIndicator";
-import { BookingFormData, ServiceType } from "@/lib/types/booking";
-import { calculatePrice, formatPrice } from "@/lib/pricing";
+import DatePicker from "@/components/booking/DatePicker";
+import { BookingFormData, ServiceType, FrequencyType, CleanerPreference } from "@/lib/types/booking";
+import { calculatePrice, formatPrice, fetchPricingConfig, PricingConfig } from "@/lib/pricing";
 import {
   getAdditionalServices,
   getTimeSlots,
@@ -34,7 +40,22 @@ const iconMap: Record<string, any> = {
   Grid,
   Paintbrush,
   Shirt,
+  Layers,
+  Car,
+  Home,
+  Sofa,
+  Square,
 };
+
+// Services that are only available for deep and move-in-out
+const DEEP_SERVICES_ONLY = [
+  'carpet-cleaning',
+  'ceiling-cleaning',
+  'garage-cleaning',
+  'balcony-cleaning',
+  'couch-cleaning',
+  'exterior-windows',
+];
 
 const services: ServiceType[] = ["standard", "deep", "move-in-out", "airbnb", "office", "holiday"];
 
@@ -58,25 +79,34 @@ export default function ServiceDetailsPage() {
     return mapping[serviceTypeFromUrl] || "standard";
   };
 
-  const [formData, setFormData] = useState<Partial<BookingFormData>>({
-    service: getServiceType(),
-    bedrooms: 2,
-    bathrooms: 1,
-    extras: [],
-    scheduledDate: null,
-    scheduledTime: null,
-    frequency: "one-time",
-    cleanerPreference: "no-preference",
-  });
+  // Initialize formData with defaults - always same on server and client to avoid hydration mismatch
+  const getInitialFormData = (): Partial<BookingFormData> => {
+    return {
+      service: getServiceType(),
+      bedrooms: 2,
+      bathrooms: 1,
+      extras: [],
+      scheduledDate: null,
+      scheduledTime: null,
+      frequency: "one-time" as FrequencyType,
+      cleanerPreference: "no-preference" as CleanerPreference,
+    };
+  };
+
+  const [formData, setFormData] = useState<Partial<BookingFormData>>(getInitialFormData);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isClient, setIsClient] = useState(false);
   
   // Dynamic data from Supabase
+  const [allExtras, setAllExtras] = useState<Array<{ id: string; name: string; icon: any }>>(
+    FALLBACK_EXTRAS.map(extra => ({ ...extra, icon: iconMap[extra.icon] || Shirt }))
+  );
   const [extras, setExtras] = useState<Array<{ id: string; name: string; icon: any }>>(
     FALLBACK_EXTRAS.map(extra => ({ ...extra, icon: iconMap[extra.icon] || Shirt }))
   );
   const [timeSlots, setTimeSlots] = useState<string[]>(FALLBACK_TIME_SLOTS);
+  const [pricingConfig, setPricingConfig] = useState<PricingConfig | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
 
   // Fetch dynamic data on mount
@@ -85,23 +115,45 @@ export default function ServiceDetailsPage() {
       try {
         setIsLoadingData(true);
         
-        // Fetch additional services
-        const additionalServicesData = await getAdditionalServices();
+        // Fetch all data in parallel
+        const [additionalServicesData, timeSlotsData, pricing] = await Promise.all([
+          getAdditionalServices(),
+          getTimeSlots(),
+          fetchPricingConfig(),
+        ]);
+        
+        // Set additional services/extras
         if (additionalServicesData.length > 0) {
+          const mappedExtras = additionalServicesData.map(service => ({
+            id: service.service_id,
+            name: service.name,
+            icon: iconMap[service.icon_name || "Shirt"] || Shirt,
+          }));
+          setAllExtras(mappedExtras);
+          
+          // Filter based on current service type
+          const currentServiceType = formData.service || getServiceType();
+          const isDeepOrMoveInOut = currentServiceType === 'deep' || currentServiceType === 'move-in-out';
+          
           setExtras(
-            additionalServicesData.map(service => ({
-              id: service.service_id,
-              name: service.name,
-              icon: iconMap[service.icon_name || "Shirt"] || Shirt,
-            }))
+            mappedExtras.filter(service => {
+              // Show deep-only services only for deep and move-in-out
+              if (DEEP_SERVICES_ONLY.includes(service.id)) {
+                return isDeepOrMoveInOut;
+              }
+              // Show all other services for all service types
+              return true;
+            })
           );
         }
         
-        // Fetch time slots
-        const timeSlotsData = await getTimeSlots();
+        // Set time slots
         if (timeSlotsData.length > 0) {
           setTimeSlots(timeSlotsData.map(slot => slot.time_value));
         }
+        
+        // Set pricing config
+        setPricingConfig(pricing);
       } catch (error) {
         console.error("Error loading dynamic data:", error);
         // Keep using fallback data
@@ -113,16 +165,31 @@ export default function ServiceDetailsPage() {
     fetchData();
   }, []);
 
-  // Load from localStorage after component mounts (client-side only)
+  // Mark as client-side mounted and load from localStorage after hydration
   useEffect(() => {
     setIsClient(true);
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
-        const parsedData = JSON.parse(saved);
-        setFormData(parsedData);
+        const parsedData = JSON.parse(saved) as Partial<BookingFormData>;
+        const defaults = getInitialFormData();
+        // Merge saved data with defaults to ensure all fields are present
+        setFormData({
+          ...defaults,
+          ...parsedData,
+          // Ensure service matches URL if navigating to a different service type
+          service: (parsedData.service || getServiceType()) as ServiceType,
+          // Preserve Step 1 specific fields
+          bedrooms: parsedData.bedrooms ?? defaults.bedrooms,
+          bathrooms: parsedData.bathrooms ?? defaults.bathrooms,
+          extras: parsedData.extras || defaults.extras,
+          scheduledDate: parsedData.scheduledDate ?? defaults.scheduledDate,
+          scheduledTime: parsedData.scheduledTime ?? defaults.scheduledTime,
+          frequency: (parsedData.frequency || defaults.frequency) as FrequencyType,
+          cleanerPreference: (parsedData.cleanerPreference || defaults.cleanerPreference) as CleanerPreference,
+        });
       } catch {
-        // Ignore parse errors
+        // If parse fails, keep defaults
       }
     }
   }, []);
@@ -134,6 +201,30 @@ export default function ServiceDetailsPage() {
     }
   }, [serviceTypeFromUrl]);
 
+  // Filter extras when service type changes
+  useEffect(() => {
+    if (allExtras.length > 0 && formData.service) {
+      const isDeepOrMoveInOut = formData.service === 'deep' || formData.service === 'move-in-out';
+      const isStandardOrAirbnb = formData.service === 'standard' || formData.service === 'airbnb';
+      
+      // Clear selected extras if service doesn't support extras (not standard or airbnb)
+      if (!isStandardOrAirbnb && formData.extras && formData.extras.length > 0) {
+        setFormData((prev) => ({ ...prev, extras: [] }));
+      }
+      
+      setExtras(
+        allExtras.filter(service => {
+          // Show deep-only services only for deep and move-in-out
+          if (DEEP_SERVICES_ONLY.includes(service.id)) {
+            return isDeepOrMoveInOut;
+          }
+          // Show all other services for all service types
+          return true;
+        })
+      );
+    }
+  }, [formData.service, allExtras]);
+
   useEffect(() => {
     // Save to localStorage (only after client-side hydration)
     if (isClient) {
@@ -141,7 +232,10 @@ export default function ServiceDetailsPage() {
     }
   }, [formData, isClient]);
 
-  const priceBreakdown = calculatePrice(formData as Partial<BookingFormData>);
+  const priceBreakdown = calculatePrice(
+    formData as Partial<BookingFormData>,
+    pricingConfig || undefined
+  );
 
   const handleServiceSelect = (service: ServiceType) => {
     setFormData((prev) => ({ ...prev, service }));
@@ -155,18 +249,6 @@ export default function ServiceDetailsPage() {
         : [...current, extraId];
       return { ...prev, extras: updated };
     });
-  };
-
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const date = e.target.value;
-    setFormData((prev) => ({ ...prev, scheduledDate: date, scheduledTime: null }));
-    if (errors.scheduledDate) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors.scheduledDate;
-        return newErrors;
-      });
-    }
   };
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -312,35 +394,42 @@ export default function ServiceDetailsPage() {
               </div>
             </section>
 
-            {/* Extras */}
-            <section className="bg-white border border-gray-200 rounded-xl p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Extras</h2>
-              <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-                {extras.map((extra) => {
-                  const Icon = extra.icon;
-                  const isSelected = formData.extras?.includes(extra.id) || false;
-                  return (
-                    <button
-                      key={extra.id}
-                      type="button"
-                      onClick={() => handleExtrasToggle(extra.id)}
-                      className={`p-4 border-2 rounded-full transition-all ${
-                        isSelected
-                          ? "border-blue-500 bg-blue-50"
-                          : "border-gray-200 hover:border-gray-300 bg-white"
-                      }`}
-                      title={extra.name}
-                    >
-                      <Icon
-                        className={`w-6 h-6 mx-auto ${
-                          isSelected ? "text-blue-500" : "text-gray-400"
+            {/* Extras - Only show for standard and airbnb services */}
+            {(formData.service === "standard" || formData.service === "airbnb") && (
+              <section className="bg-white border border-gray-200 rounded-xl p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-6">Extras</h2>
+                <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
+                  {extras.map((extra) => {
+                    const Icon = extra.icon;
+                    const isSelected = formData.extras?.includes(extra.id) || false;
+                    return (
+                      <button
+                        key={extra.id}
+                        type="button"
+                        onClick={() => handleExtrasToggle(extra.id)}
+                        className={`flex flex-col items-center justify-center gap-2 p-3 border-2 rounded-xl transition-all min-h-[100px] ${
+                          isSelected
+                            ? "border-blue-500 bg-blue-50"
+                            : "border-gray-200 hover:border-gray-300 bg-white"
                         }`}
-                      />
-                    </button>
-                  );
-                })}
-              </div>
-            </section>
+                        title={extra.name}
+                      >
+                        <Icon
+                          className={`w-6 h-6 ${
+                            isSelected ? "text-blue-500" : "text-gray-400"
+                          }`}
+                        />
+                        <span className={`text-xs text-center leading-tight ${
+                          isSelected ? "text-blue-600 font-medium" : "text-gray-600"
+                        }`}>
+                          {extra.name}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
 
             {/* Schedule */}
             <section className="bg-white border border-gray-200 rounded-xl p-6">
@@ -350,15 +439,21 @@ export default function ServiceDetailsPage() {
                   <label htmlFor="scheduledDate" className="block text-sm font-medium text-gray-700 mb-2">
                     Which day would you like us to come?
                   </label>
-                  <input
-                    type="date"
+                  <DatePicker
                     id="scheduledDate"
                     value={formData.scheduledDate || ""}
-                    onChange={handleDateChange}
+                    onChange={(date: string) => {
+                      setFormData((prev) => ({ ...prev, scheduledDate: date, scheduledTime: null }));
+                      if (errors.scheduledDate) {
+                        setErrors((prev) => {
+                          const newErrors = { ...prev };
+                          delete newErrors.scheduledDate;
+                          return newErrors;
+                        });
+                      }
+                    }}
                     min={today}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.scheduledDate ? "border-red-500" : "border-gray-300"
-                    }`}
+                    error={!!errors.scheduledDate}
                   />
                   {errors.scheduledDate && (
                     <p className="mt-1 text-sm text-red-600">{errors.scheduledDate}</p>

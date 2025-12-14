@@ -26,8 +26,13 @@ export default async function AdminLayout({
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-8">
-              <Link href="/" className="text-xl font-bold text-blue-600">
-                Shalean Admin
+              <Link href="/" className="flex items-center gap-2">
+                <img 
+                  src="/shalean-logo.png" 
+                  alt="Shalean" 
+                  className="h-8 md:h-10 w-auto"
+                />
+                <span className="text-sm font-medium text-gray-600">Admin</span>
               </Link>
               <nav className="hidden md:flex items-center gap-6">
                 <Link
@@ -64,3 +69,8 @@ export default async function AdminLayout({
     </div>
   );
 }
+
+
+
+
+

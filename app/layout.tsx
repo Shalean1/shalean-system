@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { generateStructuredData } from "@/lib/structured-data";
 import Header from "@/components/Header";
+import BottomNavigation from "@/components/BottomNavigation";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -139,7 +140,10 @@ export default function RootLayout({
         className={`${inter.variable} antialiased`}
       >
         <Header />
-        {children}
+        <div className="pb-16 md:pb-0">
+          {children}
+        </div>
+        <BottomNavigation />
       </body>
     </html>
   );

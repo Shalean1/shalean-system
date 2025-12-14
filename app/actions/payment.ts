@@ -1,7 +1,8 @@
 "use server";
 
 import { BookingFormData } from "@/lib/types/booking";
-import { calculatePrice } from "@/lib/pricing";
+import { calculatePrice, fetchPricingConfig } from "@/lib/pricing";
+import { validateDiscountCode } from "@/app/actions/discount";
 
 export interface PaymentInitResult {
   success: boolean;
@@ -10,6 +11,45 @@ export interface PaymentInitResult {
   email?: string;
   reference?: string;
   message?: string;
+}
+
+/**
+ * Initialize payment with a fixed amount (for rebook scenarios)
+ * This bypasses price calculation and uses the provided amount directly
+ */
+export async function initializePaymentWithAmount(
+  amount: number,
+  email: string
+): Promise<PaymentInitResult> {
+  if (!process.env.PAYSTACK_PUBLIC_KEY) {
+    return {
+      success: false,
+      message: "Payment gateway is not configured",
+    };
+  }
+
+  try {
+    // Generate payment reference
+    const reference = `shalean-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+
+    // Convert amount to cents (Paystack uses smallest currency unit)
+    // ZAR amounts are multiplied by 100 to convert to cents
+    const amountInCents = amount * 100;
+
+    return {
+      success: true,
+      publicKey: process.env.PAYSTACK_PUBLIC_KEY,
+      amount: amountInCents,
+      email,
+      reference,
+    };
+  } catch (error) {
+    console.error("Error initializing payment:", error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Failed to initialize payment",
+    };
+  }
 }
 
 /**
@@ -27,8 +67,29 @@ export async function initializePayment(
   }
 
   try {
-    // Calculate total amount
-    const priceBreakdown = calculatePrice(bookingData);
+    // Fetch pricing configuration from database
+    const pricingConfig = await fetchPricingConfig();
+    
+    // Calculate initial price breakdown (without discount code)
+    const initialPriceBreakdown = calculatePrice(bookingData, pricingConfig, 0);
+    
+    // Validate and apply discount code if provided
+    let discountCodeAmount = 0;
+    if (bookingData.discountCode && bookingData.discountCode.trim()) {
+      const discountResult = await validateDiscountCode(
+        bookingData.discountCode.trim(),
+        initialPriceBreakdown.subtotal - initialPriceBreakdown.frequencyDiscount
+      );
+      
+      if (discountResult.success) {
+        discountCodeAmount = discountResult.discountAmount;
+      }
+      // If discount code is invalid, we still proceed but without discount
+      // The booking submission will handle the error
+    }
+    
+    // Calculate final price breakdown with discount code
+    const priceBreakdown = calculatePrice(bookingData, pricingConfig, discountCodeAmount);
     
     // Generate payment reference
     const reference = `shalean-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;

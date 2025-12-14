@@ -8,7 +8,7 @@ import ProgressIndicator from "./ProgressIndicator";
 export default function BookingLayoutHeader() {
   const pathname = usePathname();
   
-  // Hide header on confirmation page
+  // Hide header on confirmation page (it has its own header)
   if (pathname?.includes("/confirmation")) {
     return null;
   }

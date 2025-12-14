@@ -1,82 +1,198 @@
 import { ServiceType, FrequencyType, BookingFormData, PriceBreakdown } from "./types/booking";
+import { 
+  getServiceTypePricing, 
+  getAdditionalServices, 
+  getFrequencyOptions, 
+  getSystemSettings,
+  getRoomPricing,
+  FALLBACK_SERVICE_PRICING,
+  FALLBACK_ROOM_PRICING
+} from "./supabase/booking-data";
 
-// Base prices for each service type (in ZAR)
-const BASE_PRICES: Record<ServiceType, number> = {
-  standard: 250,
-  deep: 400,
-  "move-in-out": 500,
-  airbnb: 350,
-  office: 300,
-  holiday: 450,
+// ============================================================================
+// PRICING CONFIGURATION TYPE
+// ============================================================================
+
+export interface PricingConfig {
+  basePrices: Record<ServiceType, number>;
+  roomPricing: Record<ServiceType, { bedroom: number; bathroom: number }>;
+  extrasPricing: Record<string, number>;
+  serviceFeePercentage: number;
+  frequencyDiscounts: Record<FrequencyType, number>;
+}
+
+// ============================================================================
+// FALLBACK PRICING (for backward compatibility or if DB fails)
+// ============================================================================
+
+const FALLBACK_PRICING_CONFIG: PricingConfig = {
+  basePrices: {
+    standard: 250,
+    deep: 400,
+    "move-in-out": 500,
+    airbnb: 350,
+    office: 300,
+    holiday: 450,
+  },
+  roomPricing: {
+    standard: { bedroom: 20, bathroom: 30 },
+    deep: { bedroom: 180, bathroom: 250 },
+    "move-in-out": { bedroom: 160, bathroom: 220 },
+    airbnb: { bedroom: 18, bathroom: 26 },
+    office: { bedroom: 30, bathroom: 40 },
+    holiday: { bedroom: 30, bathroom: 40 },
+  },
+  extrasPricing: {
+    "inside-fridge": 50,
+    "inside-oven": 50,
+    "inside-cabinets": 75,
+    "interior-windows": 100,
+    "interior-walls": 100,
+    "ironing": 75,
+    "laundry": 150,
+  },
+  serviceFeePercentage: 0.1, // 10%
+  frequencyDiscounts: {
+    "one-time": 0,
+    weekly: 0.15, // 15%
+    "bi-weekly": 0.1, // 10%
+    monthly: 0.05, // 5%
+  },
 };
 
-// Price per bedroom (in ZAR)
-const PRICE_PER_BEDROOM = 30;
+// ============================================================================
+// FETCH PRICING CONFIGURATION FROM DATABASE
+// ============================================================================
 
-// Price per bathroom (in ZAR)
-const PRICE_PER_BATHROOM = 40;
+/**
+ * Fetch all pricing configuration from the database
+ * This should be called once and cached/passed around
+ */
+export async function fetchPricingConfig(): Promise<PricingConfig> {
+  try {
+    // Fetch all pricing data in parallel
+    const [serviceTypePricing, additionalServices, frequencyOptions, systemSettings, roomPricingData] = await Promise.all([
+      getServiceTypePricing(),
+      getAdditionalServices(),
+      getFrequencyOptions(),
+      getSystemSettings(['service_fee_percentage']),
+      getRoomPricing().catch(() => []), // Return empty array if it fails
+    ]);
 
-// Additional services pricing (in ZAR)
-const EXTRAS_PRICING: Record<string, number> = {
-  "inside-fridge": 50,
-  "inside-oven": 50,
-  "inside-cabinets": 40,
-  "interior-windows": 60,
-  "interior-walls": 80,
-  "laundry": 70,
-  "ironing": 50,
-};
+    // Build base prices from service type pricing
+    const basePrices: Record<ServiceType, number> = { ...FALLBACK_PRICING_CONFIG.basePrices };
+    if (serviceTypePricing && Array.isArray(serviceTypePricing)) {
+      serviceTypePricing.forEach((pricing) => {
+        basePrices[pricing.service_type as ServiceType] = Number(pricing.base_price);
+      });
+    }
 
-// Service fee percentage
-const SERVICE_FEE_PERCENTAGE = 0.1; // 10%
+    // Build room pricing from room_pricing table
+    const roomPricing: Record<ServiceType, { bedroom: number; bathroom: number }> = { ...FALLBACK_PRICING_CONFIG.roomPricing };
+    if (roomPricingData && Array.isArray(roomPricingData)) {
+      roomPricingData.forEach((pricing) => {
+        const serviceType = pricing.service_type as ServiceType;
+        if (!roomPricing[serviceType]) {
+          roomPricing[serviceType] = { bedroom: 30, bathroom: 40 };
+        }
+        if (pricing.room_type === 'bedroom') {
+          roomPricing[serviceType].bedroom = Number(pricing.price_per_room);
+        } else if (pricing.room_type === 'bathroom') {
+          roomPricing[serviceType].bathroom = Number(pricing.price_per_room);
+        }
+      });
+    }
 
-// Frequency discounts
-const FREQUENCY_DISCOUNTS: Record<FrequencyType, number> = {
-  "one-time": 0,
-  weekly: 0.15, // 15%
-  "bi-weekly": 0.1, // 10%
-  monthly: 0.05, // 5%
-};
+    // Build extras pricing from additional services
+    const extrasPricing: Record<string, number> = {};
+    if (additionalServices && Array.isArray(additionalServices)) {
+      additionalServices.forEach((service) => {
+        extrasPricing[service.service_id] = Number(service.price_modifier);
+      });
+    }
+
+    // Build frequency discounts from frequency options
+    const frequencyDiscounts: Record<FrequencyType, number> = { ...FALLBACK_PRICING_CONFIG.frequencyDiscounts };
+    if (frequencyOptions && Array.isArray(frequencyOptions)) {
+      frequencyOptions.forEach((option) => {
+        frequencyDiscounts[option.frequency_id as FrequencyType] = Number(option.discount_percentage) / 100;
+      });
+    }
+
+    // Get service fee percentage
+    const serviceFeePercentage = systemSettings.service_fee_percentage 
+      ? Number(systemSettings.service_fee_percentage) / 100 
+      : FALLBACK_PRICING_CONFIG.serviceFeePercentage;
+
+    return {
+      basePrices,
+      roomPricing,
+      extrasPricing,
+      serviceFeePercentage,
+      frequencyDiscounts,
+    };
+  } catch (error) {
+    console.error('Error fetching pricing config, using fallback:', error);
+    return FALLBACK_PRICING_CONFIG;
+  }
+}
+
+// ============================================================================
+// PRICE CALCULATION
+// ============================================================================
 
 /**
  * Calculate the price breakdown for a booking
+ * @param data - Booking form data
+ * @param config - Optional pricing configuration (fetched from DB). If not provided, uses fallback.
+ * @param discountCodeAmount - Optional discount amount from discount code (default: 0)
  */
-export function calculatePrice(data: Partial<BookingFormData>): PriceBreakdown {
+export function calculatePrice(
+  data: Partial<BookingFormData>, 
+  config: PricingConfig = FALLBACK_PRICING_CONFIG,
+  discountCodeAmount: number = 0
+): PriceBreakdown {
   const service = data.service || "standard";
   const bedrooms = data.bedrooms || 0;
   const bathrooms = data.bathrooms || 1;
   const extras = data.extras || [];
   const frequency = data.frequency || "one-time";
 
-  // Base price
-  const basePrice = BASE_PRICES[service];
+  // Base price (from config)
+  const basePrice = config.basePrices[service] || 0;
 
-  // Room pricing
-  const roomPrice = bedrooms * PRICE_PER_BEDROOM + bathrooms * PRICE_PER_BATHROOM;
+  // Room pricing (service-specific from config)
+  // Safety check: ensure roomPricing exists and has the service type
+  const roomPricing = config.roomPricing || FALLBACK_PRICING_CONFIG.roomPricing;
+  const servicePricing = roomPricing[service] || { bedroom: 30, bathroom: 40 };
+  const roomPrice = bedrooms * servicePricing.bedroom + bathrooms * servicePricing.bathroom;
 
-  // Extras pricing
+  // Extras pricing (from config)
   const extrasPrice = extras.reduce((total, extra) => {
-    return total + (EXTRAS_PRICING[extra] || 0);
+    return total + (config.extrasPricing[extra] || 0);
   }, 0);
 
   // Subtotal before discounts
   const subtotal = basePrice + roomPrice + extrasPrice;
 
-  // Frequency discount
-  const frequencyDiscountRate = FREQUENCY_DISCOUNTS[frequency];
+  // Frequency discount (from config)
+  const frequencyDiscountRate = config.frequencyDiscounts[frequency] || 0;
   const frequencyDiscount = subtotal * frequencyDiscountRate;
 
-  // Discount code discount (placeholder - implement discount code logic)
-  const discountCodeDiscount = 0;
+  // Discount code discount (from parameter)
+  const discountCodeDiscount = Math.max(0, Math.min(discountCodeAmount, subtotal - frequencyDiscount));
 
   // Subtotal after discounts
   const discountedSubtotal = subtotal - frequencyDiscount - discountCodeDiscount;
 
-  // Service fee (calculated on discounted subtotal)
-  const serviceFee = Math.round(discountedSubtotal * SERVICE_FEE_PERCENTAGE);
+  // Service fee (calculated on discounted subtotal, from config)
+  const serviceFee = Math.round(discountedSubtotal * config.serviceFeePercentage);
 
-  // Total
-  const total = discountedSubtotal + serviceFee;
+  // Tip (optional, from form data)
+  const tip = data.tip || 0;
+
+  // Total (includes tip)
+  const total = discountedSubtotal + serviceFee + tip;
 
   return {
     basePrice,
@@ -84,8 +200,9 @@ export function calculatePrice(data: Partial<BookingFormData>): PriceBreakdown {
     extrasPrice,
     subtotal,
     frequencyDiscount: Math.round(frequencyDiscount),
-    discountCodeDiscount,
+    discountCodeDiscount: Math.round(discountCodeDiscount),
     serviceFee,
+    tip: Math.round(tip),
     total,
   };
 }

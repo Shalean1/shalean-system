@@ -216,3 +216,8 @@ After successful setup:
 - Check Supabase logs for database issues
 - Check browser console for frontend issues
 - Review RLS policies if having permission issues
+
+
+
+
+

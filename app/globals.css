@@ -25,3 +25,31 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Shalean Logo Styling */
+.shalean-logo {
+  font-family: 'Comic Sans MS', 'Marker Felt', 'Chalkboard', 'Bradley Hand', cursive, system-ui;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #2c3e50;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  line-height: 1;
+}
+
+.shalean-logo-text {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'Comic Sans MS', 'Marker Felt', 'Chalkboard', 'Bradley Hand', cursive, system-ui;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  line-height: 1;
+}

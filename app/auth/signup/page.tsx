@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, User, Mail, Lock, AlertCircle, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, User, Mail, Lock, AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { signup, type SignupFormData } from "@/app/actions/auth";
 
-export default function SignupPage() {
+function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState<SignupFormData>({
     firstName: "",
     lastName: "",
@@ -15,10 +16,21 @@ export default function SignupPage() {
     password: "",
     confirmPassword: "",
   });
+  const [referralCode, setReferralCode] = useState<string | null>(null);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // Capture referral code from URL query parameter
+  useEffect(() => {
+    const ref = searchParams.get("ref");
+    if (ref) {
+      setReferralCode(ref);
+    }
+  }, [searchParams]);
 
   const handleInputChange = (field: keyof SignupFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -50,15 +62,11 @@ export default function SignupPage() {
     setSubmitStatus(null);
     setErrors({});
 
-    const result = await signup(formData);
+    const result = await signup(formData, referralCode || undefined);
 
     if (result.success) {
-      setSubmitStatus({
-        type: "success",
-        message: result.message,
-      });
-      // TODO: Redirect to login page or dashboard after successful signup
-      // router.push("/auth/login");
+      // Redirect to confirmation page with email
+      router.push(`/auth/signup/confirmation?email=${encodeURIComponent(formData.email)}`);
     } else {
       setSubmitStatus({
         type: "error",
@@ -106,6 +114,16 @@ export default function SignupPage() {
               Sign up to get started with Shalean Cleaning Services
             </p>
           </div>
+
+          {/* Referral Code Detected */}
+          {referralCode && (
+            <div className="mb-6 p-4 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 flex items-center gap-3">
+              <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+              <p className="text-sm">
+                <span className="font-semibold">Referral code detected:</span> {referralCode.toUpperCase()}
+              </p>
+            </div>
+          )}
 
           {/* Success/Error Message */}
           {submitStatus && (
@@ -211,16 +229,28 @@ export default function SignupPage() {
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     id="password"
                     value={formData.password}
                     onChange={(e) => handleInputChange("password", e.target.value)}
-                    className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.password ? "border-red-500" : "border-gray-300"
                     }`}
                     placeholder="At least 8 characters"
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
                 </div>
                 {errors.password && (
                   <p className="mt-1 text-sm text-red-600">{errors.password}</p>
@@ -236,16 +266,28 @@ export default function SignupPage() {
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     id="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                    className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.confirmPassword ? "border-red-500" : "border-gray-300"
                     }`}
                     placeholder="Re-enter your password"
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
                 </div>
                 {errors.confirmPassword && (
                   <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
@@ -278,5 +320,20 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <SignupForm />
+    </Suspense>
   );
 }
