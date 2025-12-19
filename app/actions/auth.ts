@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { isPhoneNumber, constructCleanerEmail, normalizePhoneNumber } from "@/lib/utils/phone";
 
 export interface LoginFormData {
   email: string;
@@ -32,8 +33,9 @@ export async function login(
   // Server-side validation
   const errors: Record<string, string> = {};
 
-  if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-    errors.email = "Valid email is required";
+  // Check if input is empty
+  if (!data.email || data.email.trim().length === 0) {
+    errors.email = "Email or phone number is required";
   }
 
   if (!data.password || data.password.length < 6) {
@@ -51,15 +53,152 @@ export async function login(
   try {
     const supabase = await createClient();
 
+    // Detect if input is phone number or email
+    let emailToUse: string;
+    
+    if (isPhoneNumber(data.email.trim())) {
+      // Input is a phone number - normalize it and construct email
+      // Note: We use service role client to check profiles because RLS blocks
+      // unauthenticated users from viewing profiles
+      const normalizedPhone = normalizePhoneNumber(data.email.trim());
+      const constructedEmail = constructCleanerEmail(data.email.trim());
+      
+      // Try to find profile using service role client (bypasses RLS)
+      // This helps us determine the correct email format if profile exists
+      emailToUse = constructedEmail; // Default to constructed email
+      
+      try {
+        const { createServiceRoleClient } = await import("@/lib/supabase/server");
+        const supabaseAdmin = createServiceRoleClient();
+        
+        // Check profiles by phone (normalized comparison)
+        const { data: phoneProfiles } = await supabaseAdmin
+          .from("profiles")
+          .select("id, cleaner_id, phone, email")
+          .not("phone", "is", null);
+        
+        const matchingProfile = phoneProfiles?.find(profile => {
+          if (!profile.phone) return false;
+          const profilePhoneNormalized = normalizePhoneNumber(profile.phone);
+          return profilePhoneNormalized === normalizedPhone;
+        });
+
+        // If no match by phone, try by email
+        if (!matchingProfile) {
+          const { data: emailProfiles } = await supabaseAdmin
+            .from("profiles")
+            .select("id, cleaner_id, phone, email")
+            .eq("email", constructedEmail)
+            .limit(1);
+          
+          if (emailProfiles && emailProfiles.length > 0) {
+            emailToUse = emailProfiles[0].email && emailProfiles[0].email.includes("@")
+              ? emailProfiles[0].email
+              : constructedEmail;
+          }
+        } else {
+          // Found profile by phone - use its email if available
+          emailToUse = matchingProfile.email && matchingProfile.email.includes("@")
+            ? matchingProfile.email
+            : constructedEmail;
+        }
+      } catch (error) {
+        // If service role lookup fails, just use constructed email
+        // This is safe because cleaner accounts are created with this format
+        console.warn("Could not check profiles during login, using constructed email:", error);
+        emailToUse = constructedEmail;
+      }
+    } else {
+      // Input is an email - validate format
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
+        errors.email = "Please enter a valid email address or phone number";
+        return {
+          success: false,
+          message: "Please fix the errors in the form",
+          errors,
+        };
+      }
+      emailToUse = data.email.trim();
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
-      email: data.email,
+      email: emailToUse,
       password: data.password,
     });
 
     if (error) {
+      // Provide more helpful error messages
+      let errorMessage = error.message;
+      
+      // If login failed with phone number, check if account exists
+      if (isPhoneNumber(data.email.trim())) {
+        if (error.message?.includes("Invalid login credentials") || 
+            error.message?.includes("Email not confirmed") ||
+            error.message?.includes("Invalid password") ||
+            error.message?.includes("incorrect")) {
+          
+          // Use service role client to check if account/profile exists
+          // This helps us determine if it's "account doesn't exist" vs "wrong password"
+          try {
+            const { createServiceRoleClient } = await import("@/lib/supabase/server");
+            const supabaseAdmin = createServiceRoleClient();
+            const normalizedPhone = normalizePhoneNumber(data.email.trim());
+            const constructedEmail = constructCleanerEmail(data.email.trim());
+            
+            // Check if profile exists with this phone or email
+            const { data: phoneProfiles } = await supabaseAdmin
+              .from("profiles")
+              .select("id, cleaner_id, phone, email")
+              .not("phone", "is", null);
+            
+            const hasPhoneMatch = phoneProfiles?.some(profile => {
+              if (!profile.phone) return false;
+              const profilePhoneNormalized = normalizePhoneNumber(profile.phone);
+              return profilePhoneNormalized === normalizedPhone;
+            });
+            
+            const { data: emailProfiles } = await supabaseAdmin
+              .from("profiles")
+              .select("id, cleaner_id, phone, email")
+              .eq("email", constructedEmail)
+              .limit(1);
+            
+            const hasEmailMatch = (emailProfiles?.length ?? 0) > 0;
+            const accountExists = hasPhoneMatch || hasEmailMatch;
+            
+            if (!accountExists) {
+              // No profile found - account likely doesn't exist
+              errorMessage = "Invalid phone number or password";
+              return {
+                success: false,
+                message: errorMessage,
+                errors: { email: "No cleaner account found with this phone number" },
+              };
+            } else {
+              // Profile exists but auth failed - likely wrong password
+              errorMessage = "Invalid phone number or password";
+              return {
+                success: false,
+                message: errorMessage,
+                errors: { password: "Invalid password" },
+              };
+            }
+          } catch (checkError) {
+            // If we can't check, just show generic error
+            console.warn("Could not verify account existence:", checkError);
+            errorMessage = "Invalid phone number or password";
+            return {
+              success: false,
+              message: errorMessage,
+              errors: { password: "Invalid password" },
+            };
+          }
+        }
+      }
+      
       return {
         success: false,
-        message: error.message,
+        message: errorMessage,
       };
     }
 
@@ -162,6 +301,22 @@ export async function signup(
       } catch (error) {
         // Log error but don't fail signup if referral fails
         console.error("Error processing referral code:", error);
+      }
+    }
+
+    // Create profile manually (trigger may be disabled)
+    if (authData.user) {
+      try {
+        const { ensureUserProfile } = await import("@/lib/utils/profile-creation");
+        await ensureUserProfile(authData.user.id, {
+          email: authData.user.email || null,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          fullName: `${data.firstName} ${data.lastName}`,
+        });
+      } catch (profileError) {
+        // Log but don't fail signup - profile can be created later
+        console.error("Error creating profile during signup:", profileError);
       }
     }
 

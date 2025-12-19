@@ -1,3 +1,0 @@
-module.exports=[99661,a=>{"use strict";var b=a.i(7997);function c({children:a}){return(0,b.jsx)(b.Fragment,{children:a})}a.s(["default",()=>c,"metadata",0,{title:"Get Your Free Cleaning Quote | Shalean Cleaning Services",description:"Request a free personalized quote for professional cleaning services in Cape Town. Select your service, home details, and additional services.",keywords:["cleaning quote Cape Town","free cleaning quote","cleaning services quote","professional cleaning quote"]}])}];
-
-//# sourceMappingURL=app_booking_quote_layout_tsx_30c0f7c2._.js.map

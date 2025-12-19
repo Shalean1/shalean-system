@@ -55,32 +55,24 @@ export default function SpendingSummary({
   const getColorClasses = (color: string) => {
     const colors = {
       blue: {
-        bg: "bg-gradient-to-br from-blue-50 to-blue-100",
-        icon: "bg-blue-500 text-white",
-        border: "border-blue-200",
-        text: "text-blue-900",
-        valueText: "text-blue-700",
+        bg: "bg-[#e6f0ff]",
+        icon: "bg-[#007bff] text-white",
+        valueText: "text-[#007bff]",
       },
       green: {
-        bg: "bg-gradient-to-br from-green-50 to-green-100",
-        icon: "bg-green-500 text-white",
-        border: "border-green-200",
-        text: "text-green-900",
-        valueText: "text-green-700",
+        bg: "bg-[#e6ffe6]",
+        icon: "bg-[#28a745] text-white",
+        valueText: "text-[#28a745]",
       },
       yellow: {
-        bg: "bg-gradient-to-br from-yellow-50 to-yellow-100",
-        icon: "bg-yellow-500 text-white",
-        border: "border-yellow-200",
-        text: "text-yellow-900",
-        valueText: "text-yellow-700",
+        bg: "bg-[#fffbea]",
+        icon: "bg-[#ffc107] text-white",
+        valueText: "text-[#ffc107]",
       },
       purple: {
-        bg: "bg-gradient-to-br from-purple-50 to-purple-100",
-        icon: "bg-purple-500 text-white",
-        border: "border-purple-200",
-        text: "text-purple-900",
-        valueText: "text-purple-700",
+        bg: "bg-[#f7e6ff]",
+        icon: "bg-[#6f42c1] text-white",
+        valueText: "text-[#6f42c1]",
       },
     };
     return colors[color as keyof typeof colors] || colors.blue;
@@ -97,20 +89,20 @@ export default function SpendingSummary({
           return (
             <div
               key={stat.label}
-              className={`${colorClasses.bg} ${colorClasses.border} border-2 rounded-lg p-3 transition-all hover:shadow-md`}
+              className={`${colorClasses.bg} rounded-lg p-3 shadow-sm transition-all hover:shadow-md`}
             >
               <div className="flex items-start justify-between mb-3">
                 <div className={`${colorClasses.icon} p-1.5 rounded-lg`}>
                   <Icon className="w-4 h-4" />
                 </div>
               </div>
-              <p className={`text-sm font-medium ${colorClasses.text} mb-1`}>
+              <p className="text-sm font-medium text-[#4a4a4a] mb-1">
                 {stat.label}
               </p>
               <p className={`text-xl font-bold ${colorClasses.valueText} mb-1`}>
                 {stat.value}
               </p>
-              <p className={`text-[10px] ${colorClasses.text} opacity-75`}>
+              <p className="text-[10px] text-[#4a4a4a] opacity-75">
                 {stat.description}
               </p>
             </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Tag, Users, Calendar, Settings } from "lucide-react";
+import { Tag, Users, Calendar, Settings, UserPlus } from "lucide-react";
 
 export default function AdminDashboard() {
   const adminCards = [
@@ -11,6 +11,13 @@ export default function AdminDashboard() {
       icon: Tag,
       href: "/admin/popular-services",
       color: "blue",
+    },
+    {
+      title: "Cleaner Credentials",
+      description: "Create login credentials for cleaners to access their dashboard",
+      icon: UserPlus,
+      href: "/admin/cleaners/create-credentials",
+      color: "green",
     },
     {
       title: "Bookings",

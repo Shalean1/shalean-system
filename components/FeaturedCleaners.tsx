@@ -50,7 +50,7 @@ export default function FeaturedCleaners() {
               className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 group"
             >
               {/* Profile Picture */}
-              <div className="relative h-64 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center p-8">
+              <div className="relative h-64 bg-gradient-to-br from-[#e6f0ff] to-[#cce0ff] flex items-center justify-center p-8">
                 <div className="relative w-48 h-48 rounded-full overflow-hidden shadow-lg">
                   <Image
                     src={cleaner.image}
@@ -60,7 +60,7 @@ export default function FeaturedCleaners() {
                     sizes="(max-width: 768px) 192px, 192px"
                   />
                   {/* Verified Badge */}
-                  <div className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-1.5 shadow-md border-2 border-white">
+                  <div className="absolute bottom-0 right-0 bg-[#007bff] rounded-full p-1.5 shadow-md border-2 border-white">
                     <CheckCircle className="w-5 h-5 text-white" />
                   </div>
                 </div>
@@ -72,7 +72,7 @@ export default function FeaturedCleaners() {
                   {cleaner.name}
                 </h3>
                 <div className="flex items-center justify-center gap-1 mb-2">
-                  <span className="text-sm font-semibold text-blue-600">
+                  <span className="text-sm font-semibold text-[#28a745]">
                     {cleaner.positiveReviews}% positive reviews
                   </span>
                 </div>
@@ -91,7 +91,7 @@ export default function FeaturedCleaners() {
         <div className="text-center mt-12">
           <a
             href="#contact"
-            className="inline-block px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors shadow-lg"
+            className="inline-block px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg"
           >
             View All Cleaners
           </a>

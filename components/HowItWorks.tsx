@@ -39,7 +39,7 @@ export default function HowItWorks() {
                   return (
                     <li key={index} className="flex items-start gap-4">
                       <div className="flex-shrink-0 mt-1">
-                        <Icon className="w-6 h-6 text-blue-500" />
+                        <Icon className="w-6 h-6 text-[#28a745]" />
                       </div>
                       <span className="text-lg text-gray-700">{benefit.text}</span>
                     </li>
@@ -51,7 +51,7 @@ export default function HowItWorks() {
               <div className="pt-4">
                 <Link
                   href="/booking/service/standard/details"
-                  className="inline-block px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors shadow-lg"
+                  className="inline-block px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg"
                 >
                   Book Your Clean Today
                 </Link>

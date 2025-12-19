@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { User, LogOut, ExternalLink, ChevronDown } from "lucide-react";
 import { logout } from "@/app/actions/auth";
 
@@ -13,8 +14,18 @@ interface UserMenuProps {
 export default function UserMenu({ userEmail, displayName }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
   
   const name = displayName || userEmail.split("@")[0];
+
+  const handleLogout = async () => {
+    setIsOpen(false);
+    const result = await logout();
+    if (result.success) {
+      router.push("/");
+      router.refresh();
+    }
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -71,15 +82,13 @@ export default function UserMenu({ userEmail, displayName }: UserMenuProps) {
           </Link>
           
           <div className="border-t border-gray-100 mt-2 pt-2">
-            <form action={async () => { await logout(); }}>
-              <button
-                type="submit"
-                className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-              >
-                <LogOut className="w-4 h-4" />
-                Logout
-              </button>
-            </form>
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
           </div>
         </div>
       )}

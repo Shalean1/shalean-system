@@ -3,7 +3,7 @@ import { Sparkles, Users } from "lucide-react";
 
 export default function ReadyToStart() {
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-50 to-blue-100">
+    <section className="py-20 bg-[#e6f0ff]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           {/* H2 Heading */}
@@ -18,7 +18,7 @@ export default function ReadyToStart() {
             {/* Customer CTA */}
             <div className="bg-white rounded-2xl p-8 lg:p-12 shadow-xl border border-gray-200 text-center">
               <div className="mb-6 flex justify-center">
-                <div className="w-24 h-24 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full flex items-center justify-center">
+                <div className="w-24 h-24 bg-[#007bff] rounded-full flex items-center justify-center">
                   <Sparkles className="w-12 h-12 text-white" />
                 </div>
               </div>
@@ -30,7 +30,7 @@ export default function ReadyToStart() {
               </p>
               <Link
                 href="/auth/signup"
-                className="inline-block px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors shadow-lg"
+                className="inline-block px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg"
               >
                 Sign up
               </Link>
@@ -39,7 +39,7 @@ export default function ReadyToStart() {
             {/* Cleaner CTA */}
             <div className="bg-white rounded-2xl p-8 lg:p-12 shadow-xl border border-gray-200 text-center">
               <div className="mb-6 flex justify-center">
-                <div className="w-24 h-24 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center">
+                <div className="w-24 h-24 bg-gradient-to-br from-[#007bff] to-[#6f42c1] rounded-full flex items-center justify-center">
                   <Users className="w-12 h-12 text-white" />
                 </div>
               </div>
@@ -51,7 +51,7 @@ export default function ReadyToStart() {
               </p>
               <Link
                 href="#contact"
-                className="inline-block px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors shadow-lg"
+                className="inline-block px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg"
               >
                 Become a Cleaner
               </Link>

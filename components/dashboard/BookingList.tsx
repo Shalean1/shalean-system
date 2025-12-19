@@ -81,7 +81,13 @@ export default function BookingList({ bookings }: BookingListProps) {
         return result.sort((a, b) => a.totalAmount - b.totalAmount);
       
       case "status":
-        const statusOrder = { pending: 0, confirmed: 1, completed: 2, cancelled: 3 };
+        const statusOrder: Record<string, number> = { 
+          pending: 0, 
+          confirmed: 1, 
+          "in-progress": 1.5,
+          completed: 2, 
+          cancelled: 3 
+        };
         return result.sort((a, b) => {
           const aOrder = statusOrder[a.status] ?? 99;
           const bOrder = statusOrder[b.status] ?? 99;

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Home, Tag } from "lucide-react";
+import { Home, Tag, UserPlus } from "lucide-react";
 
 export default async function AdminLayout({
   children,
@@ -48,6 +48,13 @@ export default async function AdminLayout({
                 >
                   <Tag className="w-4 h-4" />
                   Popular Services
+                </Link>
+                <Link
+                  href="/admin/cleaners/create-credentials"
+                  className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  Cleaner Credentials
                 </Link>
               </nav>
             </div>

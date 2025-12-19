@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Mail, Lock, AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Mail, Phone, Lock, AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { login, type LoginFormData } from "@/app/actions/auth";
 
 function LoginForm() {
@@ -132,28 +132,34 @@ function LoginForm() {
           {/* Login Form */}
           <div className="bg-white border border-gray-200 rounded-xl p-6 lg:p-8 shadow-sm">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email Field */}
+              {/* Email or Phone Field */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email address
+                  Email or Phone Number
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
+                    <Mail className="w-4 h-4 text-gray-400" />
+                    <Phone className="w-4 h-4 text-gray-400" />
+                  </div>
                   <input
-                    type="email"
+                    type="text"
                     id="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
-                    className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.email ? "border-red-500" : "border-gray-300"
                     }`}
-                    placeholder="you@example.com"
+                    placeholder="you@example.com or +27 12 345 6789"
                     required
                   />
                 </div>
                 {errors.email && (
                   <p className="mt-1 text-sm text-red-600">{errors.email}</p>
                 )}
+                <p className="mt-1 text-xs text-gray-500">
+                  Enter your email address or phone number (for cleaners)
+                </p>
               </div>
 
               {/* Password Field */}

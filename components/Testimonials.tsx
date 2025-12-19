@@ -27,7 +27,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+    <section className="py-20 bg-[#e6f0ff]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* H2 Heading */}
         <div className="text-center mb-16">
@@ -50,7 +50,7 @@ export default function Testimonials() {
             >
               {/* Profile Picture */}
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-500 flex items-center justify-center text-white font-bold text-lg">
+                <div className="w-12 h-12 rounded-full bg-[#007bff] flex items-center justify-center text-white font-bold text-lg">
                   {testimonial.name.charAt(0)}
                 </div>
                 <div>
@@ -102,7 +102,7 @@ export default function Testimonials() {
           </p>
           <Link
             href="/booking/service/standard/details"
-            className="inline-block px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors shadow-lg"
+            className="inline-block px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg"
           >
             Book Your Cleaning Service Today
           </Link>

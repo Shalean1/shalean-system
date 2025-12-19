@@ -3,6 +3,28 @@
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- ============================================================================
+-- CLEANERS TABLE (must be created first as it's referenced by other tables)
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS cleaners (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  cleaner_id TEXT NOT NULL UNIQUE, -- e.g., "natasha-m"
+  name TEXT NOT NULL,
+  bio TEXT,
+  rating DECIMAL(3, 2), -- e.g., 4.70
+  total_jobs INTEGER DEFAULT 0,
+  avatar_url TEXT,
+  display_order INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT true,
+  is_available BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_cleaners_order ON cleaners(display_order);
+CREATE INDEX IF NOT EXISTS idx_cleaners_active ON cleaners(is_active);
+CREATE INDEX IF NOT EXISTS idx_cleaners_available ON cleaners(is_available);
+
 -- Create bookings table
 CREATE TABLE IF NOT EXISTS bookings (
   id TEXT PRIMARY KEY,
@@ -27,6 +49,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   
   -- Cleaner preference
   cleaner_preference TEXT DEFAULT 'no-preference' CHECK (cleaner_preference IN ('no-preference', 'natasha-m', 'estery-p', 'beaul')),
+  assigned_cleaner_id TEXT REFERENCES cleaners(cleaner_id),
   
   -- Instructions
   special_instructions TEXT,
@@ -64,6 +87,9 @@ CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);
 -- Create index on created_at for sorting
 CREATE INDEX IF NOT EXISTS idx_bookings_created_at ON bookings(created_at DESC);
 
+-- Create index on assigned_cleaner_id
+CREATE INDEX IF NOT EXISTS idx_bookings_assigned_cleaner ON bookings(assigned_cleaner_id);
+
 -- Enable Row Level Security
 ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
 
@@ -90,6 +116,40 @@ CREATE POLICY "Users can update own bookings" ON bookings
     auth.jwt() ->> 'email' = contact_email
   );
 
+-- Policy: Cleaners can view bookings assigned to them
+DROP POLICY IF EXISTS "Cleaners can view assigned bookings" ON bookings;
+CREATE POLICY "Cleaners can view assigned bookings" ON bookings
+  FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles
+      WHERE profiles.id = auth.uid()
+      AND profiles.cleaner_id = bookings.assigned_cleaner_id
+      AND profiles.cleaner_id IS NOT NULL
+    )
+  );
+
+-- Policy: Cleaners can update status of bookings assigned to them
+DROP POLICY IF EXISTS "Cleaners can update assigned booking status" ON bookings;
+CREATE POLICY "Cleaners can update assigned booking status" ON bookings
+  FOR UPDATE
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles
+      WHERE profiles.id = auth.uid()
+      AND profiles.cleaner_id = bookings.assigned_cleaner_id
+      AND profiles.cleaner_id IS NOT NULL
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM profiles
+      WHERE profiles.id = auth.uid()
+      AND profiles.cleaner_id = bookings.assigned_cleaner_id
+      AND profiles.cleaner_id IS NOT NULL
+    )
+  );
+
 -- Optional: Create a profiles table for user information
 CREATE TABLE IF NOT EXISTS profiles (
   id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
@@ -98,6 +158,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   full_name TEXT,
   email TEXT,
   phone TEXT,
+  cleaner_id TEXT REFERENCES cleaners(cleaner_id),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -122,21 +183,84 @@ CREATE POLICY "Users can insert own profile" ON profiles
   FOR INSERT
   WITH CHECK (auth.uid() = id);
 
+-- Policy: Cleaners can view their own profile
+DROP POLICY IF EXISTS "Cleaners can view own profile" ON profiles;
+CREATE POLICY "Cleaners can view own profile" ON profiles
+  FOR SELECT
+  USING (auth.uid() = id);
+
+-- Policy: Cleaners can update their own profile
+DROP POLICY IF EXISTS "Cleaners can update own profile" ON profiles;
+CREATE POLICY "Cleaners can update own profile" ON profiles
+  FOR UPDATE
+  USING (auth.uid() = id);
+
 -- Create index on email in profiles for faster lookups
 CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
 
+-- Create index on cleaner_id in profiles
+CREATE INDEX IF NOT EXISTS idx_profiles_cleaner_id ON profiles(cleaner_id);
+
+-- Add unique constraint on phone for cleaner accounts (where cleaner_id is not null)
+-- Note: This allows multiple regular users with same phone, but cleaners must have unique phones
+CREATE UNIQUE INDEX IF NOT EXISTS idx_profiles_cleaner_phone_unique 
+ON profiles(phone) 
+WHERE cleaner_id IS NOT NULL AND phone IS NOT NULL;
+
 -- Function to create profile on user signup
+-- Updated to support both email and phone-based authentication
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
+DECLARE
+  user_phone TEXT;
+  user_cleaner_id TEXT;
 BEGIN
-  INSERT INTO public.profiles (id, first_name, last_name, full_name)
+  -- Extract phone from auth.users table or metadata
+  user_phone := COALESCE(
+    NEW.phone, -- Phone from auth.users table (for phone-based auth)
+    NEW.raw_user_meta_data->>'phone' -- Phone from metadata as fallback
+  );
+  
+  -- Extract cleaner_id from metadata if present
+  user_cleaner_id := NEW.raw_user_meta_data->>'cleaner_id';
+  
+  -- Insert profile with all available data
+  -- Use ON CONFLICT to prevent errors if profile already exists
+  INSERT INTO public.profiles (
+    id, 
+    first_name, 
+    last_name, 
+    full_name, 
+    email,
+    phone,
+    cleaner_id
+  )
   VALUES (
     NEW.id,
     NEW.raw_user_meta_data->>'first_name',
     NEW.raw_user_meta_data->>'last_name',
-    NEW.raw_user_meta_data->>'full_name'
-  );
+    NEW.raw_user_meta_data->>'full_name',
+    NEW.email, -- Can be NULL for phone-based users
+    user_phone,
+    NULLIF(user_cleaner_id, '') -- Set cleaner_id if present and not empty
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    -- Update fields if profile already exists (shouldn't happen, but be safe)
+    phone = COALESCE(EXCLUDED.phone, profiles.phone),
+    email = COALESCE(EXCLUDED.email, profiles.email),
+    cleaner_id = COALESCE(EXCLUDED.cleaner_id, profiles.cleaner_id),
+    first_name = COALESCE(EXCLUDED.first_name, profiles.first_name),
+    last_name = COALESCE(EXCLUDED.last_name, profiles.last_name),
+    full_name = COALESCE(EXCLUDED.full_name, profiles.full_name);
+  
   RETURN NEW;
+EXCEPTION
+  -- Catch any errors and log them, but don't fail the user creation
+  WHEN OTHERS THEN
+    -- Log the error but allow user creation to proceed
+    -- The application code will handle profile creation/update manually
+    RAISE WARNING 'Error in handle_new_user trigger for user %: %', NEW.id, SQLERRM;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
@@ -215,5 +339,33 @@ INSERT INTO popular_services (name, slug, display_order) VALUES
   ('Deep Cleaning', 'deep-cleaning', 3),
   ('Move-In Cleaning', 'move-in-cleaning', 4)
 ON CONFLICT (name) DO NOTHING;
+
+-- Trigger to update updated_at on cleaners
+DROP TRIGGER IF EXISTS update_cleaners_updated_at ON cleaners;
+CREATE TRIGGER update_cleaners_updated_at
+  BEFORE UPDATE ON cleaners
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================================================
+-- HELPER FUNCTION: Get cleaner_id from user
+-- ============================================================================
+CREATE OR REPLACE FUNCTION get_cleaner_id_from_user()
+RETURNS TEXT AS $$
+BEGIN
+  RETURN (
+    SELECT cleaner_id 
+    FROM profiles 
+    WHERE id = auth.uid() 
+    AND cleaner_id IS NOT NULL
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- ============================================================================
+-- COMMENTS FOR DOCUMENTATION
+-- ============================================================================
+COMMENT ON COLUMN bookings.assigned_cleaner_id IS 'The cleaner_id assigned to complete this booking (may differ from cleaner_preference)';
+COMMENT ON COLUMN profiles.cleaner_id IS 'Links user account to cleaner record if this is a cleaner account';
 
 

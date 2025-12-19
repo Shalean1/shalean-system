@@ -45,24 +45,24 @@ export default function ReferralStats({
   const getColorClasses = (color: string) => {
     const colors = {
       blue: {
-        bg: "bg-gradient-to-br from-blue-50 to-blue-100",
-        icon: "bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-200",
-        value: "text-blue-700",
+        bg: "bg-[#e6f0ff]",
+        icon: "bg-[#007bff] text-white",
+        value: "text-[#007bff]",
       },
       green: {
-        bg: "bg-gradient-to-br from-green-50 to-green-100",
-        icon: "bg-gradient-to-br from-green-500 to-green-600 text-white shadow-lg shadow-green-200",
-        value: "text-green-700",
+        bg: "bg-[#e6ffe6]",
+        icon: "bg-[#28a745] text-white",
+        value: "text-[#28a745]",
       },
       purple: {
-        bg: "bg-gradient-to-br from-purple-50 to-purple-100",
-        icon: "bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-200",
-        value: "text-purple-700",
+        bg: "bg-[#f7e6ff]",
+        icon: "bg-[#6f42c1] text-white",
+        value: "text-[#6f42c1]",
       },
       yellow: {
-        bg: "bg-gradient-to-br from-yellow-50 to-yellow-100",
-        icon: "bg-gradient-to-br from-yellow-500 to-yellow-600 text-white shadow-lg shadow-yellow-200",
-        value: "text-yellow-700",
+        bg: "bg-[#fffbea]",
+        icon: "bg-[#ffc107] text-white",
+        value: "text-[#ffc107]",
       },
     };
     return colors[color as keyof typeof colors] || colors.blue;
@@ -76,16 +76,16 @@ export default function ReferralStats({
         return (
           <div
             key={index}
-            className={`${colors.bg} rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow`}
+            className={`${colors.bg} rounded-xl p-6 shadow-sm`}
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <p className="text-sm font-medium text-[#4a4a4a] mb-2">{stat.label}</p>
+                <p className={`text-2xl font-bold ${colors.value}`}>{stat.value}</p>
+              </div>
               <div className={`${colors.icon} p-3 rounded-lg`}>
                 <Icon className="w-6 h-6" />
               </div>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">{stat.label}</p>
-              <p className={`text-2xl font-bold ${colors.value}`}>{stat.value}</p>
             </div>
           </div>
         );

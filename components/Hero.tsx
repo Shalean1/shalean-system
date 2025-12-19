@@ -132,7 +132,7 @@ export default function Hero() {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onFocus={handleInputFocus}
-                      className="w-full px-6 py-4 pr-12 border-2 border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
+                      className="w-full px-6 py-4 pr-12 border-2 border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-transparent text-base"
                       aria-label="Search for cleaning services"
                       autoComplete="off"
                     />
@@ -154,7 +154,7 @@ export default function Hero() {
                           key={service.id}
                           type="button"
                           onClick={() => handleServiceSelect(service)}
-                          className="w-full px-6 py-4 text-left hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-b-0 first:rounded-t-xl last:rounded-b-xl"
+                          className="w-full px-6 py-4 text-left hover:bg-[#e6f0ff] transition-colors border-b border-gray-100 last:border-b-0 first:rounded-t-xl last:rounded-b-xl"
                         >
                           <div className="font-semibold text-gray-900 mb-1">
                             {service.name}
@@ -178,7 +178,7 @@ export default function Hero() {
                 </div>
                 <Link
                   href="/booking/service/standard/details"
-                  className="px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors shadow-lg flex items-center justify-center gap-2 text-base"
+                  className="px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg flex items-center justify-center gap-2 text-base"
                 >
                   <Search className="w-5 h-5" />
                   Book cleaning today
@@ -193,7 +193,7 @@ export default function Hero() {
                 <Link
                   key={category.id}
                   href={`/booking/service/${mapServiceSlugToType(category.slug)}/details`}
-                  className="px-3 py-1.5 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-full text-xs sm:text-sm font-medium transition-colors"
+                  className="px-3 py-1.5 bg-[#e6f0ff] hover:bg-[#cce0ff] text-[#007bff] rounded-full text-xs sm:text-sm font-medium transition-colors"
                 >
                   {category.name}
                 </Link>

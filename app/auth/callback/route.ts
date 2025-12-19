@@ -28,7 +28,21 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    if (data.session) {
+    if (data.session && data.user) {
+      // Ensure profile exists (trigger may be disabled)
+      try {
+        const { ensureUserProfile } = await import("@/lib/utils/profile-creation");
+        await ensureUserProfile(data.user.id, {
+          email: data.user.email || null,
+          firstName: data.user.user_metadata?.first_name || null,
+          lastName: data.user.user_metadata?.last_name || null,
+          fullName: data.user.user_metadata?.full_name || null,
+        });
+      } catch (profileError) {
+        // Log but don't fail - profile can be created later
+        console.error("Error ensuring profile in callback:", profileError);
+      }
+      
       // Successfully verified and logged in
       // Redirect to dashboard or home page
       return NextResponse.redirect(new URL(next, requestUrl.origin));
@@ -53,7 +67,21 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    if (data.session) {
+    if (data.session && data.user) {
+      // Ensure profile exists (trigger may be disabled)
+      try {
+        const { ensureUserProfile } = await import("@/lib/utils/profile-creation");
+        await ensureUserProfile(data.user.id, {
+          email: data.user.email || null,
+          firstName: data.user.user_metadata?.first_name || null,
+          lastName: data.user.user_metadata?.last_name || null,
+          fullName: data.user.user_metadata?.full_name || null,
+        });
+      } catch (profileError) {
+        // Log but don't fail - profile can be created later
+        console.error("Error ensuring profile in callback:", profileError);
+      }
+      
       // Successfully verified and logged in
       // Redirect to dashboard or home page
       return NextResponse.redirect(new URL(next, requestUrl.origin));

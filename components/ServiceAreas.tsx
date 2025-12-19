@@ -55,7 +55,7 @@ export default function ServiceAreas() {
         {/* Areas List */}
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-center gap-2 mb-8">
-            <Globe className="w-6 h-6 text-blue-500" />
+            <Globe className="w-6 h-6 text-[#007bff]" />
             <span className="text-lg font-semibold text-gray-700">Cape Town, Western Cape</span>
           </div>
 
@@ -65,7 +65,7 @@ export default function ServiceAreas() {
               <Link
                 key={area}
                 href={`/areas/${area.toLowerCase().replace(/\s+/g, "-")}`}
-                className="text-gray-700 hover:text-blue-600 hover:underline transition-colors text-sm md:text-base"
+                className="text-gray-700 hover:text-[#007bff] hover:underline transition-colors text-sm md:text-base"
               >
                 {area}
               </Link>
@@ -79,7 +79,7 @@ export default function ServiceAreas() {
             </p>
             <Link
               href="/booking/service/standard/details"
-              className="inline-block px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors shadow-lg"
+              className="inline-block px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg"
             >
               Book Now
             </Link>

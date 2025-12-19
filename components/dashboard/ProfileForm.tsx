@@ -8,9 +8,10 @@ import { User, Mail, Phone, Save, Loader2 } from "lucide-react";
 interface ProfileFormProps {
   initialProfile: UserProfile | null;
   userEmail: string;
+  cancelLink?: string;
 }
 
-export default function ProfileForm({ initialProfile, userEmail }: ProfileFormProps) {
+export default function ProfileForm({ initialProfile, userEmail, cancelLink = "/" }: ProfileFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   
@@ -180,7 +181,7 @@ export default function ProfileForm({ initialProfile, userEmail }: ProfileFormPr
             )}
           </button>
           <a
-            href="/dashboard"
+            href={cancelLink}
             className="px-6 py-3 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition-colors"
           >
             Cancel

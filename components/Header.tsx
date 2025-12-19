@@ -19,15 +19,13 @@ export default function Header() {
   const pathname = usePathname();
   const { user, loading: userLoading } = useUser();
 
-  // Hide header on booking form pages, auth pages, dashboard, and admin pages
+  // Hide header on booking form pages, auth pages, and cleaner pages
   if (
     pathname === "/booking/quote" ||
     pathname === "/booking/quote/confirmation" ||
     pathname?.startsWith("/booking/service/") ||
-    pathname?.includes("/confirmation") ||
     pathname?.startsWith("/auth") ||
-    pathname?.startsWith("/dashboard") ||
-    pathname?.startsWith("/admin")
+    pathname?.startsWith("/cleaner")
   ) {
     return null;
   }
@@ -39,11 +37,9 @@ export default function Header() {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center" aria-label="Shalean Cleaning Services Home">
-              <img 
-                src="/shalean-logo.png" 
-                alt="Shalean" 
-                className="h-8 md:h-10 w-auto"
-              />
+              <span className="text-2xl md:text-3xl font-bold text-gray-900" style={{ fontFamily: 'cursive, system-ui' }}>
+                Shalean
+              </span>
             </Link>
           </div>
 

@@ -35,7 +35,7 @@ function ServiceImage({ src, alt }: { src: string; alt: string }) {
 
   if (imageError) {
     return (
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-200" />
+      <div className="absolute inset-0 bg-[#e6f0ff]" />
     );
   }
 
@@ -65,19 +65,26 @@ export default function Services() {
 
         {/* Service Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto">
-          {popularServices.map((service) => {
+          {popularServices.map((service, index) => {
+            const colors = [
+              { badge: "bg-[#007bff]", price: "text-[#007bff]", hover: "group-hover:text-[#007bff]" },
+              { badge: "bg-[#28a745]", price: "text-[#28a745]", hover: "group-hover:text-[#28a745]" },
+              { badge: "bg-[#6f42c1]", price: "text-[#6f42c1]", hover: "group-hover:text-[#6f42c1]" },
+            ];
+            const colorScheme = colors[index % colors.length];
+            
             return (
               <Link
                 key={service.id}
                 href={`/services/${service.id}`}
-                className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200"
+                className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 hover:bg-[#e6f0ff]"
               >
                 {/* Service Image */}
                 <div className="relative h-48 overflow-hidden">
                   <ServiceImage src={service.image} alt={service.name} />
                   {/* Category Badge */}
                   <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full">
+                    <span className={`px-3 py-1 ${colorScheme.badge} text-white text-xs font-semibold rounded-full`}>
                       {service.category}
                     </span>
                   </div>
@@ -85,17 +92,17 @@ export default function Services() {
 
                 {/* Service Content */}
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                  <h3 className={`text-xl font-bold text-gray-900 mb-2 ${colorScheme.hover} transition-colors`}>
                     {service.name}
                   </h3>
                   <p className="text-gray-600 mb-4 text-sm">
                     {service.description}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-blue-600">
+                    <span className={`text-2xl font-bold ${colorScheme.price}`}>
                       Avg. {service.avgPrice}
                     </span>
-                    <span className="text-sm text-gray-500 group-hover:text-blue-600 transition-colors">
+                    <span className={`text-sm text-gray-500 ${colorScheme.hover} transition-colors`}>
                       Learn more →
                     </span>
                   </div>
@@ -109,7 +116,7 @@ export default function Services() {
         <div className="text-center mt-12">
           <Link
             href="/booking/service/standard/details"
-            className="inline-block px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors shadow-lg"
+            className="inline-block px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg"
           >
             Book a Service
           </Link>

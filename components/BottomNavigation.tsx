@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Calendar, User, MoreHorizontal } from "lucide-react";
+import { Home, Calendar, User, MoreHorizontal, DollarSign, TrendingUp, Plus } from "lucide-react";
 import { useState } from "react";
 import SidebarMenu from "./SidebarMenu";
 
@@ -17,25 +17,53 @@ export default function BottomNavigation() {
     pathname?.startsWith("/booking/service/") ||
     pathname?.includes("/confirmation") ||
     pathname?.startsWith("/auth") ||
-    pathname?.startsWith("/admin")
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/cleaner/login")
   ) {
     return null;
   }
 
   const isActive = (href: string) => {
-    if (href === "/" || href === "/dashboard") {
-      return pathname === "/" || pathname === "/dashboard";
+    if (href === "/" || href === "/dashboard" || href === "/cleaner") {
+      return pathname === "/" || pathname === "/dashboard" || pathname === "/cleaner";
     }
     return pathname?.startsWith(href);
   };
 
-  // Determine home href based on current path
-  const homeHref = pathname?.startsWith("/dashboard") ? "/dashboard" : "/";
+  // Check if we're on a cleaner page
+  const isCleanerPage = pathname?.startsWith("/cleaner");
 
-  const navItems = [
+  // Determine home href based on current path
+  const homeHref = pathname?.startsWith("/dashboard") 
+    ? "/dashboard" 
+    : pathname?.startsWith("/cleaner")
+    ? "/cleaner"
+    : "/";
+
+  // Cleaner navigation items
+  const cleanerNavItems = [
+    {
+      href: "/cleaner",
+      label: "Jobs",
+      icon: Calendar,
+    },
+    {
+      href: "/cleaner/earnings",
+      label: "Earnings",
+      icon: DollarSign,
+    },
+    {
+      href: "/cleaner/schedule",
+      label: "More jobs",
+      icon: TrendingUp,
+    },
+  ];
+
+  // Regular navigation items
+  const regularNavItems = [
     {
       href: homeHref,
-      label: "Home",
+      label: "Jobs",
       icon: Home,
     },
     {
@@ -49,6 +77,8 @@ export default function BottomNavigation() {
       icon: User,
     },
   ];
+
+  const navItems = isCleanerPage ? cleanerNavItems : regularNavItems;
 
   return (
     <>
@@ -86,7 +116,13 @@ export default function BottomNavigation() {
             }`}
             aria-label="More options"
           >
-            <MoreHorizontal className={`w-6 h-6 ${isSidebarOpen ? "text-blue-600" : ""}`} />
+            {isCleanerPage ? (
+              <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center">
+                <Plus className="w-4 h-4 text-white" />
+              </div>
+            ) : (
+              <MoreHorizontal className={`w-6 h-6 ${isSidebarOpen ? "text-blue-600" : ""}`} />
+            )}
             <span className={`text-xs mt-1 font-medium ${isSidebarOpen ? "text-blue-600" : "text-gray-500"}`}>
               More
             </span>
@@ -99,5 +135,7 @@ export default function BottomNavigation() {
     </>
   );
 }
+
+
 
 

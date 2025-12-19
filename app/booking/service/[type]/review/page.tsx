@@ -1236,7 +1236,9 @@ export default function ReviewPage() {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-gray-700">{address || "Not specified"}</p>
+                  <p className="text-gray-700" suppressHydrationWarning>
+                    {isMounted ? (address || "Not specified") : "Not specified"}
+                  </p>
                 )}
               </div>
             </section>

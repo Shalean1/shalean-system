@@ -6,9 +6,10 @@ import { Copy, Check, Share2 } from "lucide-react";
 interface ReferralCodeProps {
   code: string;
   referralUrl: string;
+  description?: string;
 }
 
-export default function ReferralCode({ code, referralUrl }: ReferralCodeProps) {
+export default function ReferralCode({ code, referralUrl, description }: ReferralCodeProps) {
   const [copied, setCopied] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
 
@@ -40,7 +41,7 @@ export default function ReferralCode({ code, referralUrl }: ReferralCodeProps) {
         </div>
         <div>
           <h2 className="text-xl font-bold text-gray-900">Your Referral Code</h2>
-          <p className="text-sm text-gray-600">Share this code with friends to earn rewards</p>
+          <p className="text-sm text-gray-600">{description || "Share this code with friends to earn rewards"}</p>
         </div>
       </div>
 

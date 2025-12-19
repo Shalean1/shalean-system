@@ -5,7 +5,7 @@ interface StatusBadgeProps {
 }
 
 export default function StatusBadge({ status }: StatusBadgeProps) {
-  const statusConfig = {
+  const statusConfig: Record<Booking["status"], { label: string; className: string }> = {
     pending: {
       label: "Pending",
       className: "bg-yellow-100 text-yellow-800 border-yellow-300",
@@ -13,6 +13,10 @@ export default function StatusBadge({ status }: StatusBadgeProps) {
     confirmed: {
       label: "Confirmed",
       className: "bg-blue-100 text-blue-800 border-blue-300",
+    },
+    "in-progress": {
+      label: "In Progress",
+      className: "bg-purple-100 text-purple-800 border-purple-300",
     },
     completed: {
       label: "Completed",

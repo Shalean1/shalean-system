@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getUserBookings, getBookingCounts, getUpcomingBookings, getSpendingAnalytics } from "@/lib/storage/bookings-supabase";
 import { getUserDisplayName } from "@/lib/storage/profile-supabase";
@@ -19,17 +18,14 @@ export default async function DashboardPage() {
     
     const {
       data: { user },
-      error: authError,
     } = await supabase.auth.getUser();
 
-    // Redirect to login if not authenticated
-    if (!user) {
-      redirect("/auth/login");
-    }
+    // Note: Authentication is already handled in the layout
+    // User is guaranteed to be authenticated at this point
 
   // Fetch user data with error handling
   let bookings: Booking[];
-  let counts: { total: number; upcoming: number; completed: number; cancelled: number };
+  let counts: { upcoming: number; today: number; new: number; past: number };
   let upcomingBookings: Booking[];
   let displayName: string;
   let spendingAnalytics: {
@@ -54,9 +50,9 @@ export default async function DashboardPage() {
     console.error("Error fetching dashboard data:", error);
     // Return default values on error
     bookings = [];
-    counts = { total: 0, upcoming: 0, completed: 0, cancelled: 0 };
+    counts = { upcoming: 0, today: 0, new: 0, past: 0 };
     upcomingBookings = [];
-    displayName = user.email?.split("@")[0] || "User";
+    displayName = user?.email?.split("@")[0] || "User";
     spendingAnalytics = {
       totalSpent: 0,
       averageBookingValue: 0,
@@ -100,10 +96,11 @@ export default async function DashboardPage() {
         {/* Stats */}
         <div className="mb-6">
           <DashboardStats
-            total={counts.total}
             upcoming={counts.upcoming}
-            completed={counts.completed}
-            cancelled={counts.cancelled}
+            today={counts.today}
+            new={counts.new}
+            past={counts.past}
+            bookings={bookings}
           />
         </div>
 

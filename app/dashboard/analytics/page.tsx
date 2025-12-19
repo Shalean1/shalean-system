@@ -63,7 +63,7 @@ export default async function AnalyticsPage() {
             <ServiceInsights
               mostBookedService={spendingAnalytics.mostBookedService}
               favoriteFrequency={spendingAnalytics.favoriteFrequency}
-              totalBookings={counts.total}
+              totalBookings={counts.upcoming + counts.today + counts.new + counts.past}
             />
           </div>
         </div>
@@ -71,6 +71,12 @@ export default async function AnalyticsPage() {
     </div>
   );
 }
+
+
+
+
+
+
 
 
 

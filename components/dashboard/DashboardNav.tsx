@@ -16,7 +16,8 @@ import {
   UserPlus, 
   HelpCircle, 
   Mail, 
-  FileText 
+  FileText,
+  DollarSign
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -32,7 +33,7 @@ export default function DashboardNav({ onMobileMenuClose, variant }: DashboardNa
   const navItems = [
     {
       href: "/dashboard",
-      label: "Home",
+      label: "Jobs",
       icon: Home,
     },
     {
@@ -59,6 +60,11 @@ export default function DashboardNav({ onMobileMenuClose, variant }: DashboardNa
       href: "/dashboard/payments",
       label: "Payments",
       icon: CreditCard,
+    },
+    {
+      href: "/dashboard/earnings",
+      label: "Earnings",
+      icon: DollarSign,
     },
     {
       href: "/dashboard/shalcred",

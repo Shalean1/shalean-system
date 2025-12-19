@@ -10,6 +10,13 @@ export async function saveBooking(booking: Booking): Promise<void> {
   // Falls back to regular client if service role key is not configured
   const supabase = createServiceRoleClient();
   
+  // Set assigned_cleaner_id based on cleaner_preference
+  // If cleaner_preference is not "no-preference", assign that cleaner
+  const normalizedPreference = normalizeCleanerPreference(booking.cleanerPreference);
+  const assignedCleanerId = normalizedPreference !== "no-preference" 
+    ? normalizedPreference 
+    : null;
+  
   const { data, error } = await supabase
     .from("bookings")
     .insert({
@@ -26,7 +33,8 @@ export async function saveBooking(booking: Booking): Promise<void> {
       apt_unit: booking.aptUnit || null,
       suburb: booking.suburb,
       city: booking.city,
-      cleaner_preference: normalizeCleanerPreference(booking.cleanerPreference),
+      cleaner_preference: normalizedPreference,
+      assigned_cleaner_id: assignedCleanerId,
       special_instructions: booking.specialInstructions || null,
       contact_first_name: booking.firstName,
       contact_last_name: booking.lastName,
@@ -275,22 +283,22 @@ export async function getUpcomingBookings(): Promise<Booking[]> {
  * Get booking counts for current user
  */
 export async function getBookingCounts(): Promise<{
-  total: number;
   upcoming: number;
-  completed: number;
-  cancelled: number;
+  today: number;
+  new: number;
+  past: number;
 }> {
   const supabase = await createClient();
   
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) {
-    return { total: 0, upcoming: 0, completed: 0, cancelled: 0 };
+    return { upcoming: 0, today: 0, new: 0, past: 0 };
   }
 
   const { data, error } = await supabase
     .from("bookings")
-    .select("status, scheduled_date")
+    .select("status, scheduled_date, created_at")
     .eq("contact_email", user.email);
 
   if (error) {
@@ -299,16 +307,30 @@ export async function getBookingCounts(): Promise<{
 
   const bookings = data || [];
   const today = new Date().toISOString().split('T')[0];
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+  const sevenDaysAgo = new Date(todayDate);
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
   const counts = {
-    total: bookings.length,
     upcoming: bookings.filter(
       (b) => 
         (b.status === "pending" || b.status === "confirmed") && 
         b.scheduled_date >= today
     ).length,
-    completed: bookings.filter((b) => b.status === "completed").length,
-    cancelled: bookings.filter((b) => b.status === "cancelled").length,
+    today: bookings.filter(
+      (b) => b.scheduled_date === today
+    ).length,
+    new: bookings.filter(
+      (b) => {
+        if (!b.created_at) return false;
+        const createdAt = new Date(b.created_at);
+        return createdAt >= sevenDaysAgo;
+      }
+    ).length,
+    past: bookings.filter(
+      (b) => b.scheduled_date && b.scheduled_date < today
+    ).length,
   };
 
   return counts;
@@ -404,6 +426,278 @@ export async function getSpendingAnalytics(): Promise<{
     mostBookedService,
     favoriteFrequency,
   };
+}
+
+/**
+ * Get weekly spending/earnings data for current user
+ * Returns data for the current week (Monday to Sunday)
+ */
+export async function getWeeklySpending(): Promise<{
+  weekStart: Date;
+  weekEnd: Date;
+  weekStartStr: string;
+  weekEndStr: string;
+  completedJobs: Booking[];
+  upcomingJobs: Booking[];
+  jobsCount: number;
+  totalHours: number;
+  tipsTotal: number;
+  earningsTotal: number;
+  totalAmount: number;
+  upcomingJobsCount: number;
+  upcomingHours: number;
+  estimatedEarnings: number;
+}> {
+  const supabase = await createClient();
+  
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust to Monday start
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() + diff);
+    weekStart.setHours(0, 0, 0, 0);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    weekEnd.setHours(23, 59, 59, 999);
+    
+    return {
+      weekStart,
+      weekEnd,
+      weekStartStr: formatWeekDate(weekStart),
+      weekEndStr: formatWeekDate(weekEnd),
+      completedJobs: [],
+      upcomingJobs: [],
+      jobsCount: 0,
+      totalHours: 0,
+      tipsTotal: 0,
+      earningsTotal: 0,
+      totalAmount: 0,
+      upcomingJobsCount: 0,
+      upcomingHours: 0,
+      estimatedEarnings: 0,
+    };
+  }
+
+  // Calculate week range (Monday to Sunday)
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust to Monday start
+  const weekStart = new Date(now);
+  weekStart.setDate(now.getDate() + diff);
+  weekStart.setHours(0, 0, 0, 0);
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  weekEnd.setHours(23, 59, 59, 999);
+  
+  const weekStartStr = weekStart.toISOString().split('T')[0];
+  const weekEndStr = weekEnd.toISOString().split('T')[0];
+
+  // Fetch all bookings for this user
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("contact_email", user.email)
+    .order("scheduled_date", { ascending: true });
+
+  if (error) {
+    throw new Error(`Failed to fetch weekly spending: ${error.message}`);
+  }
+
+  const bookings = (data || []).map(mapDatabaseToBooking);
+  
+  // Filter completed jobs for this week
+  const completedJobs = bookings.filter((b) => {
+    if (b.status !== "completed") return false;
+    const scheduledDate = new Date(b.scheduledDate!);
+    return scheduledDate >= weekStart && scheduledDate <= weekEnd;
+  });
+
+  // Filter upcoming jobs for this week
+  const upcomingJobs = bookings.filter((b) => {
+    if (b.status === "completed" || b.status === "cancelled") return false;
+    const scheduledDate = new Date(b.scheduledDate!);
+    return scheduledDate >= weekStart && scheduledDate <= weekEnd;
+  });
+
+  // Calculate totals for completed jobs
+  const jobsCount = completedJobs.length;
+  const totalHours = completedJobs.reduce((sum, b) => {
+    return sum + estimateJobHours(b.service, b.bedrooms, b.bathrooms);
+  }, 0);
+  const tipsTotal = completedJobs.reduce((sum, b) => sum + (b.tip || 0), 0);
+  const earningsTotal = completedJobs
+    .filter((b) => b.paymentStatus === "completed")
+    .reduce((sum, b) => sum + (b.totalAmount - (b.tip || 0)), 0);
+  const totalAmount = earningsTotal + tipsTotal;
+
+  // Calculate upcoming jobs
+  const upcomingJobsCount = upcomingJobs.length;
+  const upcomingHours = upcomingJobs.reduce((sum, b) => {
+    return sum + estimateJobHours(b.service, b.bedrooms, b.bathrooms);
+  }, 0);
+  const estimatedEarnings = upcomingJobs.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+
+  return {
+    weekStart,
+    weekEnd,
+    weekStartStr: formatWeekDate(weekStart),
+    weekEndStr: formatWeekDate(weekEnd),
+    completedJobs,
+    upcomingJobs,
+    jobsCount,
+    totalHours,
+    tipsTotal,
+    earningsTotal,
+    totalAmount,
+    upcomingJobsCount,
+    upcomingHours,
+    estimatedEarnings,
+  };
+}
+
+/**
+ * Get historical earnings data for current user
+ * Returns all completed bookings grouped by month
+ */
+export async function getHistoricalEarnings(): Promise<{
+  totalJobs: number;
+  totalHours: number;
+  totalTips: number;
+  totalEarnings: number;
+  totalAmount: number;
+  monthlyData: Array<{
+    month: string;
+    monthKey: string;
+    jobs: Booking[];
+    jobsCount: number;
+    hours: number;
+    tips: number;
+    earnings: number;
+    total: number;
+  }>;
+}> {
+  const supabase = await createClient();
+  
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    return {
+      totalJobs: 0,
+      totalHours: 0,
+      totalTips: 0,
+      totalEarnings: 0,
+      totalAmount: 0,
+      monthlyData: [],
+    };
+  }
+
+  // Fetch all completed bookings for this user
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("contact_email", user.email)
+    .eq("status", "completed")
+    .order("scheduled_date", { ascending: false });
+
+  if (error) {
+    throw new Error(`Failed to fetch historical earnings: ${error.message}`);
+  }
+
+  const bookings = (data || []).map(mapDatabaseToBooking);
+  
+  // Group by month
+  const monthlyMap = new Map<string, Booking[]>();
+  
+  bookings.forEach((booking) => {
+    if (!booking.scheduledDate) return;
+    const date = new Date(booking.scheduledDate);
+    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    const monthName = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    
+    if (!monthlyMap.has(monthKey)) {
+      monthlyMap.set(monthKey, []);
+    }
+    monthlyMap.get(monthKey)!.push(booking);
+  });
+
+  // Convert to array and calculate totals for each month
+  const monthlyData = Array.from(monthlyMap.entries()).map(([monthKey, jobs]) => {
+    const firstJob = jobs[0];
+    const date = new Date(firstJob.scheduledDate!);
+    const monthName = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    
+    const hours = jobs.reduce((sum, b) => sum + estimateJobHours(b.service, b.bedrooms, b.bathrooms), 0);
+    const tips = jobs.reduce((sum, b) => sum + (b.tip || 0), 0);
+    const earnings = jobs
+      .filter((b) => b.paymentStatus === "completed")
+      .reduce((sum, b) => sum + (b.totalAmount - (b.tip || 0)), 0);
+    const total = earnings + tips;
+    
+    return {
+      month: monthName,
+      monthKey,
+      jobs,
+      jobsCount: jobs.length,
+      hours,
+      tips,
+      earnings,
+      total,
+    };
+  }).sort((a, b) => b.monthKey.localeCompare(a.monthKey)); // Sort by most recent first
+
+  // Calculate overall totals
+  const totalJobs = bookings.length;
+  const totalHours = bookings.reduce((sum, b) => sum + estimateJobHours(b.service, b.bedrooms, b.bathrooms), 0);
+  const totalTips = bookings.reduce((sum, b) => sum + (b.tip || 0), 0);
+  const totalEarnings = bookings
+    .filter((b) => b.paymentStatus === "completed")
+    .reduce((sum, b) => sum + (b.totalAmount - (b.tip || 0)), 0);
+  const totalAmount = totalEarnings + totalTips;
+
+  return {
+    totalJobs,
+    totalHours,
+    totalTips,
+    totalEarnings,
+    totalAmount,
+    monthlyData,
+  };
+}
+
+/**
+ * Estimate job hours based on service type and property size
+ */
+function estimateJobHours(service: string, bedrooms: number, bathrooms: number): number {
+  const baseHours: Record<string, number> = {
+    standard: 2,
+    deep: 4,
+    "move-in-out": 5,
+    airbnb: 3,
+    office: 3,
+    holiday: 4,
+  };
+
+  const base = baseHours[service] || 2;
+  const roomHours = bedrooms * 0.5 + bathrooms * 0.5;
+  return Math.round((base + roomHours) * 10) / 10;
+}
+
+/**
+ * Format date as "Wed 17 Dec 2025"
+ */
+function formatWeekDate(date: Date): string {
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  
+  const day = days[date.getDay()];
+  const dayNum = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  
+  return `${day} ${dayNum} ${month} ${year}`;
 }
 
 /**

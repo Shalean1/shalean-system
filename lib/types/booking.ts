@@ -72,7 +72,7 @@ export interface Booking extends BookingFormData {
   totalAmount: number;
   paymentStatus: "pending" | "completed" | "failed";
   paymentReference?: string;
-  status: "pending" | "confirmed" | "completed" | "cancelled";
+  status: "pending" | "confirmed" | "in-progress" | "completed" | "cancelled";
 }
 
 export interface PriceBreakdown {
