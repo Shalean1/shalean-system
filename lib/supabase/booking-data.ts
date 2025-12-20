@@ -48,6 +48,7 @@ export interface Cleaner {
   display_order: number;
   is_active: boolean;
   is_available: boolean;
+  availability_days?: string[];
 }
 
 export interface FrequencyOption {
