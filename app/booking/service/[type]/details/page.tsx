@@ -28,8 +28,6 @@ import { calculatePrice, formatPrice, fetchPricingConfig, PricingConfig } from "
 import {
   getAdditionalServices,
   getTimeSlots,
-  checkDateAvailability,
-  TimeSlotAvailability,
   FALLBACK_EXTRAS,
   FALLBACK_TIME_SLOTS,
 } from "@/lib/supabase/booking-data";
@@ -110,8 +108,6 @@ export default function ServiceDetailsPage() {
   const [timeSlots, setTimeSlots] = useState<string[]>(FALLBACK_TIME_SLOTS);
   const [pricingConfig, setPricingConfig] = useState<PricingConfig | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
-  const [slotAvailability, setSlotAvailability] = useState<TimeSlotAvailability[]>([]);
-  const [isLoadingAvailability, setIsLoadingAvailability] = useState(false);
 
   // Fetch dynamic data on mount
   useEffect(() => {
@@ -267,42 +263,6 @@ export default function ServiceDetailsPage() {
     }
   };
 
-  // Fetch availability when date is selected
-  useEffect(() => {
-    const fetchAvailability = async () => {
-      if (!formData.scheduledDate || timeSlots.length === 0) {
-        setSlotAvailability([]);
-        return;
-      }
-
-      setIsLoadingAvailability(true);
-      try {
-        const availability = await checkDateAvailability(formData.scheduledDate, timeSlots);
-        setSlotAvailability(availability);
-        
-        // Clear selected time if it becomes unavailable
-        if (formData.scheduledTime) {
-          const selectedSlotAvailability = availability.find(a => a.timeSlot === formData.scheduledTime);
-          if (!selectedSlotAvailability?.isAvailable) {
-            setFormData((prev) => ({ ...prev, scheduledTime: null }));
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching availability:', error);
-        // On error, assume all slots are available
-        setSlotAvailability(timeSlots.map(slot => ({
-          timeSlot: slot,
-          availableCleaners: 1,
-          isAvailable: true,
-        })));
-      } finally {
-        setIsLoadingAvailability(false);
-      }
-    };
-
-    fetchAvailability();
-  }, [formData.scheduledDate, timeSlots]);
-
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
@@ -316,12 +276,6 @@ export default function ServiceDetailsPage() {
 
     if (!formData.scheduledTime) {
       newErrors.scheduledTime = "Please select a time";
-    } else if (formData.scheduledDate && slotAvailability.length > 0) {
-      // Check if selected time slot is available
-      const selectedSlot = slotAvailability.find(a => a.timeSlot === formData.scheduledTime);
-      if (selectedSlot && !selectedSlot.isAvailable) {
-        newErrors.scheduledTime = "This time slot is no longer available. Please select another time.";
-      }
     }
 
     setErrors(newErrors);
@@ -490,7 +444,6 @@ export default function ServiceDetailsPage() {
                     value={formData.scheduledDate || ""}
                     onChange={(date: string) => {
                       setFormData((prev) => ({ ...prev, scheduledDate: date, scheduledTime: null }));
-                      setSlotAvailability([]); // Clear availability when date changes
                       if (errors.scheduledDate) {
                         setErrors((prev) => {
                           const newErrors = { ...prev };
@@ -516,65 +469,23 @@ export default function ServiceDetailsPage() {
                       id="scheduledTime"
                       value={formData.scheduledTime || ""}
                       onChange={handleTimeChange}
-                      disabled={!formData.scheduledDate || isLoadingAvailability}
+                      disabled={!formData.scheduledDate}
                       className={`w-full px-4 pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white ${
                         errors.scheduledTime ? "border-red-500" : "border-gray-300"
-                      } ${!formData.scheduledDate || isLoadingAvailability ? "bg-gray-100 cursor-not-allowed" : ""}`}
+                      } ${!formData.scheduledDate ? "bg-gray-100 cursor-not-allowed" : ""}`}
                     >
                       <option value="">
-                        {isLoadingAvailability 
-                          ? "Checking availability..." 
-                          : formData.scheduledDate 
-                            ? "Select a time" 
-                            : "Select date first"}
+                        {formData.scheduledDate ? "Select a time" : "Select date first"}
                       </option>
-                      {timeSlots.map((time) => {
-                        const availability = slotAvailability.find(a => a.timeSlot === time);
-                        const isAvailable = availability?.isAvailable ?? true;
-                        const availableCount = availability?.availableCleaners ?? 0;
-                        
-                        // Show availability info only if we have data
-                        const showAvailability = slotAvailability.length > 0;
-                        
-                        return (
-                          <option 
-                            key={time} 
-                            value={time}
-                            disabled={!isAvailable}
-                            className={!isAvailable ? "text-gray-400" : ""}
-                          >
-                            {time}{showAvailability && !isAvailable ? " (Unavailable)" : ""}
-                          </option>
-                        );
-                      })}
+                      {timeSlots.map((time) => (
+                        <option key={time} value={time}>
+                          {time}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   {errors.scheduledTime && (
                     <p className="mt-1 text-sm text-red-600">{errors.scheduledTime}</p>
-                  )}
-                  {formData.scheduledDate && slotAvailability.length > 0 && (
-                    <>
-                      {slotAvailability.every(slot => !slot.isAvailable) ? (
-                        <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                          <p className="text-sm text-yellow-800 font-medium mb-1 flex items-center">
-                            <AlertCircle className="w-4 h-4 mr-1 flex-shrink-0" />
-                            No cleaners available on this date
-                          </p>
-                          <p className="text-xs text-yellow-700 mt-1">
-                            Please select another date to see available time slots.
-                          </p>
-                        </div>
-                      ) : slotAvailability.some(slot => !slot.isAvailable) && (
-                        <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                          <p className="text-sm text-blue-800 font-medium mb-1">
-                            Some time slots are unavailable
-                          </p>
-                          <p className="text-xs text-blue-700 mt-1">
-                            <strong>Available slots:</strong> {slotAvailability.filter(s => s.isAvailable).map(s => s.timeSlot).join(", ")}
-                          </p>
-                        </div>
-                      )}
-                    </>
                   )}
                 </div>
               </div>

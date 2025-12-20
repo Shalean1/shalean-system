@@ -2,7 +2,9 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { getUserDisplayName } from "@/lib/storage/profile-supabase";
+import { getCurrentCleaner } from "@/lib/storage/cleaner-auth-supabase";
 import DashboardNav from "@/components/dashboard/DashboardNav";
+import CleanerNav from "@/components/cleaner/CleanerNav";
 import UserMenu from "@/components/dashboard/UserMenu";
 import PageviewTracker from "@/components/PageviewTracker";
 
@@ -23,6 +25,10 @@ export default async function DashboardLayout({
   }
 
   const displayName = await getUserDisplayName();
+  
+  // Check if user is a cleaner
+  const cleaner = await getCurrentCleaner();
+  const isCleaner = !!cleaner;
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -39,7 +45,11 @@ export default async function DashboardLayout({
           </Link>
         </div>
         {/* Navigation */}
-        <DashboardNav variant="desktop" />
+        {isCleaner ? (
+          <CleanerNav variant="desktop" />
+        ) : (
+          <DashboardNav variant="desktop" />
+        )}
       </aside>
 
       {/* Main Content Area */}
@@ -57,7 +67,11 @@ export default async function DashboardLayout({
                     className="h-8 w-auto"
                   />
                 </Link>
-                <DashboardNav variant="mobile" />
+                {isCleaner ? (
+                  <CleanerNav variant="mobile" />
+                ) : (
+                  <DashboardNav variant="mobile" />
+                )}
               </div>
               {/* Desktop: Empty space, Mobile: Hidden */}
               <div className="hidden md:block"></div>

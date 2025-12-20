@@ -53,7 +53,7 @@ export default function BottomNavigation() {
       icon: DollarSign,
     },
     {
-      href: "/cleaner/schedule",
+      href: "/cleaner/earn-more",
       label: "More jobs",
       icon: TrendingUp,
     },

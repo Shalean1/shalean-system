@@ -25,14 +25,9 @@ export default function DatePicker({
   // Initialize month based on value prop if available, otherwise use a consistent default
   const getInitialMonth = () => {
     if (value) {
-      // Parse YYYY-MM-DD format manually to avoid timezone issues
-      const parts = value.split("-");
-      if (parts.length === 3) {
-        const [year, month, day] = parts.map(Number);
-        const date = new Date(year, month - 1, day);
-        if (!isNaN(date.getTime())) {
-          return date;
-        }
+      const date = new Date(value);
+      if (!isNaN(date.getTime())) {
+        return date;
       }
     }
     // Use a consistent default date to avoid hydration issues
@@ -64,14 +59,9 @@ export default function DatePicker({
   // Update month when value changes
   useEffect(() => {
     if (value) {
-      // Parse YYYY-MM-DD format manually to avoid timezone issues
-      const parts = value.split("-");
-      if (parts.length === 3) {
-        const [year, month, day] = parts.map(Number);
-        const date = new Date(year, month - 1, day);
-        if (!isNaN(date.getTime())) {
-          setCurrentMonth(date);
-        }
+      const date = new Date(value);
+      if (!isNaN(date.getTime())) {
+        setCurrentMonth(date);
       }
     }
   }, [value]);
@@ -97,21 +87,19 @@ export default function DatePicker({
   };
 
   const handleDateSelect = (date: Date) => {
-    // Format date using local timezone to avoid timezone conversion issues
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const dateString = `${year}-${month}-${day}`;
+    const dateString = date.toISOString().split("T")[0];
     onChange(dateString);
     setIsOpen(false);
   };
 
   const formatDisplayDate = (dateString: string) => {
     if (!dateString) return "";
-    // Parse YYYY-MM-DD format manually to avoid timezone issues
-    const parts = dateString.split("-");
-    if (parts.length !== 3) return "";
-    const [year, month, day] = parts;
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "";
+    
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${year}/${month}/${day}`;
   };
 
@@ -140,11 +128,7 @@ export default function DatePicker({
 
   const isDateDisabled = (date: Date) => {
     if (!min) return false;
-    // Parse YYYY-MM-DD format manually to avoid timezone issues
-    const parts = min.split("-");
-    if (parts.length !== 3) return false;
-    const [year, month, day] = parts.map(Number);
-    const minDate = new Date(year, month - 1, day);
+    const minDate = new Date(min);
     minDate.setHours(0, 0, 0, 0);
     const checkDate = new Date(date);
     checkDate.setHours(0, 0, 0, 0);
@@ -153,14 +137,11 @@ export default function DatePicker({
 
   const isDateSelected = (date: Date) => {
     if (!value) return false;
-    // Parse YYYY-MM-DD format manually to avoid timezone issues
-    const parts = value.split("-");
-    if (parts.length !== 3) return false;
-    const [year, month, day] = parts.map(Number);
+    const selectedDate = new Date(value);
     return (
-      date.getDate() === day &&
-      date.getMonth() === month - 1 &&
-      date.getFullYear() === year
+      date.getDate() === selectedDate.getDate() &&
+      date.getMonth() === selectedDate.getMonth() &&
+      date.getFullYear() === selectedDate.getFullYear()
     );
   };
 

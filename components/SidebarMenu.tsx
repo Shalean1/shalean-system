@@ -14,11 +14,21 @@ import {
   Mail, 
   FileText,
   LogOut,
-  Settings
+  Settings,
+  Share2,
+  Calendar,
+  Edit,
+  TrendingUp,
+  CheckSquare,
+  Star,
+  DollarSign,
+  User,
+  RefreshCw
 } from "lucide-react";
 import { useUser } from "@/lib/hooks/useSupabase";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface SidebarMenuProps {
   isOpen: boolean;
@@ -29,8 +39,73 @@ export default function SidebarMenu({ isOpen, onClose }: SidebarMenuProps) {
   const pathname = usePathname();
   const { user } = useUser();
   const router = useRouter();
+  const [isCleaner, setIsCleaner] = useState(false);
+  const [cleanerName, setCleanerName] = useState<string | null>(null);
 
-  const menuItems = [
+  // Check if user is a cleaner
+  useEffect(() => {
+    async function checkCleanerStatus() {
+      if (!user) {
+        setIsCleaner(false);
+        return;
+      }
+
+      // Check if we're on a cleaner page
+      if (pathname?.startsWith("/cleaner")) {
+        setIsCleaner(true);
+        // Try to get cleaner name
+        const supabase = createClient();
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("cleaner_id")
+          .eq("id", user.id)
+          .not("cleaner_id", "is", null)
+          .single();
+        
+        if (profile?.cleaner_id) {
+          const { data: cleanerData } = await supabase
+            .from("cleaners")
+            .select("name")
+            .eq("cleaner_id", profile.cleaner_id)
+            .single();
+          
+          if (cleanerData?.name) {
+            setCleanerName(cleanerData.name);
+          }
+        }
+        return;
+      }
+
+      // Check if user has cleaner_id in profile (for dashboard pages)
+      const supabase = createClient();
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("cleaner_id")
+        .eq("id", user.id)
+        .not("cleaner_id", "is", null)
+        .single();
+
+      if (profile?.cleaner_id) {
+        setIsCleaner(true);
+        const { data: cleanerData } = await supabase
+          .from("cleaners")
+          .select("name")
+          .eq("cleaner_id", profile.cleaner_id)
+          .single();
+        
+        if (cleanerData?.name) {
+          setCleanerName(cleanerData.name);
+        }
+      } else {
+        setIsCleaner(false);
+      }
+    }
+
+    checkCleanerStatus();
+  }, [user, pathname]);
+
+  // Customer menu items
+  const customerMenuItems = [
     {
       href: "/dashboard/cleaners",
       label: "Cleaners",
@@ -78,6 +153,67 @@ export default function SidebarMenu({ isOpen, onClose }: SidebarMenuProps) {
     },
   ];
 
+  // Cleaner menu items
+  const cleanerMenuItems = [
+    {
+      href: "/cleaner/share-profile",
+      label: "Share my profile",
+      icon: Share2,
+    },
+    {
+      href: "/cleaner/work-days",
+      label: "My Work Days",
+      icon: Calendar,
+    },
+    {
+      href: "/cleaner/areas",
+      label: "My Areas",
+      icon: MapPin,
+    },
+    {
+      href: "/cleaner/change-info",
+      label: "Change my info",
+      icon: Edit,
+    },
+    {
+      href: "/cleaner/refer-friend",
+      label: "Refer a friend",
+      icon: UserPlus,
+    },
+    {
+      href: "/cleaner/earn-more",
+      label: "More jobs",
+      icon: TrendingUp,
+    },
+    {
+      href: "/cleaner/checklist",
+      label: "Checklist",
+      icon: CheckSquare,
+    },
+    {
+      href: "/cleaner/performance",
+      label: "My Performance",
+      icon: Star,
+    },
+    {
+      href: "/cleaner/earnings",
+      label: "My Earnings",
+      icon: DollarSign,
+    },
+    {
+      href: "/cleaner/info",
+      label: "My Info",
+      icon: User,
+    },
+    {
+      href: "/cleaner/contract",
+      label: "My Contract",
+      icon: FileText,
+    },
+  ];
+
+  const menuItems = isCleaner ? cleanerMenuItems : customerMenuItems;
+
   const isActive = (href: string) => {
     return pathname?.startsWith(href);
   };
@@ -119,13 +255,15 @@ export default function SidebarMenu({ isOpen, onClose }: SidebarMenuProps) {
             <div className="p-4 border-b border-gray-200 bg-gray-50">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
-                  {user.email?.charAt(0).toUpperCase() || "U"}
+                  {isCleaner && cleanerName 
+                    ? cleanerName.charAt(0).toUpperCase()
+                    : user.email?.charAt(0).toUpperCase() || "U"}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 truncate">
-                    {user.email}
+                    {isCleaner && cleanerName ? cleanerName : user.email}
                   </p>
-                  <p className="text-xs text-gray-500">Account</p>
+                  <p className="text-xs text-gray-500">{isCleaner ? "Cleaner" : "Account"}</p>
                 </div>
               </div>
             </div>
@@ -160,21 +298,50 @@ export default function SidebarMenu({ isOpen, onClose }: SidebarMenuProps) {
           <div className="border-t border-gray-200 p-4 space-y-1">
             {user ? (
               <>
-                <Link
-                  href="/dashboard/profile"
-                  onClick={onClose}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-all"
-                >
-                  <Settings className="w-5 h-5" />
-                  Settings
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-red-600 hover:bg-red-50 transition-all"
-                >
-                  <LogOut className="w-5 h-5" />
-                  Sign Out
-                </button>
+                {isCleaner ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        window.location.reload();
+                        onClose();
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-all"
+                    >
+                      <RefreshCw className="w-5 h-5" />
+                      Refresh Page
+                    </button>
+                    <button
+                      onClick={async () => {
+                        const supabase = createClient();
+                        await supabase.auth.signOut();
+                        router.push("/cleaner/login");
+                        onClose();
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-red-600 hover:bg-red-50 transition-all"
+                    >
+                      <LogOut className="w-5 h-5" />
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/dashboard/profile"
+                      onClick={onClose}
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-all"
+                    >
+                      <Settings className="w-5 h-5" />
+                      Settings
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-red-600 hover:bg-red-50 transition-all"
+                    >
+                      <LogOut className="w-5 h-5" />
+                      Sign Out
+                    </button>
+                  </>
+                )}
               </>
             ) : (
               <Link
