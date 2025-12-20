@@ -190,6 +190,156 @@ export async function getCleaners(): Promise<Cleaner[]> {
 }
 
 /**
+ * Check cleaner availability for a specific date and time slot
+ * Returns the number of available cleaners for that slot
+ */
+export interface TimeSlotAvailability {
+  timeSlot: string;
+  availableCleaners: number;
+  isAvailable: boolean;
+}
+
+export async function checkTimeSlotAvailability(
+  date: string,
+  timeSlot: string
+): Promise<number> {
+  try {
+    const supabase = createClient();
+    
+    // Get all active cleaners
+    const { data: cleaners, error: cleanersError } = await supabase
+      .from('cleaners')
+      .select('cleaner_id')
+      .eq('is_active', true)
+      .eq('is_available', true);
+
+    if (cleanersError) {
+      console.error('Error fetching cleaners:', cleanersError);
+      return 0;
+    }
+
+    if (!cleaners || cleaners.length === 0) {
+      return 0;
+    }
+
+    const cleanerIds = cleaners.map(c => c.cleaner_id);
+
+    // Check which cleaners are already booked for this date/time
+    const { data: bookings, error: bookingsError } = await supabase
+      .from('bookings')
+      .select('assigned_cleaner_id')
+      .eq('scheduled_date', date)
+      .eq('scheduled_time', timeSlot)
+      .in('status', ['pending', 'confirmed'])
+      .in('assigned_cleaner_id', cleanerIds);
+
+    if (bookingsError) {
+      console.error('Error fetching bookings:', bookingsError);
+      return cleaners.length; // Assume all are available if we can't check
+    }
+
+    const bookedCleanerIds = new Set(
+      (bookings || [])
+        .map(b => b.assigned_cleaner_id)
+        .filter(id => id !== null)
+    );
+
+    // Return count of available cleaners (total - booked)
+    return cleaners.length - bookedCleanerIds.size;
+  } catch (error) {
+    console.error('Error checking time slot availability:', error);
+    return 0;
+  }
+}
+
+/**
+ * Check availability for all time slots on a specific date
+ * Returns availability information for each time slot
+ */
+export async function checkDateAvailability(
+  date: string,
+  timeSlots: string[]
+): Promise<TimeSlotAvailability[]> {
+  try {
+    const supabase = createClient();
+    
+    // Get all active cleaners
+    const { data: cleaners, error: cleanersError } = await supabase
+      .from('cleaners')
+      .select('cleaner_id')
+      .eq('is_active', true)
+      .eq('is_available', true);
+
+    if (cleanersError) {
+      console.error('Error fetching cleaners:', cleanersError);
+      return timeSlots.map(slot => ({
+        timeSlot: slot,
+        availableCleaners: 0,
+        isAvailable: false,
+      }));
+    }
+
+    if (!cleaners || cleaners.length === 0) {
+      return timeSlots.map(slot => ({
+        timeSlot: slot,
+        availableCleaners: 0,
+        isAvailable: false,
+      }));
+    }
+
+    const cleanerIds = cleaners.map(c => c.cleaner_id);
+    const totalCleaners = cleaners.length;
+
+    // Get all bookings for this date with pending/confirmed status
+    const { data: bookings, error: bookingsError } = await supabase
+      .from('bookings')
+      .select('scheduled_time, assigned_cleaner_id')
+      .eq('scheduled_date', date)
+      .in('status', ['pending', 'confirmed']);
+
+    if (bookingsError) {
+      console.error('Error fetching bookings:', bookingsError);
+      // Assume all slots are available if we can't check
+      return timeSlots.map(slot => ({
+        timeSlot: slot,
+        availableCleaners: totalCleaners,
+        isAvailable: totalCleaners > 0,
+      }));
+    }
+
+    // Group bookings by time slot
+    const bookingsByTimeSlot = new Map<string, Set<string>>();
+    (bookings || []).forEach(booking => {
+      if (booking.assigned_cleaner_id && booking.scheduled_time) {
+        if (!bookingsByTimeSlot.has(booking.scheduled_time)) {
+          bookingsByTimeSlot.set(booking.scheduled_time, new Set());
+        }
+        bookingsByTimeSlot.get(booking.scheduled_time)!.add(booking.assigned_cleaner_id);
+      }
+    });
+
+    // Calculate availability for each time slot
+    return timeSlots.map(slot => {
+      const bookedCleaners = bookingsByTimeSlot.get(slot)?.size || 0;
+      const availableCleaners = totalCleaners - bookedCleaners;
+      
+      return {
+        timeSlot: slot,
+        availableCleaners,
+        isAvailable: availableCleaners > 0,
+      };
+    });
+  } catch (error) {
+    console.error('Error checking date availability:', error);
+    return timeSlots.map(slot => ({
+      timeSlot: slot,
+      availableCleaners: 0,
+      isAvailable: false,
+    }));
+  }
+}
+
+/**
  * Fetch all active frequency options
  */
 export async function getFrequencyOptions(): Promise<FrequencyOption[]> {
