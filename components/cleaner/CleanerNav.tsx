@@ -18,7 +18,10 @@ import {
   Menu, 
   X, 
   LogOut,
-  ChevronRight
+  ChevronRight,
+  LayoutDashboard,
+  List,
+  Clock
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -39,11 +42,28 @@ export default function CleanerNav({ onMobileMenuClose, variant }: CleanerNavPro
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems: NavItem[] = [
+    // Main navigation - most frequently used
     {
-      href: "/cleaner/share-profile",
-      label: "Share my profile",
-      icon: Share2,
+      href: "/cleaner",
+      label: "Dashboard",
+      icon: LayoutDashboard,
     },
+    {
+      href: "/cleaner/bookings",
+      label: "Bookings",
+      icon: List,
+    },
+    {
+      href: "/cleaner/schedule",
+      label: "Schedule",
+      icon: Clock,
+    },
+    {
+      href: "/cleaner/profile",
+      label: "Profile",
+      icon: User,
+    },
+    // Work management
     {
       href: "/cleaner/work-days",
       label: "My Work Days",
@@ -55,25 +75,11 @@ export default function CleanerNav({ onMobileMenuClose, variant }: CleanerNavPro
       icon: MapPin,
     },
     {
-      href: "/cleaner/change-info",
-      label: "Change my info",
-      icon: Edit,
-    },
-    {
-      href: "/cleaner/refer-friend",
-      label: "Refer a friend",
-      icon: UserPlus,
-    },
-    {
-      href: "/cleaner/earn-more",
-      label: "More jobs",
-      icon: TrendingUp,
-    },
-    {
       href: "/cleaner/checklist",
       label: "Checklist",
       icon: CheckSquare,
     },
+    // Performance & earnings
     {
       href: "/cleaner/performance",
       label: "My Performance",
@@ -85,15 +91,38 @@ export default function CleanerNav({ onMobileMenuClose, variant }: CleanerNavPro
       icon: DollarSign,
     },
     {
+      href: "/cleaner/earn-more",
+      label: "More jobs",
+      icon: TrendingUp,
+    },
+    // Account & settings
+    {
       href: "/cleaner/info",
       label: "My Info",
-      icon: User,
+      icon: FileText,
+    },
+    {
+      href: "/cleaner/change-info",
+      label: "Change my info",
+      icon: Edit,
+    },
+    {
+      href: "/cleaner/share-profile",
+      label: "Share my profile",
+      icon: Share2,
     },
     {
       href: "/cleaner/contract",
       label: "My Contract",
       icon: FileText,
     },
+    // Referrals
+    {
+      href: "/cleaner/refer-friend",
+      label: "Refer a friend",
+      icon: UserPlus,
+    },
+    // Actions
     {
       href: "#",
       label: "Refresh Page",
@@ -104,7 +133,10 @@ export default function CleanerNav({ onMobileMenuClose, variant }: CleanerNavPro
 
   const isActive = (href: string) => {
     if (href === "/cleaner") {
-      return pathname === "/cleaner";
+      return pathname === "/cleaner" || pathname === "/cleaner/";
+    }
+    if (href === "#") {
+      return false;
     }
     return pathname?.startsWith(href);
   };
