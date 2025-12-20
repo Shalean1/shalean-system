@@ -3,38 +3,102 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentCleaner } from "./cleaner-auth-supabase";
 
 /**
+ * Normalize cleaner ID to match booking assignments
+ * Maps alternative cleaner IDs to the standard ones used in bookings
+ */
+function normalizeCleanerId(cleanerId: string | null | undefined): string | null {
+  if (!cleanerId) return null;
+  
+  const normalized = cleanerId.toLowerCase().trim();
+  
+  // Map 'beaulla-chemugarira' to 'beaul' (common mismatch)
+  if (normalized === 'beaulla-chemugarira' || normalized.includes('beaulla')) {
+    return 'beaul';
+  }
+  
+  return normalized;
+}
+
+/**
  * Get all bookings assigned to the current cleaner
  */
 export async function getCleanerBookings(): Promise<Booking[]> {
   const cleaner = await getCurrentCleaner();
   
   if (!cleaner || !cleaner.cleanerId) {
-    console.warn("getCleanerBookings: No cleaner or cleanerId found");
+    console.warn("getCleanerBookings: No cleaner or cleanerId found", {
+      cleaner: cleaner ? { cleanerId: cleaner.cleanerId, name: cleaner.name } : null
+    });
     return [];
   }
 
   const supabase = await createClient();
   
-  console.log(`Fetching bookings for cleaner: ${cleaner.cleanerId}`);
+  // Normalize cleaner ID - handles 'beaulla-chemugarira' -> 'beaul' mapping
+  const normalizedCleanerId = normalizeCleanerId(cleaner.cleanerId);
   
-  const { data, error } = await supabase
+  if (!normalizedCleanerId) {
+    console.warn("getCleanerBookings: Could not normalize cleaner ID", cleaner.cleanerId);
+    return [];
+  }
+  
+  console.log(`Fetching bookings for cleaner: ${normalizedCleanerId} (original: ${cleaner.cleanerId})`);
+  
+  // First try exact match (case-sensitive)
+  let { data, error } = await supabase
     .from("bookings")
     .select("*")
-    .eq("assigned_cleaner_id", cleaner.cleanerId)
+    .eq("assigned_cleaner_id", normalizedCleanerId)
     .order("scheduled_date", { ascending: false })
     .order("scheduled_time", { ascending: false });
 
+  // If no results and cleaner ID might have different case, try case-insensitive search
+  if ((!data || data.length === 0) && normalizedCleanerId !== cleaner.cleanerId) {
+    console.log(`No bookings found with exact match, trying case-insensitive search...`);
+    // Use a filter with case-insensitive comparison
+    const { data: caseInsensitiveData, error: caseInsensitiveError } = await supabase
+      .from("bookings")
+      .select("*")
+      .order("scheduled_date", { ascending: false })
+      .order("scheduled_time", { ascending: false });
+    
+    if (!caseInsensitiveError && caseInsensitiveData) {
+      // Filter client-side for case-insensitive match
+      data = caseInsensitiveData.filter(
+        (b: any) => b.assigned_cleaner_id?.toLowerCase() === normalizedCleanerId
+      );
+      error = null;
+    }
+  }
+
   if (error) {
-    console.error("Error fetching cleaner bookings:", error);
+    console.error("Error fetching cleaner bookings:", error, {
+      cleanerId: normalizedCleanerId,
+      originalCleanerId: cleaner.cleanerId
+    });
     throw new Error(`Failed to fetch cleaner bookings: ${error.message}`);
   }
 
   if (!data || data.length === 0) {
-    console.log(`No bookings found for cleaner ${cleaner.cleanerId}`);
+    // Diagnostic: Check if there are any bookings with similar cleaner IDs
+    const { data: diagnosticData } = await supabase
+      .from("bookings")
+      .select("assigned_cleaner_id")
+      .not("assigned_cleaner_id", "is", null);
+    
+    const uniqueCleanerIds = [...new Set(
+      (diagnosticData || []).map((b: any) => b.assigned_cleaner_id)
+    )];
+    
+    console.warn(`No bookings found for cleaner ${normalizedCleanerId}`, {
+      cleanerId: normalizedCleanerId,
+      availableCleanerIds: uniqueCleanerIds,
+      totalBookingsWithCleaners: diagnosticData?.length || 0
+    });
     return [];
   }
 
-  console.log(`Found ${data.length} bookings for cleaner ${cleaner.cleanerId}`);
+  console.log(`Found ${data.length} bookings for cleaner ${normalizedCleanerId}`);
   return data.map(mapDatabaseToBooking);
 }
 
@@ -87,21 +151,48 @@ export async function getCleanerBookingStats(): Promise<{
   const cleaner = await getCurrentCleaner();
   
   if (!cleaner || !cleaner.cleanerId) {
-    console.warn("getCleanerBookingStats: No cleaner or cleanerId found");
+    console.warn("getCleanerBookingStats: No cleaner or cleanerId found", {
+      cleaner: cleaner ? { cleanerId: cleaner.cleanerId, name: cleaner.name } : null
+    });
     return { upcoming: 0, today: 0, new: 0, past: 0 };
   }
 
   const supabase = await createClient();
   
-  console.log(`Fetching booking stats for cleaner: ${cleaner.cleanerId}`);
+  // Normalize cleaner ID - handles 'beaulla-chemugarira' -> 'beaul' mapping
+  const normalizedCleanerId = normalizeCleanerId(cleaner.cleanerId);
   
-  const { data, error } = await supabase
+  if (!normalizedCleanerId) {
+    console.warn("getCleanerBookingStats: Could not normalize cleaner ID", cleaner.cleanerId);
+    return { upcoming: 0, today: 0, new: 0, past: 0 };
+  }
+  
+  console.log(`Fetching booking stats for cleaner: ${normalizedCleanerId} (original: ${cleaner.cleanerId})`);
+  
+  let { data, error } = await supabase
     .from("bookings")
     .select("status, scheduled_date, created_at")
-    .eq("assigned_cleaner_id", cleaner.cleanerId);
+    .eq("assigned_cleaner_id", normalizedCleanerId);
+
+  // If no results, try case-insensitive search
+  if ((!data || data.length === 0) && normalizedCleanerId !== cleaner.cleanerId) {
+    const { data: allData } = await supabase
+      .from("bookings")
+      .select("status, scheduled_date, created_at, assigned_cleaner_id");
+    
+    if (allData) {
+      data = allData.filter(
+        (b: any) => b.assigned_cleaner_id?.toLowerCase() === normalizedCleanerId
+      );
+      error = null;
+    }
+  }
 
   if (error) {
-    console.error("Error fetching booking stats:", error);
+    console.error("Error fetching booking stats:", error, {
+      cleanerId: normalizedCleanerId,
+      originalCleanerId: cleaner.cleanerId
+    });
     throw new Error(`Failed to fetch booking stats: ${error.message}`);
   }
 
@@ -135,7 +226,9 @@ export async function getCleanerBookingStats(): Promise<{
     ).length,
   };
 
-  console.log(`Booking stats for cleaner ${cleaner.cleanerId}:`, counts);
+  console.log(`Booking stats for cleaner ${normalizedCleanerId}:`, counts, {
+    totalBookings: bookings.length
+  });
   return counts;
 }
 
