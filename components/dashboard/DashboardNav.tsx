@@ -192,7 +192,7 @@ export default function DashboardNav({ onMobileMenuClose, variant }: DashboardNa
       {/* Desktop Sidebar Navigation - only show when variant is desktop */}
       {variant === "desktop" && (
         <nav className="flex flex-col h-full overflow-y-auto">
-          <div className="flex flex-col space-y-1 p-4 flex-1">
+          <div className="flex flex-col space-y-1 px-4 pt-2 pb-4 flex-1">
             {navItems.slice(0, 9).map((item) => {
               const Icon = item.icon;
               const active = isActive(item.href);

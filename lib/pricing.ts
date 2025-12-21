@@ -271,3 +271,67 @@ export function getCleanerName(preference: string): string {
   };
   return names[preference] || preference;
 }
+
+// ============================================================================
+// CLEANER EARNINGS CALCULATION
+// ============================================================================
+
+export interface CleanerEarningsResult {
+  earningsBase: number;
+  earningsPercentage: number;
+  earnings: number;
+  tip: number;
+  totalEarnings: number;
+  isOldCleaner: boolean;
+}
+
+/**
+ * Calculate cleaner earnings based on price breakdown and cleaner status
+ * 
+ * Earnings formula:
+ * - Earnings Base = Subtotal - Frequency Discount - Service Fee
+ * - Old Cleaner (70%): Earnings Base × 0.70
+ * - New Cleaner (60%): Earnings Base × 0.60
+ * - Total Earnings = Earnings + Tip (tips go 100% to cleaner)
+ * 
+ * Note: Discount codes do NOT affect cleaner earnings (only frequency discounts do)
+ * 
+ * @param priceBreakdown - Complete price breakdown from calculatePrice()
+ * @param cleanerTotalJobs - Total number of completed jobs for the cleaner
+ * @param oldCleanerThreshold - Minimum jobs to be considered "old" cleaner (default: 50)
+ * @returns Cleaner earnings calculation result
+ */
+export function calculateCleanerEarnings(
+  priceBreakdown: PriceBreakdown,
+  cleanerTotalJobs: number,
+  oldCleanerThreshold: number = 50
+): CleanerEarningsResult {
+  // Earnings base excludes discount codes but includes frequency discounts
+  // Formula: subtotal - frequencyDiscount - serviceFee
+  const earningsBase = priceBreakdown.subtotal - priceBreakdown.frequencyDiscount - priceBreakdown.serviceFee;
+  
+  // Ensure earnings base is not negative
+  const safeEarningsBase = Math.max(0, earningsBase);
+  
+  // Determine if cleaner is old or new based on job count
+  const isOldCleaner = cleanerTotalJobs >= oldCleanerThreshold;
+  const earningsPercentage = isOldCleaner ? 0.70 : 0.60;
+  
+  // Calculate earnings (before tip)
+  const earnings = Math.round(safeEarningsBase * earningsPercentage * 100) / 100;
+  
+  // Tips go 100% to cleaner
+  const tip = priceBreakdown.tip || 0;
+  
+  // Total earnings = earnings + tip
+  const totalEarnings = earnings + tip;
+  
+  return {
+    earningsBase: Math.round(safeEarningsBase * 100) / 100,
+    earningsPercentage,
+    earnings: Math.round(earnings * 100) / 100,
+    tip: Math.round(tip * 100) / 100,
+    totalEarnings: Math.round(totalEarnings * 100) / 100,
+    isOldCleaner,
+  };
+}

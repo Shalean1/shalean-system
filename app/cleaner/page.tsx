@@ -82,7 +82,7 @@ export default async function CleanerDashboardPage() {
     );
   } catch (error) {
     console.error("Cleaner dashboard page error:", error);
-    // Re-throw to trigger error boundary
-    throw error;
+    // Redirect to login instead of throwing error
+    redirect("/cleaner/login");
   }
 }

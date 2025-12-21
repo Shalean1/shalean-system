@@ -6,6 +6,8 @@ import CleanerNav from "@/components/cleaner/CleanerNav";
 import PageviewTracker from "@/components/PageviewTracker";
 import { headers } from "next/headers";
 
+export const dynamic = "force-dynamic";
+
 export default async function CleanerLayout({
   children,
 }: {
@@ -106,11 +108,16 @@ export default async function CleanerLayout({
   } catch (error) {
     // If there's an error, check if we're on the login page and allow access
     // Otherwise, redirect to login
-    const headersList = await headers();
-    const pathname = headersList.get("x-pathname") || "";
-    
-    if (pathname === "/cleaner/login" || pathname.includes("/cleaner/login")) {
-      return <>{children}</>;
+    try {
+      const headersList = await headers();
+      const pathname = headersList.get("x-pathname") || "";
+      
+      if (pathname === "/cleaner/login" || pathname.includes("/cleaner/login")) {
+        return <>{children}</>;
+      }
+    } catch (headerError) {
+      // If we can't read headers, still try to redirect
+      console.error("Error reading headers in cleaner layout:", headerError);
     }
     
     // Redirect to login on error

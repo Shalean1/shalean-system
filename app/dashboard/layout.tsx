@@ -33,9 +33,9 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Left Sidebar */}
-      <aside className="hidden md:flex md:flex-col md:w-64 md:fixed md:inset-y-0 md:z-30 bg-white border-r border-gray-200">
+      <aside className="hidden md:flex md:flex-col md:w-64 md:fixed md:top-0 md:left-0 md:bottom-0 md:z-30 bg-white border-r border-gray-200">
         {/* Logo */}
-        <div className="flex items-center h-16 px-4 border-b border-gray-200">
+        <div className="flex items-center h-16 px-4 border-b border-gray-200 flex-shrink-0">
           <Link href="/" className="flex items-center">
             <img 
               src="/shalean-logo.png" 
@@ -45,17 +45,19 @@ export default async function DashboardLayout({
           </Link>
         </div>
         {/* Navigation */}
-        {isCleaner ? (
-          <CleanerNav variant="desktop" />
-        ) : (
-          <DashboardNav variant="desktop" />
-        )}
+        <div className="flex-1 overflow-y-auto">
+          {isCleaner ? (
+            <CleanerNav variant="desktop" />
+          ) : (
+            <DashboardNav variant="desktop" />
+          )}
+        </div>
       </aside>
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col md:ml-64">
         {/* Top Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <header className="bg-white border-b border-gray-200 sticky top-0 z-40 flex-shrink-0">
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               {/* Mobile Menu Button - shown in header on mobile */}

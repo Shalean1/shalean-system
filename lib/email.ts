@@ -750,3 +750,118 @@ export async function sendContactConfirmationEmail(data: ContactEmailData): Prom
     throw error;
   }
 }
+
+/**
+ * Format payment link email for failed payment bookings
+ */
+async function formatPaymentLinkEmail(booking: Booking): Promise<string> {
+  const serviceName = getServiceName(booking.service);
+  const frequencyName = getFrequencyName(booking.frequency);
+  const address = `${booking.streetAddress}${booking.aptUnit ? `, ${booking.aptUnit}` : ""}, ${booking.suburb}, ${booking.city}`;
+  
+  // Get base URL from environment or use default
+  // Try NEXT_PUBLIC_BASE_URL first, then VERCEL_URL, then default to localhost
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL 
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+  
+  const paymentLink = `${baseUrl}/booking/pay/${booking.bookingReference}`;
+
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Complete Your Payment - ${booking.bookingReference}</title>
+      </head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background-color: #0C53ED; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
+          <h1 style="margin: 0;">Complete Your Payment</h1>
+        </div>
+        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; border: 1px solid #e0e0e0;">
+          <p>Dear ${booking.firstName},</p>
+          
+          <p>We noticed that your payment for booking <strong>${booking.bookingReference}</strong> was not completed successfully.</p>
+          
+          <div style="background-color: white; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #0C53ED;">
+            <h2 style="color: #0C53ED; margin-top: 0;">Booking Reference: ${booking.bookingReference}</h2>
+            <p><strong>Service:</strong> ${serviceName}</p>
+            <p><strong>Total Amount:</strong> ${formatPrice(booking.totalAmount)}</p>
+          </div>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${paymentLink}" style="display: inline-block; background-color: #0C53ED; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">
+              Complete Payment Now
+            </a>
+          </div>
+          
+          <p style="color: #666; font-size: 14px; text-align: center;">
+            Or copy and paste this link into your browser:<br>
+            <a href="${paymentLink}" style="color: #0C53ED; word-break: break-all;">${paymentLink}</a>
+          </p>
+          
+          <h2 style="color: #0C53ED; margin-top: 30px;">Booking Details</h2>
+          <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
+            <p><strong>Service:</strong> ${serviceName}</p>
+            <p><strong>Frequency:</strong> ${frequencyName}</p>
+            <p><strong>Address:</strong> ${address}</p>
+            ${booking.scheduledDate ? `<p><strong>Scheduled Date:</strong> ${new Date(booking.scheduledDate).toLocaleDateString("en-ZA", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>` : ''}
+            ${booking.scheduledTime ? `<p><strong>Scheduled Time:</strong> ${booking.scheduledTime}</p>` : ''}
+          </div>
+          
+          <div style="margin-top: 30px; padding: 15px; background-color: #fff3cd; border-radius: 5px; border-left: 4px solid #ffc107;">
+            <p style="margin: 0;"><strong>Important:</strong> Please complete your payment to confirm your booking. Your booking will be confirmed once payment is received.</p>
+          </div>
+          
+          <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
+            <p style="color: #666; font-size: 14px;">
+              If you have any questions or need assistance, please contact us at:<br>
+              <strong>Email:</strong> hello@shalean.com<br>
+              <strong>Phone:</strong> +27 12 345 6789
+            </p>
+            <p style="color: #666; font-size: 14px; margin-top: 20px;">
+              Best regards,<br>
+              <strong>The Shalean Cleaning Services Team</strong>
+            </p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
+/**
+ * Send payment link email to customer for failed payment
+ */
+export async function sendPaymentLinkEmail(booking: Booking): Promise<void> {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY is not configured");
+  }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+  const isTestingDomain = fromEmail.includes("@resend.dev");
+  const toEmail = isTestingDomain ? "hello@shalean.com" : booking.email;
+
+  try {
+    const result = await resend.emails.send({
+      from: fromEmail,
+      to: toEmail,
+      subject: `Complete Your Payment - ${booking.bookingReference} | Shalean Cleaning Services`,
+      html: await formatPaymentLinkEmail(booking),
+    });
+
+    if (result.error) {
+      console.error("Resend API error:", JSON.stringify(result.error, null, 2));
+      throw new Error(`Failed to send payment link email: ${result.error.message || JSON.stringify(result.error)}`);
+    }
+
+    console.log("Payment link email sent successfully:", result.data?.id);
+  } catch (error) {
+    console.error("Exception while sending payment link email:", error);
+    if (error instanceof Error) {
+      throw new Error(`Failed to send payment link email: ${error.message}`);
+    }
+    throw error;
+  }
+}

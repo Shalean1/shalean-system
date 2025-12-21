@@ -65,6 +65,8 @@ export interface BookingFormData {
   tip?: number;
 }
 
+export type JobProgress = "on-my-way" | "arrived" | "started" | null;
+
 export interface Booking extends BookingFormData {
   id: string;
   bookingReference: string;
@@ -73,6 +75,21 @@ export interface Booking extends BookingFormData {
   paymentStatus: "pending" | "completed" | "failed";
   paymentReference?: string;
   status: "pending" | "confirmed" | "in-progress" | "completed" | "cancelled";
+  cleanerResponse?: "accepted" | "declined" | null;
+  jobProgress?: JobProgress;
+  // Price breakdown fields (for cleaner earnings calculation)
+  subtotal?: number;
+  frequencyDiscount?: number;
+  discountCodeDiscount?: number;
+  serviceFee?: number;
+  // Cleaner earnings fields
+  cleanerEarnings?: number;
+  cleanerEarningsPercentage?: number;
+  // Recurring booking fields
+  recurringGroupId?: string;
+  recurringSequence?: number;
+  parentBookingId?: string;
+  isRecurring?: boolean;
 }
 
 export interface PriceBreakdown {

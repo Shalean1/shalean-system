@@ -269,6 +269,17 @@ export function generateStructuredData() {
     },
   };
 
+  const blog = {
+    "@type": "Blog",
+    "@id": `${baseUrl}#blog`,
+    url: `${baseUrl}/blog`,
+    name: "Shalean Cleaning Services Blog",
+    description: "Tips, guides, and insights about cleaning services in Cape Town",
+    publisher: {
+      "@id": `${baseUrl}#organization`,
+    },
+  };
+
   const faqPage = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -322,6 +333,7 @@ export function generateStructuredData() {
       organization,
       localBusiness,
       website,
+      blog,
       ...services,
       ...reviews,
       aggregateRating,

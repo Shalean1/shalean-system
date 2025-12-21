@@ -252,7 +252,7 @@ export default function CleanerNav({ onMobileMenuClose, variant }: CleanerNavPro
       {/* Desktop Sidebar Navigation - only show when variant is desktop */}
       {variant === "desktop" && (
         <nav className="flex flex-col h-full overflow-y-auto">
-          <div className="flex flex-col flex-1">
+          <div className="flex flex-col flex-1 pt-2">
             {navItems.map((item, index) => {
               const Icon = item.icon;
               const active = isActive(item.href);

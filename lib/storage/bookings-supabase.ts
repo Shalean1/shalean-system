@@ -43,6 +43,19 @@ export async function saveBooking(booking: Booking): Promise<void> {
       discount_code: booking.discountCode || null,
       tip_amount: booking.tip || 0,
       total_amount: booking.totalAmount,
+      // Price breakdown fields
+      subtotal: booking.subtotal ?? null,
+      frequency_discount: booking.frequencyDiscount ?? 0,
+      discount_code_discount: booking.discountCodeDiscount ?? 0,
+      service_fee: booking.serviceFee ?? null,
+      // Cleaner earnings fields
+      cleaner_earnings: booking.cleanerEarnings ?? null,
+      cleaner_earnings_percentage: booking.cleanerEarningsPercentage ?? null,
+      // Recurring booking fields
+      recurring_group_id: booking.recurringGroupId || null,
+      recurring_sequence: booking.recurringSequence ?? null,
+      parent_booking_id: booking.parentBookingId || null,
+      is_recurring: booking.isRecurring ?? false,
       status: booking.status,
       payment_status: booking.paymentStatus,
       payment_reference: booking.paymentReference || null,
@@ -115,6 +128,55 @@ export async function getBookingByReference(reference: string): Promise<Booking 
 }
 
 /**
+ * Find booking by reference or ID for current user
+ * Verifies the booking belongs to the logged-in user
+ */
+export async function getUserBookingByReferenceOrId(referenceOrId: string): Promise<Booking | null> {
+  const supabase = await createClient();
+  
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    return null;
+  }
+
+  // Try to find by booking_reference first
+  let { data, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("booking_reference", referenceOrId)
+    .eq("contact_email", user.email)
+    .single();
+
+  // If not found by reference, try by ID
+  if (error && error.code === "PGRST116") {
+    const result = await supabase
+      .from("bookings")
+      .select("*")
+      .eq("id", referenceOrId)
+      .eq("contact_email", user.email)
+      .single();
+    
+    if (result.data) {
+      data = result.data;
+      error = null;
+    } else if (result.error) {
+      error = result.error;
+    }
+  }
+
+  if (error) {
+    if (error.code === "PGRST116") {
+      // No rows returned
+      return null;
+    }
+    throw new Error(`Failed to fetch booking: ${error.message}`);
+  }
+
+  return data ? mapDatabaseToBooking(data) : null;
+}
+
+/**
  * Find booking by payment reference
  * Used to check if a booking already exists for a payment
  */
@@ -136,6 +198,25 @@ export async function getBookingByPaymentReference(paymentReference: string): Pr
   }
 
   return data ? mapDatabaseToBooking(data) : null;
+}
+
+/**
+ * Get all bookings in a recurring series by group ID
+ */
+export async function getRecurringBookings(groupId: string): Promise<Booking[]> {
+  const supabase = await createClient();
+  
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("recurring_group_id", groupId)
+    .order("recurring_sequence", { ascending: true });
+
+  if (error) {
+    throw new Error(`Failed to fetch recurring bookings: ${error.message}`);
+  }
+
+  return (data || []).map(mapDatabaseToBooking);
 }
 
 /**
@@ -727,9 +808,24 @@ function mapDatabaseToBooking(data: any): Booking {
     discountCode: data.discount_code,
     tip: data.tip_amount || 0,
     totalAmount: data.total_amount,
+    // Price breakdown fields
+    subtotal: data.subtotal ?? undefined,
+    frequencyDiscount: data.frequency_discount ?? undefined,
+    discountCodeDiscount: data.discount_code_discount ?? undefined,
+    serviceFee: data.service_fee ?? undefined,
+    // Cleaner earnings fields
+    cleanerEarnings: data.cleaner_earnings ?? undefined,
+    cleanerEarningsPercentage: data.cleaner_earnings_percentage ?? undefined,
+    // Recurring booking fields
+    recurringGroupId: data.recurring_group_id ?? undefined,
+    recurringSequence: data.recurring_sequence ?? undefined,
+    parentBookingId: data.parent_booking_id ?? undefined,
+    isRecurring: data.is_recurring ?? false,
     status: data.status,
     paymentStatus: data.payment_status,
     paymentReference: data.payment_reference,
+    cleanerResponse: data.cleaner_response || null,
+    jobProgress: data.job_progress || null,
     createdAt: data.created_at,
   };
 }

@@ -1,13 +1,15 @@
 "use server";
 
 import { BookingFormData, Booking, normalizeCleanerPreference } from "@/lib/types/booking";
-import { calculatePrice, fetchPricingConfig } from "@/lib/pricing";
+import { calculatePrice, fetchPricingConfig, calculateCleanerEarnings } from "@/lib/pricing";
 import { saveBooking, generateBookingId, generateBookingReference, getBookingByPaymentReference } from "@/lib/storage/bookings-supabase";
 import { sendBookingConfirmationEmail, sendBookingNotificationEmail } from "@/lib/email";
 import { verifyPayment } from "@/lib/paystack";
 import { validateDiscountCode, recordDiscountCodeUsage } from "@/app/actions/discount";
 import { useCreditsForBooking } from "@/app/actions/credits";
 import { createClient } from "@/lib/supabase/server";
+import { getSystemSettings } from "@/lib/supabase/booking-data";
+import { generateRecurringGroupId, calculateRecurringDates } from "@/lib/utils/recurring-bookings";
 
 export interface SubmitBookingResult {
   success: boolean;
@@ -175,10 +177,55 @@ export async function submitBooking(
       bookingReference = generateBookingReference();
     }
 
+    // Determine assigned cleaner ID
+    const normalizedPreference = normalizeCleanerPreference(data.cleanerPreference);
+    const assignedCleanerId = normalizedPreference !== "no-preference" ? normalizedPreference : null;
+
+    // Calculate cleaner earnings if cleaner is assigned
+    let cleanerEarnings: number | undefined;
+    let cleanerEarningsPercentage: number | undefined;
+    
+    if (assignedCleanerId) {
+      try {
+        const supabase = await createClient();
+        
+        // Get cleaner information
+        const { data: cleanerData } = await supabase
+          .from("cleaners")
+          .select("total_jobs")
+          .eq("cleaner_id", assignedCleanerId)
+          .single();
+
+        // Get old cleaner threshold from system settings
+        const systemSettings = await getSystemSettings(['old_cleaner_job_threshold']);
+        const oldCleanerThreshold = systemSettings.old_cleaner_job_threshold 
+          ? parseInt(systemSettings.old_cleaner_job_threshold, 10) 
+          : 50;
+
+        // Calculate cleaner earnings
+        const cleanerTotalJobs = cleanerData?.total_jobs || 0;
+        const earningsResult = calculateCleanerEarnings(
+          priceBreakdown,
+          cleanerTotalJobs,
+          oldCleanerThreshold
+        );
+
+        cleanerEarnings = earningsResult.totalEarnings;
+        cleanerEarningsPercentage = earningsResult.earningsPercentage;
+      } catch (error) {
+        console.error("Failed to calculate cleaner earnings (non-critical):", error);
+        // Continue without earnings calculation if it fails
+      }
+    }
+
+    // Determine if this is a recurring booking
+    const isRecurring = data.frequency !== "one-time";
+    const recurringGroupId = isRecurring ? generateRecurringGroupId() : undefined;
+
     // Create booking object
     const booking: Booking = {
       ...data,
-      cleanerPreference: normalizeCleanerPreference(data.cleanerPreference),
+      cleanerPreference: normalizedPreference,
       id: generateBookingId(),
       bookingReference,
       createdAt: new Date().toISOString(),
@@ -186,10 +233,76 @@ export async function submitBooking(
       paymentStatus,
       paymentReference: paymentMethod === "credits" ? `credits-${bookingReference}` : paymentReference,
       status: paymentStatus === "completed" ? "confirmed" : "pending",
+      // Price breakdown fields
+      subtotal: priceBreakdown.subtotal,
+      frequencyDiscount: priceBreakdown.frequencyDiscount,
+      discountCodeDiscount: priceBreakdown.discountCodeDiscount,
+      serviceFee: priceBreakdown.serviceFee,
+      // Cleaner earnings fields
+      cleanerEarnings,
+      cleanerEarningsPercentage,
+      // Recurring booking fields
+      recurringGroupId,
+      recurringSequence: isRecurring ? 0 : undefined,
+      isRecurring: isRecurring,
     };
 
-    // Save booking
+    // Save first booking
     await saveBooking(booking);
+
+    // Create recurring bookings if applicable
+    if (isRecurring && data.scheduledDate) {
+      try {
+        const recurringDates = calculateRecurringDates(data.frequency, data.scheduledDate, 3);
+        
+        // Create recurring bookings for each date
+        const recurringBookings: Booking[] = recurringDates.map((date, index) => {
+          const recurringBookingId = generateBookingId();
+          const recurringBookingReference = generateBookingReference();
+          
+          return {
+            ...data,
+            cleanerPreference: normalizedPreference,
+            id: recurringBookingId,
+            bookingReference: recurringBookingReference,
+            scheduledDate: date, // Use calculated recurring date
+            createdAt: new Date().toISOString(),
+            totalAmount: priceBreakdown.total,
+            paymentStatus: "pending" as const, // Not charged upfront
+            status: "pending" as const, // Not confirmed yet
+            // Price breakdown fields (same as first booking)
+            subtotal: priceBreakdown.subtotal,
+            frequencyDiscount: priceBreakdown.frequencyDiscount,
+            discountCodeDiscount: priceBreakdown.discountCodeDiscount,
+            serviceFee: priceBreakdown.serviceFee,
+            // Cleaner earnings fields (will be calculated when booking is confirmed)
+            cleanerEarnings: undefined,
+            cleanerEarningsPercentage: undefined,
+            // Recurring booking fields
+            recurringGroupId,
+            recurringSequence: index + 1, // 1, 2, 3, etc.
+            parentBookingId: booking.id,
+            isRecurring: true,
+          };
+        });
+
+        // Save all recurring bookings
+        // Use batch insert for efficiency if possible, otherwise save sequentially
+        for (const recurringBooking of recurringBookings) {
+          try {
+            await saveBooking(recurringBooking);
+          } catch (error) {
+            // Log error but don't fail the main booking
+            console.error(`Failed to create recurring booking ${recurringBooking.recurringSequence}:`, error);
+          }
+        }
+
+        console.log(`Created ${recurringBookings.length} recurring bookings for group ${recurringGroupId}`);
+      } catch (error) {
+        // Log error but don't fail the main booking
+        console.error("Failed to create recurring bookings (non-critical):", error);
+      }
+    }
     
     // Record discount code usage if applicable
     if (data.discountCode && discountCodeAmount > 0 && paymentStatus === "completed") {

@@ -1,6 +1,7 @@
 "use server";
 
 import { sendQuoteEmail, sendCustomerConfirmationEmail } from "@/lib/email";
+import { createServiceRoleClient } from "@/lib/supabase/server";
 
 export interface QuoteFormData {
   firstName: string;
@@ -78,6 +79,32 @@ export async function submitQuote(
       ...data,
       submittedAt: new Date().toISOString(),
     });
+
+    // Save quote to database
+    const supabase = createServiceRoleClient();
+    const { error: dbError } = await supabase
+      .from("quotes")
+      .insert({
+        first_name: data.firstName,
+        last_name: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        location: data.location,
+        custom_location: data.customLocation || null,
+        service: data.service || null,
+        bedrooms: data.bedrooms,
+        bathrooms: data.bathrooms,
+        additional_services: data.additionalServices || [],
+        note: data.note || null,
+        status: "pending",
+      });
+
+    if (dbError) {
+      console.error("Error saving quote to database:", dbError);
+      // Continue with email sending even if DB save fails
+    } else {
+      console.log("Quote saved to database successfully");
+    }
 
     // Send notification email to business
     await sendQuoteEmail(data);

@@ -337,7 +337,8 @@ INSERT INTO popular_services (name, slug, display_order) VALUES
   ('Holiday Cleaning', 'holiday-cleaning', 1),
   ('Office Cleaning', 'office-cleaning', 2),
   ('Deep Cleaning', 'deep-cleaning', 3),
-  ('Move-In Cleaning', 'move-in-cleaning', 4)
+  ('Move-In Cleaning', 'move-in-cleaning', 4),
+  ('Airbnb Cleaning', 'airbnb-cleaning', 5)
 ON CONFLICT (name) DO NOTHING;
 
 -- Trigger to update updated_at on cleaners

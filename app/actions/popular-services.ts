@@ -94,7 +94,6 @@ export async function addPopularService(
   }
 
   revalidatePath("/");
-  revalidatePath("/admin/popular-services");
 
   return { success: true, data };
 }
@@ -128,7 +127,6 @@ export async function updatePopularService(
   }
 
   revalidatePath("/");
-  revalidatePath("/admin/popular-services");
 
   return { success: true, data };
 }

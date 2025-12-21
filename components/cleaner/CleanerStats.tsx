@@ -20,7 +20,7 @@ export default function CleanerStats({
   past,
   bookings = [],
 }: CleanerStatsProps) {
-  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
+  const [selectedFilter, setSelectedFilter] = useState<string | null>("today");
 
   const stats: Array<{
     label: string;
@@ -62,24 +62,31 @@ export default function CleanerStats({
     const today = new Date().toISOString().split('T')[0];
     const todayDate = new Date();
     todayDate.setHours(0, 0, 0, 0);
-    const sevenDaysAgo = new Date(todayDate);
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const sevenDaysFromNow = new Date(todayDate);
+    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+    const sevenDaysFromNowStr = sevenDaysFromNow.toISOString().split('T')[0];
 
     switch (selectedFilter) {
       case "upcoming":
+        // Only confirmed (accepted) bookings show in Upcoming
         return bookings.filter(
           (b) =>
-            (b.status === "pending" || b.status === "confirmed") &&
+            b.status === "confirmed" &&
             b.scheduledDate &&
             b.scheduledDate >= today
         );
       case "today":
         return bookings.filter((b) => b.scheduledDate === today);
       case "new":
+        // "New" bookings are pending bookings that need acceptance (cleaner_response IS NULL)
         return bookings.filter((b) => {
-          if (!b.createdAt) return false;
-          const createdAt = new Date(b.createdAt);
-          return createdAt >= sevenDaysAgo;
+          if (!b.scheduledDate) return false;
+          return (
+            b.status === "pending" &&
+            !b.cleanerResponse &&
+            b.scheduledDate >= today &&
+            b.scheduledDate <= sevenDaysFromNowStr
+          );
         });
       case "past":
         return bookings.filter(

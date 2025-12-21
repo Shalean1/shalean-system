@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X, LayoutDashboard } from "lucide-react";
-import AdminLink from "./AdminLink";
 import { useUser } from "@/lib/hooks/useSupabase";
 
 const navLinks = [
@@ -19,13 +18,14 @@ export default function Header() {
   const pathname = usePathname();
   const { user, loading: userLoading } = useUser();
 
-  // Hide header on booking form pages, auth pages, and cleaner pages
+  // Hide header on booking form pages, auth pages, cleaner pages, and admin pages
   if (
     pathname === "/booking/quote" ||
     pathname === "/booking/quote/confirmation" ||
     pathname?.startsWith("/booking/service/") ||
     pathname?.startsWith("/auth") ||
-    pathname?.startsWith("/cleaner")
+    pathname?.startsWith("/cleaner") ||
+    pathname?.startsWith("/admin")
   ) {
     return null;
   }
@@ -58,7 +58,6 @@ export default function Header() {
 
           {/* Right Side Actions - Desktop */}
           <div className="hidden md:flex items-center gap-4 flex-shrink-0">
-            <AdminLink />
             {!userLoading && user && (
               <Link
                 href="/dashboard"

@@ -68,7 +68,7 @@ export default async function DashboardPage() {
   const nextAppointment = upcomingBookings.length > 0 ? upcomingBookings[0] : null;
 
   return (
-    <div className="py-6 md:py-8 bg-gradient-to-b from-gray-50 to-white min-h-screen">
+    <div className="pt-4 pb-6 md:pt-4 md:pb-8 bg-gradient-to-b from-gray-50 to-white min-h-screen">
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Enhanced Header */}
         <div className="mb-6">

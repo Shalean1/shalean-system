@@ -1,6 +1,6 @@
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getBookingByReference, getUserBookings } from "@/lib/storage/bookings-supabase";
+import { getUserBookingByReferenceOrId, getUserBookings } from "@/lib/storage/bookings-supabase";
 import { getAdditionalServicesServer } from "@/lib/supabase/booking-data-server";
 import StatusBadge from "@/components/dashboard/StatusBadge";
 import PaymentStatusBadge from "@/components/dashboard/PaymentStatusBadge";
@@ -9,6 +9,8 @@ import CancelBookingButton from "@/components/dashboard/CancelBookingButton";
 import RescheduleButton from "@/components/dashboard/RescheduleButton";
 import Link from "next/link";
 import { ArrowLeft, Calendar, MapPin, Clock, User, Phone, Mail, Home, Building } from "lucide-react";
+
+export const dynamic = 'force-dynamic';
 
 export default async function BookingDetailPage({
   params,
@@ -29,14 +31,14 @@ export default async function BookingDetailPage({
     redirect("/auth/login");
   }
 
-  // Fetch user bookings first (respects RLS)
-  const userBookings = await getUserBookings();
+  // Try to find the booking by reference or ID
+  // This function queries by reference/ID AND verifies it belongs to the user
+  let booking = await getUserBookingByReferenceOrId(decodedReference);
   
-  // Find the booking by reference from user's bookings
-  // Try both encoded and decoded reference to handle URL encoding
-  const booking = userBookings.find(
-    (b) => b.bookingReference === decodedReference || b.bookingReference === reference
-  );
+  // If not found with decoded reference, try with original reference
+  if (!booking && decodedReference !== reference) {
+    booking = await getUserBookingByReferenceOrId(reference);
+  }
 
   if (!booking) {
     notFound();
