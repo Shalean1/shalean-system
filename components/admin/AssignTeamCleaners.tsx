@@ -191,7 +191,7 @@ export default function AssignTeamCleaners({ booking }: AssignTeamCleanersProps)
         <>
           <div className="mb-4">
             <p className="text-sm text-gray-600 mb-3">
-              Select the cleaners who will work on this booking:
+              Select one or more cleaners who will work on this booking (multiple cleaners can be assigned):
             </p>
             <div className="space-y-2">
               {availableCleaners.map((cleaner) => {
