@@ -48,19 +48,20 @@ export default function AssignTeamCleaners({ booking }: AssignTeamCleanersProps)
         const teamBooking = !!booking.teamId;
         const teamService = booking.service === 'deep' || booking.service === 'move-in-out';
         
-        if (teamBooking && booking.teamId) {
-          // If it's a team booking, get team members
-          const teamMembers = await getTeamMembersAction(booking.teamId);
-          cleanersData = teamMembers.map(m => ({
-            cleanerId: m.cleanerId,
-            cleanerName: m.cleanerName,
-          }));
-        } else if (teamService) {
-          // If it's a deep/move-in-out booking without team, get all cleaners
+        if (teamService) {
+          // For deep/move-in-out bookings, always show all active cleaners
+          // This allows admins to assign multiple cleaners regardless of team
           const allCleaners = await getAllActiveCleanersAction();
           cleanersData = allCleaners.map(c => ({
             cleanerId: c.cleanerId,
             cleanerName: c.cleanerName,
+          }));
+        } else if (teamBooking && booking.teamId) {
+          // If it's a team booking (but not deep/move-in-out), get team members
+          const teamMembers = await getTeamMembersAction(booking.teamId);
+          cleanersData = teamMembers.map(m => ({
+            cleanerId: m.cleanerId,
+            cleanerName: m.cleanerName,
           }));
         }
         
@@ -209,7 +210,7 @@ export default function AssignTeamCleaners({ booking }: AssignTeamCleanersProps)
                       type="checkbox"
                       checked={isSelected}
                       onChange={() => handleToggleCleaner(cleaner.cleanerId)}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                     />
                     <div className="flex-1">
                       <div className="font-medium text-gray-900">{cleaner.cleanerName}</div>
@@ -232,9 +233,17 @@ export default function AssignTeamCleaners({ booking }: AssignTeamCleanersProps)
             </div>
           )}
 
+          {selectedCleanerIds.size === 0 && (
+            <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-sm text-yellow-700">
+                No cleaners selected. Please select at least one cleaner to assign to this booking.
+              </p>
+            </div>
+          )}
+
           <button
             onClick={handleSave}
-            disabled={saving}
+            disabled={saving || selectedCleanerIds.size === 0}
             className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
           >
             {saving ? (
