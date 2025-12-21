@@ -2,6 +2,7 @@ import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getUserBookingByReferenceOrId, getUserBookings } from "@/lib/storage/bookings-supabase";
 import { getAdditionalServicesServer } from "@/lib/supabase/booking-data-server";
+import { getBookingCleaners } from "@/lib/storage/booking-cleaners-supabase";
 import StatusBadge from "@/components/dashboard/StatusBadge";
 import PaymentStatusBadge from "@/components/dashboard/PaymentStatusBadge";
 import RebookButtonWrapper from "@/components/dashboard/RebookButtonWrapper";
@@ -53,6 +54,14 @@ export default async function BookingDetailPage({
     });
   } catch (error) {
     console.error("Failed to fetch additional services:", error);
+  }
+
+  // Fetch assigned cleaners for this booking
+  let assignedCleaners: Array<{ id: string; cleanerId: string; cleanerName: string }> = [];
+  try {
+    assignedCleaners = await getBookingCleaners(booking.id);
+  } catch (error) {
+    console.error("Failed to fetch booking cleaners:", error);
   }
 
   const formatDate = (dateString: string | null) => {
@@ -188,10 +197,30 @@ export default async function BookingDetailPage({
               )}
               {booking.cleanerPreference && (
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Cleaner Preference</p>
+                  <p className="text-sm text-gray-600 mb-1">Cleaner/Team Preference</p>
                   <p className="font-medium text-gray-900">
                     {formatCleanerPreference(booking.cleanerPreference)}
                   </p>
+                </div>
+              )}
+              {booking.teamId && (
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Assigned Team</p>
+                  <p className="font-medium text-gray-900">
+                    {formatCleanerPreference(booking.teamId)}
+                  </p>
+                </div>
+              )}
+              {assignedCleaners.length > 0 && (
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Selected Cleaners</p>
+                  <ul className="space-y-1">
+                    {assignedCleaners.map((cleaner) => (
+                      <li key={cleaner.id} className="font-medium text-gray-900 text-sm">
+                        {cleaner.cleanerName}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
             </div>
