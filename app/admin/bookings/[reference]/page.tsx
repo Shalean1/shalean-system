@@ -258,8 +258,8 @@ export default async function AdminBookingDetailPage({
           </div>
         </div>
 
-        {/* Team Cleaner Assignment */}
-        {booking.teamId && (
+        {/* Cleaner Assignment (for team bookings or deep/move-in-out services) */}
+        {(booking.teamId || booking.service === 'deep' || booking.service === 'move-in-out') && (
           <div className="mb-6">
             <AssignTeamCleaners booking={booking} />
           </div>

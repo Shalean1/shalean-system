@@ -21,6 +21,40 @@ export interface AssignedCleaner {
 }
 
 /**
+ * Cleaner option interface for selection
+ */
+export interface CleanerOption {
+  cleanerId: string;
+  cleanerName: string;
+  displayOrder: number;
+}
+
+/**
+ * Get all active cleaners (for non-team bookings)
+ */
+export async function getAllActiveCleaners(): Promise<CleanerOption[]> {
+  const supabase = createServiceRoleClient();
+  
+  const { data, error } = await supabase
+    .from("cleaners")
+    .select("cleaner_id, name, display_order")
+    .eq("is_active", true)
+    .neq("cleaner_id", "no-preference") // Exclude the "no-preference" placeholder
+    .order("display_order", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching cleaners:", error);
+    throw new Error(`Failed to fetch cleaners: ${error.message}`);
+  }
+
+  return (data || []).map((cleaner: any) => ({
+    cleanerId: cleaner.cleaner_id,
+    cleanerName: cleaner.name,
+    displayOrder: cleaner.display_order || 0,
+  }));
+}
+
+/**
  * Get all team members for a specific team
  */
 export async function getTeamMembers(teamId: string): Promise<TeamMember[]> {

@@ -4,8 +4,10 @@ import {
   getTeamMembers,
   getBookingCleaners,
   assignCleanersToBooking,
+  getAllActiveCleaners,
   TeamMember,
   AssignedCleaner,
+  CleanerOption,
 } from "@/lib/storage/booking-cleaners-supabase";
 
 /**
@@ -13,6 +15,13 @@ import {
  */
 export async function getTeamMembersAction(teamId: string): Promise<TeamMember[]> {
   return getTeamMembers(teamId);
+}
+
+/**
+ * Get all active cleaners (server action)
+ */
+export async function getAllActiveCleanersAction(): Promise<CleanerOption[]> {
+  return getAllActiveCleaners();
 }
 
 /**

@@ -6,16 +6,22 @@ import {
   getTeamMembersAction,
   getBookingCleanersAction,
   assignCleanersToBookingAction,
+  getAllActiveCleanersAction,
 } from "@/app/actions/booking-cleaners";
-import { TeamMember, AssignedCleaner } from "@/lib/storage/booking-cleaners-supabase";
+import { TeamMember, AssignedCleaner, CleanerOption } from "@/lib/storage/booking-cleaners-supabase";
 import { Users, Check, X, Loader2, Save } from "lucide-react";
 
 interface AssignTeamCleanersProps {
   booking: Booking;
 }
 
+interface CleanerSelectOption {
+  cleanerId: string;
+  cleanerName: string;
+}
+
 export default function AssignTeamCleaners({ booking }: AssignTeamCleanersProps) {
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [availableCleaners, setAvailableCleaners] = useState<CleanerSelectOption[]>([]);
   const [assignedCleaners, setAssignedCleaners] = useState<AssignedCleaner[]>([]);
   const [selectedCleanerIds, setSelectedCleanerIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
@@ -23,8 +29,11 @@ export default function AssignTeamCleaners({ booking }: AssignTeamCleanersProps)
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Only show this component for team bookings
-  if (!booking.teamId) {
+  // Show this component for team bookings OR deep/move-in-out bookings
+  const isTeamBooking = !!booking.teamId;
+  const isTeamService = booking.service === 'deep' || booking.service === 'move-in-out';
+  
+  if (!isTeamBooking && !isTeamService) {
     return null;
   }
 
@@ -101,6 +110,14 @@ export default function AssignTeamCleaners({ booking }: AssignTeamCleanersProps)
       .join(" ");
   };
 
+  const getTitle = () => {
+    if (isTeamBooking && booking.teamId) {
+      return `Assign Cleaners - ${formatTeamName(booking.teamId)}`;
+    }
+    const serviceName = booking.service === 'deep' ? 'Deep Cleaning' : 'Move In/Out Cleaning';
+    return `Assign Cleaners - ${serviceName}`;
+  };
+
   if (loading) {
     return (
       <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -117,7 +134,7 @@ export default function AssignTeamCleaners({ booking }: AssignTeamCleanersProps)
       <div className="flex items-center gap-2 mb-4">
         <Users className="w-5 h-5 text-blue-600" />
         <h2 className="text-xl font-semibold text-gray-900">
-          Assign Cleaners - {formatTeamName(booking.teamId)}
+          {getTitle()}
         </h2>
       </div>
 
@@ -155,7 +172,7 @@ export default function AssignTeamCleaners({ booking }: AssignTeamCleanersProps)
                 const isSelected = selectedCleanerIds.has(member.cleanerId);
                 return (
                   <label
-                    key={member.id}
+                    key={cleaner.cleanerId}
                     className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${
                       isSelected
                         ? "border-blue-500 bg-blue-50"
@@ -165,12 +182,12 @@ export default function AssignTeamCleaners({ booking }: AssignTeamCleanersProps)
                     <input
                       type="checkbox"
                       checked={isSelected}
-                      onChange={() => handleToggleCleaner(member.cleanerId)}
+                      onChange={() => handleToggleCleaner(cleaner.cleanerId)}
                       className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                     />
                     <div className="flex-1">
-                      <div className="font-medium text-gray-900">{member.cleanerName}</div>
-                      <div className="text-sm text-gray-500">ID: {member.cleanerId}</div>
+                      <div className="font-medium text-gray-900">{cleaner.cleanerName}</div>
+                      <div className="text-sm text-gray-500">ID: {cleaner.cleanerId}</div>
                     </div>
                     {isSelected && (
                       <Check className="w-5 h-5 text-blue-600" />
