@@ -5,9 +5,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, Mail, Phone, ArrowRight, ArrowLeft, Home, LayoutDashboard } from "lucide-react";
 import { Booking, PriceBreakdown, BookingFormData, ServiceType, FrequencyType, CleanerPreference, normalizeCleanerPreference } from "@/lib/types/booking";
-import { getServiceName, formatPrice, getFrequencyName } from "@/lib/pricing";
+import { getServiceName, formatPrice, getFrequencyName, calculatePrice, fetchPricingConfig } from "@/lib/pricing";
 import { useAuth } from "@/lib/hooks/useSupabase";
 import { submitBooking } from "@/app/actions/submit-booking";
+import { validateDiscountCode } from "@/app/actions/discount";
 
 export default function ConfirmationPage() {
   const router = useRouter();
@@ -18,6 +19,52 @@ export default function ConfirmationPage() {
   const [loading, setLoading] = useState(true);
   const [submittingBooking, setSubmittingBooking] = useState(false);
   const { isAuthenticated, loading: authLoading } = useAuth();
+
+  // Pre-load pricing config to avoid dynamic imports
+  const [pricingConfig, setPricingConfig] = useState<any>(null);
+  
+  useEffect(() => {
+    // Pre-load pricing config in parallel
+    fetchPricingConfig().then(setPricingConfig).catch(console.error);
+  }, []);
+
+  // Helper function to calculate price breakdown
+  const calculatePriceBreakdown = async (bookingData: Booking | BookingFormData) => {
+    if (!pricingConfig) {
+      // Fallback: fetch if not pre-loaded
+      const config = await fetchPricingConfig();
+      setPricingConfig(config);
+      return calculatePriceBreakdownWithConfig(bookingData, config);
+    }
+    return calculatePriceBreakdownWithConfig(bookingData, pricingConfig);
+  };
+
+  const calculatePriceBreakdownWithConfig = async (
+    bookingData: Booking | BookingFormData,
+    config: any
+  ): Promise<PriceBreakdown> => {
+    // Calculate initial price breakdown (without discount code)
+    const initialPriceBreakdown = calculatePrice(bookingData, config, 0);
+    
+    // Validate and apply discount code if provided
+    let discountCodeAmount = 0;
+    if (bookingData.discountCode && bookingData.discountCode.trim()) {
+      try {
+        const discountResult = await validateDiscountCode(
+          bookingData.discountCode.trim(),
+          initialPriceBreakdown.subtotal - initialPriceBreakdown.frequencyDiscount
+        );
+        if (discountResult.success) {
+          discountCodeAmount = discountResult.discountAmount;
+        }
+      } catch (error) {
+        console.error("Error validating discount code:", error);
+      }
+    }
+    
+    // Calculate final price breakdown with discount code
+    return calculatePrice(bookingData, config, discountCodeAmount);
+  };
 
   useEffect(() => {
     const loadBooking = async () => {
@@ -31,33 +78,9 @@ export default function ConfirmationPage() {
               const fetchedBooking = data.booking;
               setBooking(fetchedBooking);
               
-              // Calculate price breakdown for fetched booking
+              // Calculate price breakdown for fetched booking (use pre-loaded config if available)
               try {
-                const { calculatePrice, fetchPricingConfig } = await import("@/lib/pricing");
-                const { validateDiscountCode } = await import("@/app/actions/discount");
-                const pricingConfig = await fetchPricingConfig();
-                
-                // Calculate initial price breakdown (without discount code)
-                const initialPriceBreakdown = calculatePrice(fetchedBooking, pricingConfig, 0);
-                
-                // Validate and apply discount code if provided
-                let discountCodeAmount = 0;
-                if (fetchedBooking.discountCode && fetchedBooking.discountCode.trim()) {
-                  try {
-                    const discountResult = await validateDiscountCode(
-                      fetchedBooking.discountCode.trim(),
-                      initialPriceBreakdown.subtotal - initialPriceBreakdown.frequencyDiscount
-                    );
-                    if (discountResult.success) {
-                      discountCodeAmount = discountResult.discountAmount;
-                    }
-                  } catch (error) {
-                    console.error("Error validating discount code:", error);
-                  }
-                }
-                
-                // Calculate final price breakdown with discount code
-                const finalPriceBreakdown = calculatePrice(fetchedBooking, pricingConfig, discountCodeAmount);
+                const finalPriceBreakdown = await calculatePriceBreakdown(fetchedBooking);
                 setPriceBreakdown(finalPriceBreakdown);
               } catch (error) {
                 console.error("Error calculating price breakdown:", error);
@@ -87,11 +110,20 @@ export default function ConfirmationPage() {
             }
           }
           
-          // If address fields are missing, try to get them from Paystack payment metadata
-          if ((!parsed.streetAddress || !parsed.suburb || !parsed.city) && paymentRef) {
+          // Only fetch Paystack metadata if address fields are missing (optimize: avoid unnecessary external API call)
+          const needsAddressData = !parsed.streetAddress || !parsed.suburb || !parsed.city;
+          if (needsAddressData && paymentRef) {
             try {
               console.log("Address fields missing, fetching from Paystack metadata...");
-              const paymentResponse = await fetch(`/api/payment/${encodeURIComponent(paymentRef)}`);
+              // Fetch payment metadata (with AbortController for timeout if needed)
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+              
+              const paymentResponse = await fetch(`/api/payment/${encodeURIComponent(paymentRef)}`, {
+                signal: controller.signal
+              });
+              clearTimeout(timeoutId);
+              
               if (paymentResponse.ok) {
                 const paymentData = await paymentResponse.json();
                 console.log("Payment API response:", paymentData);
@@ -166,8 +198,13 @@ export default function ConfirmationPage() {
                   console.warn("No metadata found in payment transaction:", paymentData);
                 }
               }
-            } catch (error) {
-              console.error("Error fetching payment metadata:", error);
+            } catch (error: any) {
+              if (error.name === 'AbortError') {
+                console.warn("Payment API request timed out, continuing with localStorage data");
+              } else {
+                console.error("Error fetching payment metadata:", error);
+              }
+              // Continue with localStorage data even if Paystack fetch fails
             }
           }
           
@@ -318,32 +355,9 @@ export default function ConfirmationPage() {
         if (saved) {
           try {
             const parsed = JSON.parse(saved);
-            // Calculate total amount with dynamic pricing
-            const { calculatePrice, fetchPricingConfig } = await import("@/lib/pricing");
-            const { validateDiscountCode } = await import("@/app/actions/discount");
-            const pricingConfig = await fetchPricingConfig();
             
-            // Calculate initial price breakdown (without discount code)
-            const initialPriceBreakdown = calculatePrice(parsed, pricingConfig, 0);
-            
-            // Validate and apply discount code if provided
-            let discountCodeAmount = 0;
-            if (parsed.discountCode && parsed.discountCode.trim()) {
-              try {
-                const discountResult = await validateDiscountCode(
-                  parsed.discountCode.trim(),
-                  initialPriceBreakdown.subtotal - initialPriceBreakdown.frequencyDiscount
-                );
-                if (discountResult.success) {
-                  discountCodeAmount = discountResult.discountAmount;
-                }
-              } catch (error) {
-                console.error("Error validating discount code:", error);
-              }
-            }
-            
-            // Calculate final price breakdown with discount code
-            const finalPriceBreakdown = calculatePrice(parsed, pricingConfig, discountCodeAmount);
+            // Calculate price breakdown (use pre-loaded config if available)
+            const finalPriceBreakdown = await calculatePriceBreakdown(parsed);
             
             // Create a booking object for display
             const mockBooking: Partial<Booking> = {
@@ -367,8 +381,14 @@ export default function ConfirmationPage() {
       setLoading(false);
     };
 
-    loadBooking();
-  }, [paymentRef]);
+    // Only load booking if we have a payment reference or can access localStorage
+    if (paymentRef || typeof window !== "undefined") {
+      loadBooking();
+    } else {
+      setLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentRef]); // pricingConfig is intentionally excluded - we want to load booking immediately
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "Not scheduled";

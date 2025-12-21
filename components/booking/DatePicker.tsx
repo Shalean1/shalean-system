@@ -25,9 +25,16 @@ export default function DatePicker({
   // Initialize month based on value prop if available, otherwise use a consistent default
   const getInitialMonth = () => {
     if (value) {
-      const date = new Date(value);
-      if (!isNaN(date.getTime())) {
-        return date;
+      // Parse date string as local date (YYYY-MM-DD format) to avoid timezone issues
+      const parts = value.split("-");
+      if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
+        const day = parseInt(parts[2], 10);
+        const date = new Date(year, month, day);
+        if (!isNaN(date.getTime())) {
+          return date;
+        }
       }
     }
     // Use a consistent default date to avoid hydration issues
@@ -59,9 +66,16 @@ export default function DatePicker({
   // Update month when value changes
   useEffect(() => {
     if (value) {
-      const date = new Date(value);
-      if (!isNaN(date.getTime())) {
-        setCurrentMonth(date);
+      // Parse date string as local date (YYYY-MM-DD format) to avoid timezone issues
+      const parts = value.split("-");
+      if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
+        const day = parseInt(parts[2], 10);
+        const date = new Date(year, month, day);
+        if (!isNaN(date.getTime())) {
+          setCurrentMonth(date);
+        }
       }
     }
   }, [value]);
@@ -87,20 +101,27 @@ export default function DatePicker({
   };
 
   const handleDateSelect = (date: Date) => {
-    const dateString = date.toISOString().split("T")[0];
+    // Use local date components to avoid timezone issues
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const dateString = `${year}-${month}-${day}`;
     onChange(dateString);
     setIsOpen(false);
   };
 
   const formatDisplayDate = (dateString: string) => {
     if (!dateString) return "";
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
+    // Parse date string as local date (YYYY-MM-DD format)
+    const parts = dateString.split("-");
+    if (parts.length !== 3) return "";
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10);
+    const day = parseInt(parts[2], 10);
     
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}/${month}/${day}`;
+    if (isNaN(year) || isNaN(month) || isNaN(day)) return "";
+    
+    return `${year}/${String(month).padStart(2, "0")}/${String(day).padStart(2, "0")}`;
   };
 
   const getDaysInMonth = (date: Date) => {
@@ -128,20 +149,31 @@ export default function DatePicker({
 
   const isDateDisabled = (date: Date) => {
     if (!min) return false;
-    const minDate = new Date(min);
-    minDate.setHours(0, 0, 0, 0);
-    const checkDate = new Date(date);
-    checkDate.setHours(0, 0, 0, 0);
+    // Parse min date string as local date (YYYY-MM-DD format) to avoid timezone issues
+    const parts = min.split("-");
+    if (parts.length !== 3) return false;
+    const minYear = parseInt(parts[0], 10);
+    const minMonth = parseInt(parts[1], 10) - 1; // Month is 0-indexed
+    const minDay = parseInt(parts[2], 10);
+    const minDate = new Date(minYear, minMonth, minDay);
+    
+    const checkDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     return checkDate < minDate;
   };
 
   const isDateSelected = (date: Date) => {
     if (!value) return false;
-    const selectedDate = new Date(value);
+    // Parse date string as local date (YYYY-MM-DD format) to avoid timezone issues
+    const parts = value.split("-");
+    if (parts.length !== 3) return false;
+    const selectedYear = parseInt(parts[0], 10);
+    const selectedMonth = parseInt(parts[1], 10) - 1; // Month is 0-indexed
+    const selectedDay = parseInt(parts[2], 10);
+    
     return (
-      date.getDate() === selectedDate.getDate() &&
-      date.getMonth() === selectedDate.getMonth() &&
-      date.getFullYear() === selectedDate.getFullYear()
+      date.getDate() === selectedDay &&
+      date.getMonth() === selectedMonth &&
+      date.getFullYear() === selectedYear
     );
   };
 

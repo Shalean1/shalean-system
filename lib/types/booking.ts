@@ -2,7 +2,7 @@ export type ServiceType = "standard" | "deep" | "move-in-out" | "airbnb" | "offi
 
 export type FrequencyType = "one-time" | "weekly" | "bi-weekly" | "monthly";
 
-export type CleanerPreference = "no-preference" | "natasha-m" | "estery-p" | "beaul";
+export type CleanerPreference = "no-preference" | "natasha-m" | "estery-p" | "beaul" | "team-a" | "team-b" | "team-c";
 
 /**
  * Valid cleaner preference values
@@ -12,6 +12,9 @@ const VALID_CLEANER_PREFERENCES: CleanerPreference[] = [
   "natasha-m",
   "estery-p",
   "beaul",
+  "team-a",
+  "team-b",
+  "team-c",
 ];
 
 /**
@@ -90,6 +93,9 @@ export interface Booking extends BookingFormData {
   recurringSequence?: number;
   parentBookingId?: string;
   isRecurring?: boolean;
+  // Team booking fields
+  teamId?: string;
+  assignedCleanerIds?: string[];
 }
 
 export interface PriceBreakdown {

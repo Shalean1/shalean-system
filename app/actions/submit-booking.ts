@@ -8,7 +8,7 @@ import { verifyPayment } from "@/lib/paystack";
 import { validateDiscountCode, recordDiscountCodeUsage } from "@/app/actions/discount";
 import { useCreditsForBooking } from "@/app/actions/credits";
 import { createClient } from "@/lib/supabase/server";
-import { getSystemSettings } from "@/lib/supabase/booking-data";
+import { getSystemSettings, checkTeamAvailability } from "@/lib/supabase/booking-data";
 import { generateRecurringGroupId, calculateRecurringDates } from "@/lib/utils/recurring-bookings";
 
 export interface SubmitBookingResult {
@@ -113,6 +113,25 @@ export async function submitBooking(
     // Calculate final pricing with discount code
     const priceBreakdown = calculatePrice(data, pricingConfig, discountCodeAmount);
 
+    // Check team availability for deep/move-in-out services
+    const normalizedPreference = normalizeCleanerPreference(data.cleanerPreference);
+    const isTeamService = data.service === 'deep' || data.service === 'move-in-out';
+    const isTeamPreference = normalizedPreference.startsWith('team-');
+    
+    if (isTeamService && isTeamPreference && data.scheduledDate) {
+      const teamAvailable = await checkTeamAvailability(normalizedPreference, data.scheduledDate);
+      if (!teamAvailable) {
+        return {
+          success: false,
+          message: "Selected team is not available on this date. Please choose a different team or date.",
+          errors: { 
+            cleanerPreference: "Selected team is not available on this date. Please choose a different team or date.",
+            scheduledDate: "Selected team is not available on this date. Please choose a different team or date."
+          },
+        };
+      }
+    }
+
     // Handle payment based on payment method
     let paymentStatus: "pending" | "completed" | "failed" = "pending";
     
@@ -177,9 +196,9 @@ export async function submitBooking(
       bookingReference = generateBookingReference();
     }
 
-    // Determine assigned cleaner ID
-    const normalizedPreference = normalizeCleanerPreference(data.cleanerPreference);
-    const assignedCleanerId = normalizedPreference !== "no-preference" ? normalizedPreference : null;
+    // Determine assigned cleaner ID (reuse normalizedPreference from above)
+    // normalizedPreference is already defined above for team availability check
+    const assignedCleanerId = !isTeamPreference && normalizedPreference !== "no-preference" ? normalizedPreference : null;
 
     // Calculate cleaner earnings if cleaner is assigned
     let cleanerEarnings: number | undefined;

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { MapPin, User, Heart, AlertCircle, ChevronDown, X } from "lucide-react";
 import CleanerCard from "@/components/booking/CleanerCard";
+import TeamCard from "@/components/booking/TeamCard";
 import FrequencyCard from "@/components/booking/FrequencyCard";
 import PriceSummary from "@/components/booking/PriceSummary";
 import ProgressIndicator from "@/components/booking/ProgressIndicator";
@@ -12,11 +13,16 @@ import { BookingFormData, CleanerPreference, FrequencyType } from "@/lib/types/b
 import { calculatePrice, fetchPricingConfig, PricingConfig } from "@/lib/pricing";
 import {
   getCleaners,
+  getTeams,
+  getTeamMembers,
+  checkTeamAvailability,
   getFrequencyOptions,
   getSystemSetting,
   getServiceLocations,
   ServiceLocation,
+  Team,
   FALLBACK_CLEANERS,
+  FALLBACK_TEAMS,
   FALLBACK_FREQUENCIES,
 } from "@/lib/supabase/booking-data";
 
@@ -106,31 +112,124 @@ export default function SchedulePage() {
   const suburbDropdownRef = useRef<HTMLDivElement>(null);
   const suburbInputRef = useRef<HTMLInputElement>(null);
 
+  // Determine if this is a team service (deep or move-in-out)
+  const isTeamService = serviceType === 'deep' || serviceType === 'move-in-out';
+  
+  // Teams state for team services
+  const [teams, setTeams] = useState<Team[]>(
+    FALLBACK_TEAMS.map(t => ({ 
+      team_id: t.id, 
+      id: t.id, 
+      name: t.name, 
+      display_order: 0, 
+      is_active: true,
+      memberCount: 0,
+      isAvailable: true
+    }))
+  );
+
   // Fetch dynamic data on mount
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoadingData(true);
         
-        // Fetch all data in parallel
-        const [cleanersData, frequencyOptionsData, cityData, locationsData, pricing] = await Promise.all([
-          getCleaners(),
-          getFrequencyOptions(),
-          getSystemSetting("default_city"),
-          getServiceLocations(),
-          fetchPricingConfig(),
-        ]);
-        
-        // Set cleaners
-        if (cleanersData.length > 0) {
-          setCleaners(
-            cleanersData.map(cleaner => ({
-              id: cleaner.cleaner_id as CleanerPreference,
-              name: cleaner.name,
-              rating: cleaner.rating || undefined,
-            }))
+        if (isTeamService) {
+          // For deep/move-in-out services, fetch teams
+          const [teamsData, frequencyOptionsData, cityData, locationsData, pricing] = await Promise.all([
+            getTeams(),
+            getFrequencyOptions(),
+            getSystemSetting("default_city"),
+            getServiceLocations(),
+            fetchPricingConfig(),
+          ]);
+          
+          // Fetch team members for each team
+          const teamsWithMembers = await Promise.all(
+            (teamsData.length > 0 ? teamsData : FALLBACK_TEAMS.map(t => ({ id: t.id, team_id: t.id, name: t.name, display_order: 0, is_active: true }))).map(async (team) => {
+              const members = await getTeamMembers(team.team_id);
+              return {
+                ...team,
+                memberCount: members.length,
+              };
+            })
           );
+          
+          setTeams(teamsWithMembers);
+        } else {
+          // For other services, fetch cleaners
+          const [cleanersData, frequencyOptionsData, cityData, locationsData, pricing] = await Promise.all([
+            getCleaners(),
+            getFrequencyOptions(),
+            getSystemSetting("default_city"),
+            getServiceLocations(),
+            fetchPricingConfig(),
+          ]);
+          
+          // Set cleaners
+          if (cleanersData.length > 0) {
+            setCleaners(
+              cleanersData.map(cleaner => ({
+                id: cleaner.cleaner_id as CleanerPreference,
+                name: cleaner.name,
+                rating: cleaner.rating || undefined,
+              }))
+            );
+          }
+          
+          // Set frequency options
+          if (frequencyOptionsData.length > 0) {
+            setFrequencies(frequencyOptionsData.map(f => f.frequency_id as FrequencyType));
+            
+            const discounts: Record<FrequencyType, string> = {} as any;
+            frequencyOptionsData.forEach(f => {
+              discounts[f.frequency_id as FrequencyType] = f.display_label || "";
+            });
+            setFrequencyDiscounts(discounts);
+          }
+          
+          // Set default city
+          if (cityData) {
+            setDefaultCity(cityData);
+          }
+          
+          // Set service locations
+          if (locationsData.length > 0) {
+            setServiceLocations(locationsData);
+          }
+          
+          // Set pricing config
+          setPricingConfig(pricing);
+          return;
         }
+        
+        // Set frequency options (for team services)
+        const frequencyOptionsData = await getFrequencyOptions();
+        if (frequencyOptionsData.length > 0) {
+          setFrequencies(frequencyOptionsData.map(f => f.frequency_id as FrequencyType));
+          
+          const discounts: Record<FrequencyType, string> = {} as any;
+          frequencyOptionsData.forEach(f => {
+            discounts[f.frequency_id as FrequencyType] = f.display_label || "";
+          });
+          setFrequencyDiscounts(discounts);
+        }
+        
+        // Set default city
+        const cityData = await getSystemSetting("default_city");
+        if (cityData) {
+          setDefaultCity(cityData);
+        }
+        
+        // Set service locations
+        const locationsData = await getServiceLocations();
+        if (locationsData.length > 0) {
+          setServiceLocations(locationsData);
+        }
+        
+        // Set pricing config
+        const pricing = await fetchPricingConfig();
+        setPricingConfig(pricing);
         
         // Set frequency options
         if (frequencyOptionsData.length > 0) {
@@ -196,6 +295,23 @@ export default function SchedulePage() {
       setSuburbSearchQuery(formData.suburb);
     }
   }, [formData.suburb]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Check team availability when date changes
+  useEffect(() => {
+    const checkAvailability = async () => {
+      if (isTeamService && formData.scheduledDate && teams.length > 0) {
+        const updatedTeams = await Promise.all(
+          teams.map(async (team) => {
+            const isAvailable = await checkTeamAvailability(team.team_id, formData.scheduledDate!);
+            return { ...team, isAvailable };
+          })
+        );
+        setTeams(updatedTeams);
+      }
+    };
+
+    checkAvailability();
+  }, [formData.scheduledDate, isTeamService]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     // Save to localStorage, ensuring all fields are preserved
@@ -499,42 +615,65 @@ export default function SchedulePage() {
               </div>
             </section>
 
-            {/* Cleaner Selection */}
-            <section className="bg-white border border-gray-200 rounded-xl p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Select your preferred cleaner</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {cleaners.map((cleaner) => (
-                  <CleanerCard
-                    key={cleaner.id}
-                    id={cleaner.id}
-                    name={cleaner.name}
-                    rating={cleaner.rating}
-                    isSelected={formData.cleanerPreference === cleaner.id}
-                    onClick={() =>
-                      setFormData((prev) => ({ ...prev, cleanerPreference: cleaner.id }))
-                    }
-                  />
-                ))}
-              </div>
-            </section>
+            {/* Cleaner/Team Selection */}
+            {isTeamService ? (
+              <section className="bg-white border border-gray-200 rounded-xl p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-6">Select your preferred team</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {teams.map((team) => (
+                    <TeamCard
+                      key={team.team_id}
+                      id={team.team_id}
+                      name={team.name}
+                      memberCount={team.memberCount}
+                      isSelected={formData.cleanerPreference === team.team_id}
+                      isAvailable={team.isAvailable}
+                      onClick={() =>
+                        setFormData((prev) => ({ ...prev, cleanerPreference: team.team_id as CleanerPreference }))
+                      }
+                    />
+                  ))}
+                </div>
+              </section>
+            ) : (
+              <section className="bg-white border border-gray-200 rounded-xl p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-6">Select your preferred cleaner</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {cleaners.map((cleaner) => (
+                    <CleanerCard
+                      key={cleaner.id}
+                      id={cleaner.id}
+                      name={cleaner.name}
+                      rating={cleaner.rating}
+                      isSelected={formData.cleanerPreference === cleaner.id}
+                      onClick={() =>
+                        setFormData((prev) => ({ ...prev, cleanerPreference: cleaner.id }))
+                      }
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Frequency Selection */}
-            <section className="bg-white border border-gray-200 rounded-xl p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">
-                How often do you need cleaning?
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {frequencies.map((frequency) => (
-                  <FrequencyCard
-                    key={frequency}
-                    frequency={frequency}
-                    isSelected={formData.frequency === frequency}
-                    discount={frequencyDiscounts[frequency]}
-                    onClick={() => setFormData((prev) => ({ ...prev, frequency }))}
-                  />
-                ))}
-              </div>
-            </section>
+            {!isTeamService && (
+              <section className="bg-white border border-gray-200 rounded-xl p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-6">
+                  How often do you need cleaning?
+                </h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {frequencies.map((frequency) => (
+                    <FrequencyCard
+                      key={frequency}
+                      frequency={frequency}
+                      isSelected={formData.frequency === frequency}
+                      discount={frequencyDiscounts[frequency]}
+                      onClick={() => setFormData((prev) => ({ ...prev, frequency }))}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Navigation Buttons */}
             <div className="flex justify-between">
@@ -566,7 +705,7 @@ export default function SchedulePage() {
               scheduledTime={formData.scheduledTime || null}
               address={address}
               cleanerPreference={formData.cleanerPreference}
-              cleaners={cleaners}
+              cleaners={isTeamService ? teams.map(t => ({ id: t.team_id as CleanerPreference, name: t.name })) : cleaners}
             />
           </div>
         </div>

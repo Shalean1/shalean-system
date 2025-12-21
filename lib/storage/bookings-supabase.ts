@@ -10,10 +10,13 @@ export async function saveBooking(booking: Booking): Promise<void> {
   // Falls back to regular client if service role key is not configured
   const supabase = createServiceRoleClient();
   
-  // Set assigned_cleaner_id based on cleaner_preference
-  // If cleaner_preference is not "no-preference", assign that cleaner
+  // Set assigned_cleaner_id and team_id based on cleaner_preference
+  // If cleaner_preference is a team (team-a, team-b, team-c), set team_id
+  // Otherwise, if it's a cleaner preference, set assigned_cleaner_id
   const normalizedPreference = normalizeCleanerPreference(booking.cleanerPreference);
-  const assignedCleanerId = normalizedPreference !== "no-preference" 
+  const isTeamPreference = normalizedPreference.startsWith('team-');
+  const teamId = isTeamPreference ? normalizedPreference : null;
+  const assignedCleanerId = !isTeamPreference && normalizedPreference !== "no-preference" 
     ? normalizedPreference 
     : null;
   
@@ -35,6 +38,7 @@ export async function saveBooking(booking: Booking): Promise<void> {
       city: booking.city,
       cleaner_preference: normalizedPreference,
       assigned_cleaner_id: assignedCleanerId,
+      team_id: teamId,
       special_instructions: booking.specialInstructions || null,
       contact_first_name: booking.firstName,
       contact_last_name: booking.lastName,
@@ -827,6 +831,8 @@ function mapDatabaseToBooking(data: any): Booking {
     cleanerResponse: data.cleaner_response || null,
     jobProgress: data.job_progress || null,
     createdAt: data.created_at,
+    teamId: data.team_id || undefined,
+    // assignedCleanerIds will be loaded separately if needed
   };
 }
 

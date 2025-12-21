@@ -89,6 +89,22 @@ export interface RoomPricing {
   is_active: boolean;
 }
 
+export interface Team {
+  id: string;
+  team_id: string;
+  name: string;
+  display_order: number;
+  is_active: boolean;
+}
+
+export interface TeamMember {
+  id: string;
+  team_id: string;
+  cleaner_id: string;
+  cleaner_name?: string;
+  display_order: number;
+}
+
 // ============================================================================
 // FETCH FUNCTIONS
 // ============================================================================
@@ -395,6 +411,97 @@ export async function getRoomPricingByServiceType(serviceType: string): Promise<
   }
 }
 
+/**
+ * Fetch all active teams
+ */
+export async function getTeams(): Promise<Team[]> {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('teams')
+      .select('*')
+      .eq('is_active', true)
+      .order('display_order', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching teams:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching teams:', error);
+    return [];
+  }
+}
+
+/**
+ * Fetch all cleaners assigned to a specific team
+ */
+export async function getTeamMembers(teamId: string): Promise<TeamMember[]> {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('team_members')
+      .select(`
+        id,
+        team_id,
+        cleaner_id,
+        display_order,
+        cleaners:cleaner_id (
+          name
+        )
+      `)
+      .eq('team_id', teamId)
+      .order('display_order', { ascending: true });
+
+    if (error) {
+      console.error(`Error fetching team members for ${teamId}:`, error);
+      return [];
+    }
+
+    return (data || []).map((member: any) => ({
+      id: member.id,
+      team_id: member.team_id,
+      cleaner_id: member.cleaner_id,
+      cleaner_name: member.cleaners?.name,
+      display_order: member.display_order,
+    }));
+  } catch (error) {
+    console.error(`Error fetching team members for ${teamId}:`, error);
+    return [];
+  }
+}
+
+/**
+ * Check if a team is available on a specific date
+ * Returns true if team has no bookings on that date, false otherwise
+ */
+export async function checkTeamAvailability(teamId: string, date: string): Promise<boolean> {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('bookings')
+      .select('id')
+      .eq('team_id', teamId)
+      .eq('scheduled_date', date)
+      .in('status', ['pending', 'confirmed', 'in-progress']); // Only count active bookings
+
+    if (error) {
+      console.error(`Error checking team availability for ${teamId} on ${date}:`, error);
+      // On error, assume unavailable to be safe
+      return false;
+    }
+
+    // Team is available if no bookings found
+    return (data || []).length === 0;
+  } catch (error) {
+    console.error(`Error checking team availability for ${teamId} on ${date}:`, error);
+    // On error, assume unavailable to be safe
+    return false;
+  }
+}
+
 // ============================================================================
 // FALLBACK DATA (for backward compatibility)
 // ============================================================================
@@ -429,6 +536,12 @@ export const FALLBACK_CLEANERS = [
   { id: "natasha-m", name: "Natasha M.", rating: 4.7 },
   { id: "estery-p", name: "Estery P.", rating: 4.6 },
   { id: "beaul", name: "Beaul", rating: 3.1 },
+];
+
+export const FALLBACK_TEAMS = [
+  { id: "team-a", name: "Team A" },
+  { id: "team-b", name: "Team B" },
+  { id: "team-c", name: "Team C" },
 ];
 
 export const FALLBACK_FREQUENCIES = [

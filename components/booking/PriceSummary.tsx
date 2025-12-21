@@ -121,7 +121,9 @@ export default function PriceSummary({
 
         {selectedCleanerName && (
           <div>
-            <p className="text-sm text-gray-600 mb-1">Cleaner</p>
+            <p className="text-sm text-gray-600 mb-1">
+              {cleanerPreference && cleanerPreference.startsWith('team-') ? 'Team' : 'Cleaner'}
+            </p>
             <p className="font-medium text-gray-900">{selectedCleanerName}</p>
           </div>
         )}

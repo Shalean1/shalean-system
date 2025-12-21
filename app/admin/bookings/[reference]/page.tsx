@@ -8,6 +8,7 @@ import AdminStatusUpdateDropdown from "@/components/admin/AdminStatusUpdateDropd
 import AdminEditBookingButton from "@/components/admin/AdminEditBookingButton";
 import AdminDeleteBookingButton from "@/components/admin/AdminDeleteBookingButton";
 import SendPaymentLinkButton from "@/components/admin/SendPaymentLinkButton";
+import AssignTeamCleaners from "@/components/admin/AssignTeamCleaners";
 import Link from "next/link";
 import { ArrowLeft, Calendar, MapPin, Clock, User, Phone, Mail, Home, Building } from "lucide-react";
 
@@ -189,9 +190,17 @@ export default async function AdminBookingDetailPage({
               )}
               {booking.cleanerPreference && (
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Cleaner Preference</p>
+                  <p className="text-sm text-gray-600 mb-1">Cleaner/Team Preference</p>
                   <p className="font-medium text-gray-900">
                     {formatCleanerPreference(booking.cleanerPreference)}
+                  </p>
+                </div>
+              )}
+              {booking.teamId && (
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Assigned Team</p>
+                  <p className="font-medium text-gray-900">
+                    {formatCleanerPreference(booking.teamId)}
                   </p>
                 </div>
               )}
@@ -248,6 +257,13 @@ export default async function AdminBookingDetailPage({
             </div>
           </div>
         </div>
+
+        {/* Team Cleaner Assignment */}
+        {booking.teamId && (
+          <div className="mb-6">
+            <AssignTeamCleaners booking={booking} />
+          </div>
+        )}
 
         {/* Special Instructions */}
         {booking.specialInstructions && (

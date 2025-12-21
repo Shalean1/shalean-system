@@ -44,9 +44,11 @@ import {
   getAdditionalServices,
   getTimeSlots,
   getCleaners,
+  getTeams,
   FALLBACK_EXTRAS,
   FALLBACK_TIME_SLOTS,
   FALLBACK_CLEANERS,
+  FALLBACK_TEAMS,
 } from "@/lib/supabase/booking-data";
 import { useUser } from "@/lib/hooks/useSupabase";
 import { getUserProfileClient } from "@/lib/storage/profile-supabase-client";
@@ -181,8 +183,13 @@ export default function ReviewPage() {
     FALLBACK_EXTRAS.map(extra => ({ ...extra, icon: iconMap[extra.icon] || Shirt }))
   );
   const [timeSlots, setTimeSlots] = useState<string[]>(FALLBACK_TIME_SLOTS);
+  const isTeamService = serviceType === 'deep' || serviceType === 'move-in-out';
+  
   const [cleaners, setCleaners] = useState<{ id: CleanerPreference; name: string; rating?: number }[]>(
     FALLBACK_CLEANERS.map(c => ({ id: c.id as CleanerPreference, name: c.name, rating: c.rating }))
+  );
+  const [teams, setTeams] = useState<Array<{ id: CleanerPreference; name: string }>>(
+    FALLBACK_TEAMS.map(t => ({ id: t.id as CleanerPreference, name: t.name }))
   );
 
   // Load credit balance when user is logged in
@@ -284,55 +291,96 @@ export default function ReviewPage() {
         }
       }
       
-      // Fetch pricing config, extras, time slots, and cleaners
+      // Fetch pricing config, extras, time slots, and cleaners/teams
       try {
-        const [pricing, additionalServicesData, timeSlotsData, cleanersData] = await Promise.all([
-          fetchPricingConfig(),
-          getAdditionalServices(),
-          getTimeSlots(),
-          getCleaners(),
-        ]);
-        
-        setPricingConfig(pricing);
-        
-        // Set additional services/extras
-        if (additionalServicesData.length > 0) {
-          const mappedExtras = additionalServicesData.map(service => ({
-            id: service.service_id,
-            name: service.name,
-            icon: iconMap[service.icon_name || "Shirt"] || Shirt,
-          }));
-          setAllExtras(mappedExtras);
+        if (isTeamService) {
+          const [pricing, additionalServicesData, timeSlotsData, teamsData] = await Promise.all([
+            fetchPricingConfig(),
+            getAdditionalServices(),
+            getTimeSlots(),
+            getTeams(),
+          ]);
           
-          // Filter based on current service type
-          const currentServiceType = loadedFormData.service || formData.service || "standard";
-          const isDeepOrMoveInOut = currentServiceType === 'deep' || currentServiceType === 'move-in-out';
-          const isStandardOrAirbnb = currentServiceType === 'standard' || currentServiceType === 'airbnb';
+          // Set teams
+          if (teamsData.length > 0) {
+            setTeams(
+              teamsData.map(team => ({
+                id: team.team_id as CleanerPreference,
+                name: team.name,
+              }))
+            );
+          }
           
-          setExtras(
-            mappedExtras.filter(service => {
-              if (DEEP_SERVICES_ONLY.includes(service.id)) {
-                return isDeepOrMoveInOut;
-              }
-              return isStandardOrAirbnb && !DEEP_SERVICES_ONLY.includes(service.id);
-            })
-          );
-        }
+          // Set pricing config
+          setPricingConfig(pricing);
+          
+          // Set extras
+          if (additionalServicesData.length > 0) {
+            setExtras(additionalServicesData);
+          } else {
+            setExtras(FALLBACK_EXTRAS);
+          }
+          
+          // Set time slots
+          if (timeSlotsData.length > 0) {
+            setTimeSlots(timeSlotsData.map(ts => ts.time_value));
+          } else {
+            setTimeSlots(FALLBACK_TIME_SLOTS);
+          }
+        } else {
+          const [pricing, additionalServicesData, timeSlotsData, cleanersData] = await Promise.all([
+            fetchPricingConfig(),
+            getAdditionalServices(),
+            getTimeSlots(),
+            getCleaners(),
+          ]);
+          
+          // Set cleaners
+          if (cleanersData.length > 0) {
+            setCleaners(
+              cleanersData.map(cleaner => ({
+                id: cleaner.cleaner_id as CleanerPreference,
+                name: cleaner.name,
+                rating: cleaner.rating || undefined,
+              }))
+            );
+          }
+          
+          // Set pricing config
+          setPricingConfig(pricing);
         
-        // Set time slots
-        if (timeSlotsData.length > 0) {
-          setTimeSlots(timeSlotsData.map(slot => slot.time_value));
-        }
-        
-        // Set cleaners
-        if (cleanersData.length > 0) {
-          setCleaners(
-            cleanersData.map(cleaner => ({
-              id: cleaner.cleaner_id as CleanerPreference,
-              name: cleaner.name,
-              rating: cleaner.rating || undefined,
-            }))
-          );
+          // Set additional services/extras
+          if (additionalServicesData.length > 0) {
+            const mappedExtras = additionalServicesData.map(service => ({
+              id: service.service_id,
+              name: service.name,
+              icon: iconMap[service.icon_name || "Shirt"] || Shirt,
+            }));
+            setAllExtras(mappedExtras);
+            
+            // Filter based on current service type
+            const currentServiceType = loadedFormData.service || formData.service || "standard";
+            const isDeepOrMoveInOut = currentServiceType === 'deep' || currentServiceType === 'move-in-out';
+            const isStandardOrAirbnb = currentServiceType === 'standard' || currentServiceType === 'airbnb';
+            
+            setExtras(
+              mappedExtras.filter(service => {
+                if (DEEP_SERVICES_ONLY.includes(service.id)) {
+                  return isDeepOrMoveInOut;
+                }
+                return isStandardOrAirbnb && !DEEP_SERVICES_ONLY.includes(service.id);
+              })
+            );
+          } else {
+            setExtras(FALLBACK_EXTRAS);
+          }
+          
+          // Set time slots
+          if (timeSlotsData.length > 0) {
+            setTimeSlots(timeSlotsData.map(slot => slot.time_value));
+          } else {
+            setTimeSlots(FALLBACK_TIME_SLOTS);
+          }
         }
       } catch (error) {
         console.error("Error loading data:", error);
@@ -1497,7 +1545,7 @@ export default function ReviewPage() {
               scheduledTime={dataForPricing.scheduledTime || null}
               address={address}
               cleanerPreference={formData.cleanerPreference}
-              cleaners={cleaners}
+              cleaners={isTeamService ? teams : cleaners}
             />
           </div>
         </div>

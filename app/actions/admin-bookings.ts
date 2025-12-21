@@ -47,6 +47,8 @@ function mapDatabaseToBooking(data: any): Booking {
     cleanerResponse: data.cleaner_response || null,
     jobProgress: data.job_progress || null,
     createdAt: data.created_at,
+    teamId: data.team_id || undefined,
+    // assignedCleanerIds will be loaded separately if needed
   };
 }
 
