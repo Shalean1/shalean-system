@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { isUserAdmin } from "@/lib/storage/profile-supabase";
 
 /**
  * Auth callback route to handle email verification
@@ -43,9 +44,12 @@ export async function GET(request: NextRequest) {
         console.error("Error ensuring profile in callback:", profileError);
       }
       
+      // Check if user is admin and redirect accordingly
+      const isAdmin = await isUserAdmin();
+      const redirectPath = isAdmin ? "/admin" : (next === "/" ? "/dashboard" : next);
+      
       // Successfully verified and logged in
-      // Redirect to dashboard or home page
-      return NextResponse.redirect(new URL(next, requestUrl.origin));
+      return NextResponse.redirect(new URL(redirectPath, requestUrl.origin));
     }
   }
 
@@ -82,9 +86,12 @@ export async function GET(request: NextRequest) {
         console.error("Error ensuring profile in callback:", profileError);
       }
       
+      // Check if user is admin and redirect accordingly
+      const isAdmin = await isUserAdmin();
+      const redirectPath = isAdmin ? "/admin" : (next === "/" ? "/dashboard" : next);
+      
       // Successfully verified and logged in
-      // Redirect to dashboard or home page
-      return NextResponse.redirect(new URL(next, requestUrl.origin));
+      return NextResponse.redirect(new URL(redirectPath, requestUrl.origin));
     }
   }
 

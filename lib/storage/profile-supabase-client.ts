@@ -32,5 +32,6 @@ export async function getUserProfileClient(): Promise<UserProfile | null> {
     fullName: profile?.full_name || user.user_metadata?.full_name || null,
     phone: profile?.phone || null,
     email: profile?.email || user.email || "",
+    isAdmin: profile?.is_admin || false,
   };
 }

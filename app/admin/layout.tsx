@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { getUserDisplayName } from "@/lib/storage/profile-supabase";
+import { getUserDisplayName, isUserAdmin } from "@/lib/storage/profile-supabase";
 import AdminNav from "@/components/admin/AdminNav";
 import UserMenu from "@/components/dashboard/UserMenu";
 import { Bell } from "lucide-react";
@@ -20,6 +20,12 @@ export default async function AdminLayout({
   // Redirect to login if not authenticated
   if (!user) {
     redirect("/auth/login");
+  }
+
+  // Check if user has admin role
+  const isAdmin = await isUserAdmin();
+  if (!isAdmin) {
+    redirect("/dashboard");
   }
 
   const displayName = await getUserDisplayName();

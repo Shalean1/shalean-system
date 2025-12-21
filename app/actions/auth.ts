@@ -257,6 +257,12 @@ export async function signup(
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
     
+    console.log("Signup attempt:", {
+      email: data.email,
+      siteUrl,
+      redirectTo: `${siteUrl}/auth/callback`,
+    });
+    
     const { data: authData, error } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
@@ -271,11 +277,19 @@ export async function signup(
     });
 
     if (error) {
+      console.error("Signup error:", error);
       return {
         success: false,
         message: error.message,
       };
     }
+
+    console.log("Signup successful:", {
+      userId: authData.user?.id,
+      email: authData.user?.email,
+      emailConfirmed: authData.user?.email_confirmed_at ? "Yes" : "No",
+      sessionCreated: !!authData.session,
+    });
 
     // Process referral code if provided
     if (authData.user && referralCode && referralCode.trim()) {
@@ -421,10 +435,73 @@ export async function logout(): Promise<AuthResult> {
 }
 
 /**
+ * Resend email confirmation
+ */
+export async function resendConfirmationEmail(email: string): Promise<AuthResult> {
+  // Server-side validation
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return {
+      success: false,
+      message: "Valid email is required",
+      errors: { email: "Valid email is required" },
+    };
+  }
+
+  try {
+    const supabase = await createClient();
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: email,
+      options: {
+        emailRedirectTo: `${siteUrl}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+
+    return {
+      success: true,
+      message: "Confirmation email sent! Please check your inbox.",
+    };
+  } catch (error) {
+    console.error("Error resending confirmation email:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    
+    return {
+      success: false,
+      message: `Failed to resend confirmation email: ${errorMessage}`,
+    };
+  }
+}
+
+/**
  * Get the current user
  */
 export async function getCurrentUser() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   return user;
+}
+
+/**
+ * Get the redirect path after login based on user role
+ * Returns "/admin" for admins, "/dashboard" for regular users
+ */
+export async function getLoginRedirectPath(): Promise<string> {
+  try {
+    const { isUserAdmin } = await import("@/lib/storage/profile-supabase");
+    const isAdmin = await isUserAdmin();
+    return isAdmin ? "/admin" : "/dashboard";
+  } catch (error) {
+    console.error("Error checking admin status:", error);
+    // Default to dashboard if check fails
+    return "/dashboard";
+  }
 }

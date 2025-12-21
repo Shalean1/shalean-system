@@ -7,6 +7,7 @@ export interface UserProfile {
   fullName: string | null;
   phone: string | null;
   email: string;
+  isAdmin: boolean;
 }
 
 /**
@@ -37,6 +38,7 @@ export async function getUserProfile(): Promise<UserProfile | null> {
     fullName: profile?.full_name || user.user_metadata?.full_name || null,
     phone: profile?.phone || null,
     email: profile?.email || user.email || "",
+    isAdmin: profile?.is_admin || false,
   };
 }
 
@@ -59,4 +61,12 @@ export async function getUserDisplayName(): Promise<string> {
   }
   
   return "there";
+}
+
+/**
+ * Check if the current user has admin role
+ */
+export async function isUserAdmin(): Promise<boolean> {
+  const profile = await getUserProfile();
+  return profile?.isAdmin || false;
 }

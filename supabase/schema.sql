@@ -159,6 +159,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   email TEXT,
   phone TEXT,
   cleaner_id TEXT REFERENCES cleaners(cleaner_id),
+  is_admin BOOLEAN DEFAULT false,
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -200,6 +201,9 @@ CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
 
 -- Create index on cleaner_id in profiles
 CREATE INDEX IF NOT EXISTS idx_profiles_cleaner_id ON profiles(cleaner_id);
+
+-- Create index on is_admin for faster lookups
+CREATE INDEX IF NOT EXISTS idx_profiles_is_admin ON profiles(is_admin);
 
 -- Add unique constraint on phone for cleaner accounts (where cleaner_id is not null)
 -- Note: This allows multiple regular users with same phone, but cleaners must have unique phones

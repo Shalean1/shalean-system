@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Mail, Phone, Lock, AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react";
-import { login, type LoginFormData } from "@/app/actions/auth";
+import { login, getLoginRedirectPath, type LoginFormData } from "@/app/actions/auth";
 
 function LoginForm() {
   const router = useRouter();
@@ -61,8 +61,9 @@ function LoginForm() {
         type: "success",
         message: result.message,
       });
-      // Redirect to dashboard after successful login
-      router.push("/dashboard");
+      // Get the appropriate redirect path based on user role (admin vs regular user)
+      const redirectPath = await getLoginRedirectPath();
+      router.push(redirectPath);
     } else {
       setSubmitStatus({
         type: "error",

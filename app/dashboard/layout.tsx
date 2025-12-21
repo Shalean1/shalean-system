@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { getUserDisplayName } from "@/lib/storage/profile-supabase";
+import { getUserDisplayName, isUserAdmin } from "@/lib/storage/profile-supabase";
 import { getCurrentCleaner } from "@/lib/storage/cleaner-auth-supabase";
 import DashboardNav from "@/components/dashboard/DashboardNav";
 import CleanerNav from "@/components/cleaner/CleanerNav";
@@ -22,6 +22,12 @@ export default async function DashboardLayout({
   // Redirect to login if not authenticated
   if (!user) {
     redirect("/auth/login");
+  }
+
+  // Redirect admins to admin dashboard
+  const isAdmin = await isUserAdmin();
+  if (isAdmin) {
+    redirect("/admin");
   }
 
   const displayName = await getUserDisplayName();

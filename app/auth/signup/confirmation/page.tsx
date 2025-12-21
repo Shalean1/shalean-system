@@ -3,20 +3,38 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Mail, CheckCircle2, Loader2 } from "lucide-react";
+import { ArrowLeft, Mail, CheckCircle2, Loader2, RefreshCw } from "lucide-react";
+import { resendConfirmationEmail } from "@/app/actions/auth";
 
 function SignupConfirmationForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState<string | null>(null);
+  const [isResending, setIsResending] = useState(false);
+  const [resendStatus, setResendStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   useEffect(() => {
     // Get email from query params if available
     const emailParam = searchParams.get("email");
     if (emailParam) {
-      setEmail(emailParam);
+      setEmail(decodeURIComponent(emailParam));
     }
   }, [searchParams]);
+
+  const handleResendEmail = async () => {
+    if (!email) return;
+    
+    setIsResending(true);
+    setResendStatus(null);
+    
+    const result = await resendConfirmationEmail(email);
+    
+    setIsResending(false);
+    setResendStatus({
+      type: result.success ? "success" : "error",
+      message: result.message,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -114,19 +132,56 @@ function SignupConfirmationForm() {
               </div>
             </div>
 
+            {/* Resend Status */}
+            {resendStatus && (
+              <div
+                className={`mb-6 p-4 rounded-lg flex items-center gap-3 ${
+                  resendStatus.type === "success"
+                    ? "bg-green-50 text-green-800 border border-green-200"
+                    : "bg-red-50 text-red-800 border border-red-200"
+                }`}
+              >
+                {resendStatus.type === "success" ? (
+                  <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+                ) : (
+                  <Mail className="w-5 h-5 flex-shrink-0" />
+                )}
+                <p className="text-sm">{resendStatus.message}</p>
+              </div>
+            )}
+
             {/* Note */}
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
               <p className="text-xs text-gray-600 text-center">
                 <strong>Note:</strong> The verification link will expire after a certain period. 
-                If you didn't receive the email, please check your spam folder or try signing up again.
+                If you didn't receive the email, please check your spam folder or click "Resend Email" below.
               </p>
             </div>
 
             {/* Actions */}
             <div className="space-y-3">
+              {email && (
+                <button
+                  onClick={handleResendEmail}
+                  disabled={isResending}
+                  className="w-full px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {isResending ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="w-5 h-5" />
+                      Resend Email
+                    </>
+                  )}
+                </button>
+              )}
               <Link
                 href="/auth/login"
-                className="block w-full px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors text-center"
+                className="block w-full px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors text-center"
               >
                 Go to Login
               </Link>
