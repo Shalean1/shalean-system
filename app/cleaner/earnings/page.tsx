@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Booking } from "@/lib/types/booking";
 import { DollarSign, Mail, Info, Calendar, ChevronDown, ChevronUp } from "lucide-react";
@@ -19,6 +19,7 @@ interface WeeklyData {
   jobsCount: number;
   totalHours: number;
   tipsTotal: number;
+  baseEarningsTotal: number;
   earningsTotal: number;
   totalAmount: number;
   upcomingJobsCount: number;
@@ -184,8 +185,9 @@ export default function CleanerEarningsPage() {
 
 async function fetchWeeklyData(supabase: any, cleanerId: string): Promise<WeeklyData> {
   // Calculate week range (Monday to Sunday)
+  // Normalize to local timezone to avoid timezone issues
   const now = new Date();
-  const dayOfWeek = now.getDay();
+  const dayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
   const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust to Monday start
   const weekStart = new Date(now);
   weekStart.setDate(now.getDate() + diff);
@@ -207,39 +209,88 @@ async function fetchWeeklyData(supabase: any, cleanerId: string): Promise<Weekly
 
   const bookings = (data || []).map(mapDatabaseToBooking);
 
+  // Helper function to normalize date string to Date object at start of day (local timezone)
+  const normalizeDate = (dateStr: string): Date => {
+    const date = new Date(dateStr);
+    // Normalize to start of day in local timezone
+    const normalized = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    return normalized;
+  };
+
   // Filter completed jobs for this week
+  // Only include jobs with both status === "completed" AND paymentStatus === "completed"
   const completedJobs = bookings.filter((b: Booking) => {
-    if (b.status !== "completed") return false;
+    // Must have both status and payment status as completed
+    if (b.status !== "completed" || b.paymentStatus !== "completed") return false;
     if (!b.scheduledDate) return false;
-    const scheduledDate = new Date(b.scheduledDate);
-    return scheduledDate >= weekStart && scheduledDate <= weekEnd;
+    
+    // Normalize scheduled date to start of day for accurate comparison
+    const scheduledDate = normalizeDate(b.scheduledDate);
+    const weekStartNormalized = normalizeDate(weekStart.toISOString());
+    const weekEndNormalized = normalizeDate(weekEnd.toISOString());
+    
+    return scheduledDate >= weekStartNormalized && scheduledDate <= weekEndNormalized;
   });
 
   // Filter upcoming jobs for this week
   const upcomingJobs = bookings.filter((b: Booking) => {
     if (b.status === "completed" || b.status === "cancelled") return false;
     if (!b.scheduledDate) return false;
-    const scheduledDate = new Date(b.scheduledDate);
-    return scheduledDate >= weekStart && scheduledDate <= weekEnd;
+    
+    // Normalize scheduled date to start of day for accurate comparison
+    const scheduledDate = normalizeDate(b.scheduledDate);
+    const weekStartNormalized = normalizeDate(weekStart.toISOString());
+    const weekEndNormalized = normalizeDate(weekEnd.toISOString());
+    
+    return scheduledDate >= weekStartNormalized && scheduledDate <= weekEndNormalized;
   });
 
   // Calculate totals for completed jobs
+  // Since completedJobs already filters for paymentStatus === "completed", we don't need to filter again
   const jobsCount = completedJobs.length;
   const totalHours = completedJobs.reduce((sum: number, b: Booking) => {
     return sum + estimateJobHours(b.service, b.bedrooms, b.bathrooms);
   }, 0);
   const tipsTotal = completedJobs.reduce((sum: number, b: Booking) => sum + (b.tip || 0), 0);
-  const earningsTotal = completedJobs
-    .filter((b: Booking) => b.paymentStatus === "completed")
-    .reduce((sum: number, b: Booking) => sum + (b.totalAmount - (b.tip || 0)), 0);
-  const totalAmount = earningsTotal + tipsTotal;
+  
+  // Calculate earnings total - cleanerEarnings already includes tips
+  const earningsTotal = completedJobs.reduce((sum: number, b: Booking) => {
+    // Use cleaner_earnings if available (already includes tip), otherwise fallback
+    if (b.cleanerEarnings !== undefined && b.cleanerEarnings !== null) {
+      return sum + b.cleanerEarnings;
+    }
+    // Fallback: use totalAmount - tip (for backward compatibility)
+    return sum + (b.totalAmount - (b.tip || 0));
+  }, 0);
+  
+  // Calculate base earnings (earnings without tips)
+  // Since cleanerEarnings includes tips, we subtract tips to get base earnings
+  const baseEarningsTotal = completedJobs.reduce((sum: number, b: Booking) => {
+    const tip = b.tip || 0;
+    if (b.cleanerEarnings !== undefined && b.cleanerEarnings !== null) {
+      // cleanerEarnings already includes tip, so subtract tip to get base
+      return sum + (b.cleanerEarnings - tip);
+    }
+    // Fallback: use (totalAmount - tip) - tip = totalAmount - 2*tip
+    // This matches the earningsTotal fallback logic (totalAmount - tip) but subtracts tip again for base
+    return sum + (b.totalAmount - tip - tip);
+  }, 0);
+  
+  const totalAmount = earningsTotal;
 
   // Calculate upcoming jobs
   const upcomingJobsCount = upcomingJobs.length;
   const upcomingHours = upcomingJobs.reduce((sum: number, b: Booking) => {
     return sum + estimateJobHours(b.service, b.bedrooms, b.bathrooms);
   }, 0);
-  const estimatedEarnings = upcomingJobs.reduce((sum: number, b: Booking) => sum + (b.totalAmount || 0), 0);
+  const estimatedEarnings = upcomingJobs.reduce((sum: number, b: Booking) => {
+    // Use cleaner_earnings if available, otherwise fallback to totalAmount
+    if (b.cleanerEarnings !== undefined && b.cleanerEarnings !== null) {
+      return sum + b.cleanerEarnings;
+    }
+    // Fallback: use totalAmount (for backward compatibility)
+    return sum + (b.totalAmount || 0);
+  }, 0);
 
   return {
     weekStart,
@@ -251,6 +302,7 @@ async function fetchWeeklyData(supabase: any, cleanerId: string): Promise<Weekly
     jobsCount,
     totalHours,
     tipsTotal,
+    baseEarningsTotal,
     earningsTotal,
     totalAmount,
     upcomingJobsCount,
@@ -319,8 +371,15 @@ async function fetchHistoricalData(supabase: any, cleanerId: string): Promise<Hi
       const tips = jobs.reduce((sum: number, b: Booking) => sum + (b.tip || 0), 0);
       const earnings = jobs
         .filter((b: Booking) => b.paymentStatus === "completed")
-        .reduce((sum: number, b: Booking) => sum + (b.totalAmount - (b.tip || 0)), 0);
-      const total = earnings + tips;
+        .reduce((sum: number, b: Booking) => {
+          // Use cleaner_earnings if available (already includes tip), otherwise fallback
+          if (b.cleanerEarnings !== undefined && b.cleanerEarnings !== null) {
+            return sum + b.cleanerEarnings;
+          }
+          // Fallback: use totalAmount - tip (for backward compatibility)
+          return sum + (b.totalAmount - (b.tip || 0));
+        }, 0);
+      const total = earnings;
 
       return {
         month: monthName,
@@ -341,8 +400,15 @@ async function fetchHistoricalData(supabase: any, cleanerId: string): Promise<Hi
   const totalTips = bookings.reduce((sum: number, b: Booking) => sum + (b.tip || 0), 0);
   const totalEarnings = bookings
     .filter((b: Booking) => b.paymentStatus === "completed")
-    .reduce((sum: number, b: Booking) => sum + (b.totalAmount - (b.tip || 0)), 0);
-  const totalAmount = totalEarnings + totalTips;
+    .reduce((sum: number, b: Booking) => {
+      // Use cleaner_earnings if available (already includes tip), otherwise fallback
+      if (b.cleanerEarnings !== undefined && b.cleanerEarnings !== null) {
+        return sum + b.cleanerEarnings;
+      }
+      // Fallback: use totalAmount - tip (for backward compatibility)
+      return sum + (b.totalAmount - (b.tip || 0));
+    }, 0);
+  const totalAmount = totalEarnings;
 
   return {
     totalJobs,
@@ -368,7 +434,7 @@ function ThisWeekView({ weeklyData }: { weeklyData: WeeklyData | null }) {
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-4">
-          <Mail className="w-5 h-5 text-blue-600" />
+          <DollarSign className="w-5 h-5 text-blue-600" />
           <h1 className="text-2xl font-bold text-gray-900">This Week&apos;s Earnings</h1>
         </div>
 
@@ -389,26 +455,46 @@ function ThisWeekView({ weeklyData }: { weeklyData: WeeklyData | null }) {
 
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <span className="text-gray-600">Jobs</span>
+            <span className="text-gray-600">Total Jobs</span>
             <span className="text-gray-900 font-medium">
               {weeklyData.jobsCount} ({weeklyData.totalHours.toFixed(1)} hours)
             </span>
           </div>
 
           <div className="flex justify-between items-center">
-            <span className="text-gray-600">Tips</span>
-            <span className="text-gray-900 font-medium">R {weeklyData.tipsTotal.toFixed(2)}</span>
+            <span className="text-gray-600">Base Earnings</span>
+            <span className="text-gray-900 font-medium">
+              R {weeklyData.baseEarningsTotal.toFixed(2)}
+            </span>
           </div>
 
           <div className="flex justify-between items-center">
-            <span className="text-gray-600">Earnings</span>
-            <span className="text-gray-900 font-medium">R {weeklyData.earningsTotal.toFixed(2)}</span>
+            <span className="text-gray-600">Total Tips</span>
+            <span className="text-gray-900 font-medium">R {weeklyData.tipsTotal.toFixed(2)}</span>
           </div>
 
           <div className="border-t border-gray-200 pt-4 flex justify-between items-center">
-            <span className="text-gray-900 font-semibold">Total</span>
+            <span className="text-gray-900 font-semibold">Grand Total</span>
             <span className="text-gray-900 font-bold text-xl">R {weeklyData.totalAmount.toFixed(2)}</span>
           </div>
+          
+          {/* Earnings Percentage Info */}
+          {weeklyData.completedJobs.length > 0 && weeklyData.completedJobs[0].cleanerEarningsPercentage && (
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Info className="w-4 h-4" />
+                <span>
+                  Earnings Rate: {(weeklyData.completedJobs[0].cleanerEarningsPercentage * 100).toFixed(0)}%
+                  {weeklyData.completedJobs[0].cleanerEarningsPercentage === 0.70 && (
+                    <span className="ml-1 text-blue-600 font-medium">(Old Cleaner)</span>
+                  )}
+                  {weeklyData.completedJobs[0].cleanerEarningsPercentage === 0.60 && (
+                    <span className="ml-1 text-green-600 font-medium">(New Cleaner)</span>
+                  )}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -467,9 +553,25 @@ function ThisWeekView({ weeklyData }: { weeklyData: WeeklyData | null }) {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-gray-900">R {job.totalAmount.toFixed(2)}</p>
-                      {job.tip && job.tip > 0 && (
-                        <p className="text-xs text-blue-600">+R {job.tip.toFixed(2)} tip</p>
+                      {job.cleanerEarnings !== undefined && job.cleanerEarnings !== null ? (
+                        <>
+                          <p className="font-semibold text-gray-900">R {job.cleanerEarnings.toFixed(2)}</p>
+                          {job.tip && job.tip > 0 && (
+                            <p className="text-xs text-blue-600">+R {job.tip.toFixed(2)} tip</p>
+                          )}
+                          {job.cleanerEarningsPercentage && (
+                            <p className="text-xs text-gray-500">
+                              {(job.cleanerEarningsPercentage * 100).toFixed(0)}% rate
+                            </p>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <p className="font-semibold text-gray-900">R {job.totalAmount.toFixed(2)}</p>
+                          {job.tip && job.tip > 0 && (
+                            <p className="text-xs text-blue-600">+R {job.tip.toFixed(2)} tip</p>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
@@ -492,6 +594,8 @@ function HistoryView({
   expandedMonths: Set<string>;
   toggleMonth: (monthKey: string) => void;
 }) {
+  const [selectedDate, setSelectedDate] = useState<string>("");
+
   if (!historicalData) {
     return (
       <div className="text-center py-12">
@@ -509,6 +613,108 @@ function HistoryView({
     );
   }
 
+  // Filter data based on selected date
+  const filteredData = useMemo(() => {
+    if (!selectedDate) {
+      return historicalData;
+    }
+
+    const filterDate = new Date(selectedDate);
+    filterDate.setHours(0, 0, 0, 0);
+    const filterDateStr = filterDate.toISOString().split('T')[0];
+
+    // Filter jobs by date
+    const filteredJobs = historicalData.monthlyData.flatMap(month => 
+      month.jobs.filter(job => {
+        if (!job.scheduledDate) return false;
+        const jobDate = new Date(job.scheduledDate);
+        jobDate.setHours(0, 0, 0, 0);
+        return jobDate.toISOString().split('T')[0] === filterDateStr;
+      })
+    );
+
+    if (filteredJobs.length === 0) {
+      return {
+        totalJobs: 0,
+        totalHours: 0,
+        totalTips: 0,
+        totalEarnings: 0,
+        totalAmount: 0,
+        monthlyData: [],
+      };
+    }
+
+    // Group filtered jobs by month
+    const monthlyMap = new Map<string, Booking[]>();
+    filteredJobs.forEach((job: Booking) => {
+      if (!job.scheduledDate) return;
+      const date = new Date(job.scheduledDate);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+
+      if (!monthlyMap.has(monthKey)) {
+        monthlyMap.set(monthKey, []);
+      }
+      monthlyMap.get(monthKey)!.push(job);
+    });
+
+    const monthlyData = Array.from(monthlyMap.entries())
+      .map(([monthKey, jobs]) => {
+        const firstJob = jobs[0];
+        const date = new Date(firstJob.scheduledDate!);
+        const monthName = date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+        const hours = jobs.reduce((sum: number, b: Booking) => sum + estimateJobHours(b.service, b.bedrooms, b.bathrooms), 0);
+        const tips = jobs.reduce((sum: number, b: Booking) => sum + (b.tip || 0), 0);
+        const earnings = jobs
+          .filter((b: Booking) => b.paymentStatus === "completed")
+          .reduce((sum: number, b: Booking) => {
+            // Use cleaner_earnings if available (already includes tip), otherwise fallback
+            if (b.cleanerEarnings !== undefined && b.cleanerEarnings !== null) {
+              return sum + b.cleanerEarnings;
+            }
+            // Fallback: use totalAmount - tip (for backward compatibility)
+            return sum + (b.totalAmount - (b.tip || 0));
+          }, 0);
+        const total = earnings;
+
+        return {
+          month: monthName,
+          monthKey,
+          jobs,
+          jobsCount: jobs.length,
+          hours,
+          tips,
+          earnings,
+          total,
+        };
+      })
+      .sort((a, b) => b.monthKey.localeCompare(a.monthKey));
+
+    const totalJobs = filteredJobs.length;
+    const totalHours = filteredJobs.reduce((sum: number, b: Booking) => sum + estimateJobHours(b.service, b.bedrooms, b.bathrooms), 0);
+    const totalTips = filteredJobs.reduce((sum: number, b: Booking) => sum + (b.tip || 0), 0);
+    const totalEarnings = filteredJobs
+      .filter((b: Booking) => b.paymentStatus === "completed")
+      .reduce((sum: number, b: Booking) => {
+        // Use cleaner_earnings if available (already includes tip), otherwise fallback
+        if (b.cleanerEarnings !== undefined && b.cleanerEarnings !== null) {
+          return sum + b.cleanerEarnings;
+        }
+        // Fallback: use totalAmount - tip (for backward compatibility)
+        return sum + (b.totalAmount - (b.tip || 0));
+      }, 0);
+    const totalAmount = totalEarnings;
+
+    return {
+      totalJobs,
+      totalHours,
+      totalTips,
+      totalEarnings,
+      totalAmount,
+      monthlyData,
+    };
+  }, [selectedDate, historicalData]);
+
   return (
     <>
       {/* Header */}
@@ -517,12 +723,36 @@ function HistoryView({
           <DollarSign className="w-5 h-5 text-blue-600" />
           <h1 className="text-2xl font-bold text-gray-900">Earnings History</h1>
         </div>
+        
+        {/* Date Filter */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4">
+          <label htmlFor="date-filter" className="block text-sm font-medium text-gray-700 mb-2">
+            Choose a date to see your earnings:
+          </label>
+          <input
+            id="date-filter"
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+          {selectedDate && (
+            <button
+              onClick={() => setSelectedDate("")}
+              className="mt-2 text-sm text-blue-600 hover:text-blue-700 underline"
+            >
+              Clear filter
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Overall Totals */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
         <div className="flex items-center gap-2 mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">All-Time Totals</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            {selectedDate ? "Filtered Totals" : "All-Time Totals"}
+          </h2>
           <Info className="w-4 h-4 text-gray-400" />
         </div>
 
@@ -530,30 +760,60 @@ function HistoryView({
           <div className="flex justify-between items-center">
             <span className="text-gray-600">Total Jobs</span>
             <span className="text-gray-900 font-medium">
-              {historicalData.totalJobs} ({historicalData.totalHours.toFixed(1)} hours)
+              {filteredData.totalJobs} ({filteredData.totalHours.toFixed(1)} hours)
+            </span>
+          </div>
+
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600">Base Earnings</span>
+            <span className="text-gray-900 font-medium">
+              R {(filteredData.totalEarnings - filteredData.totalTips).toFixed(2)}
             </span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-gray-600">Total Tips</span>
-            <span className="text-gray-900 font-medium">R {historicalData.totalTips.toFixed(2)}</span>
-          </div>
-
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Total Earnings</span>
-            <span className="text-gray-900 font-medium">R {historicalData.totalEarnings.toFixed(2)}</span>
+            <span className="text-gray-900 font-medium">R {filteredData.totalTips.toFixed(2)}</span>
           </div>
 
           <div className="border-t border-gray-200 pt-4 flex justify-between items-center">
             <span className="text-gray-900 font-semibold">Grand Total</span>
-            <span className="text-gray-900 font-bold text-xl">R {historicalData.totalAmount.toFixed(2)}</span>
+            <span className="text-gray-900 font-bold text-xl">R {filteredData.totalAmount.toFixed(2)}</span>
           </div>
+          
+          {/* Earnings Percentage Info */}
+          {filteredData.monthlyData.length > 0 && 
+           filteredData.monthlyData[0].jobs.length > 0 && 
+           filteredData.monthlyData[0].jobs[0].cleanerEarningsPercentage && (
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Info className="w-4 h-4" />
+                <span>
+                  Earnings Rate: {(filteredData.monthlyData[0].jobs[0].cleanerEarningsPercentage * 100).toFixed(0)}%
+                  {filteredData.monthlyData[0].jobs[0].cleanerEarningsPercentage === 0.70 && (
+                    <span className="ml-1 text-blue-600 font-medium">(Old Cleaner)</span>
+                  )}
+                  {filteredData.monthlyData[0].jobs[0].cleanerEarningsPercentage === 0.60 && (
+                    <span className="ml-1 text-green-600 font-medium">(New Cleaner)</span>
+                  )}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Monthly Breakdown */}
-      <div className="space-y-4">
-        {historicalData.monthlyData.map((monthData) => {
+      {filteredData.monthlyData.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200">
+          <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+          <p className="text-gray-600">
+            {selectedDate ? "No earnings found for the selected date." : "No completed jobs found in your earnings history."}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {filteredData.monthlyData.map((monthData) => {
           const isExpanded = expandedMonths.has(monthData.monthKey);
           return (
             <div key={monthData.monthKey} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -624,9 +884,25 @@ function HistoryView({
                               </p>
                             </div>
                             <div className="text-right">
-                              <p className="font-semibold text-gray-900 text-sm">R {job.totalAmount.toFixed(2)}</p>
-                              {job.tip && job.tip > 0 && (
-                                <p className="text-xs text-blue-600">+R {job.tip.toFixed(2)} tip</p>
+                              {job.cleanerEarnings !== undefined && job.cleanerEarnings !== null ? (
+                                <>
+                                  <p className="font-semibold text-gray-900 text-sm">R {job.cleanerEarnings.toFixed(2)}</p>
+                                  {job.tip && job.tip > 0 && (
+                                    <p className="text-xs text-blue-600">+R {job.tip.toFixed(2)} tip</p>
+                                  )}
+                                  {job.cleanerEarningsPercentage && (
+                                    <p className="text-xs text-gray-500">
+                                      {(job.cleanerEarningsPercentage * 100).toFixed(0)}% rate
+                                    </p>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <p className="font-semibold text-gray-900 text-sm">R {job.totalAmount.toFixed(2)}</p>
+                                  {job.tip && job.tip > 0 && (
+                                    <p className="text-xs text-blue-600">+R {job.tip.toFixed(2)} tip</p>
+                                  )}
+                                </>
                               )}
                             </div>
                           </div>
@@ -639,7 +915,8 @@ function HistoryView({
             </div>
           );
         })}
-      </div>
+        </div>
+      )}
     </>
   );
 }
@@ -671,6 +948,14 @@ function mapDatabaseToBooking(data: any): Booking {
     discountCode: data.discount_code,
     tip: data.tip_amount || 0,
     totalAmount: data.total_amount,
+    // Price breakdown fields
+    subtotal: data.subtotal ?? undefined,
+    frequencyDiscount: data.frequency_discount ?? undefined,
+    discountCodeDiscount: data.discount_code_discount ?? undefined,
+    serviceFee: data.service_fee ?? undefined,
+    // Cleaner earnings fields
+    cleanerEarnings: data.cleaner_earnings ?? undefined,
+    cleanerEarningsPercentage: data.cleaner_earnings_percentage ?? undefined,
     status: data.status,
     paymentStatus: data.payment_status,
     paymentReference: data.payment_reference,

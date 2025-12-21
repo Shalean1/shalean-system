@@ -1,131 +1,133 @@
-"use client";
+import { getAdminDashboardData } from "@/app/actions/admin-dashboard";
+import type { DateRange } from "@/lib/storage/admin-supabase";
+import MetricCard from "@/components/admin/MetricCard";
+import RevenueChart from "@/components/admin/RevenueChart";
+import BookingsChart from "@/components/admin/BookingsChart";
+import ServiceBreakdownChart from "@/components/admin/ServiceBreakdownChart";
+import BookingPipeline from "@/components/admin/BookingPipeline";
+import RecentActivity from "@/components/admin/RecentActivity";
+import PendingItems from "@/components/admin/PendingItems";
+import QuickActions from "@/components/admin/QuickActions";
+import { DollarSign, Calendar, Users, TrendingUp, RefreshCw } from "lucide-react";
+import dynamicImport from "next/dynamic";
 
-import Link from "next/link";
-import { Tag, Users, Calendar, Settings, UserPlus } from "lucide-react";
+const AdminDashboardClient = dynamicImport(
+  () => import("@/components/admin/AdminDashboardClient")
+);
 
-export default function AdminDashboard() {
-  const adminCards = [
-    {
-      title: "Popular Services",
-      description: "Manage popular service tags displayed on the homepage",
-      icon: Tag,
-      href: "/admin/popular-services",
-      color: "blue",
-    },
-    {
-      title: "Cleaner Credentials",
-      description: "Create login credentials for cleaners to access their dashboard",
-      icon: UserPlus,
-      href: "/admin/cleaners/create-credentials",
-      color: "green",
-    },
-    {
-      title: "Bookings",
-      description: "View and manage customer bookings",
-      icon: Calendar,
-      href: "/admin/bookings",
-      color: "green",
-      comingSoon: true,
-    },
-    {
-      title: "Users",
-      description: "Manage user accounts and permissions",
-      icon: Users,
-      href: "/admin/users",
-      color: "purple",
-      comingSoon: true,
-    },
-    {
-      title: "Settings",
-      description: "Configure site settings and preferences",
-      icon: Settings,
-      href: "/admin/settings",
-      color: "gray",
-      comingSoon: true,
-    },
-  ];
+export const dynamic = 'force-dynamic';
 
-  const getColorClasses = (color: string) => {
-    const colors = {
-      blue: "bg-blue-100 text-blue-600",
-      green: "bg-green-100 text-green-600",
-      purple: "bg-purple-100 text-purple-600",
-      gray: "bg-gray-100 text-gray-600",
+export default async function AdminDashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ dateRange?: string }>;
+}) {
+  const params = await searchParams;
+  const dateRange = (params.dateRange || "today") as DateRange;
+  
+  try {
+    const dashboardData = await getAdminDashboardData(dateRange);
+    
+    const {
+      metrics,
+      revenueTrends,
+      bookingsTrends,
+      serviceBreakdown,
+      bookingPipeline,
+      recentBookings,
+      pendingCounts,
+    } = dashboardData;
+
+    // Format currency values
+    const formatCurrency = (value: number) => {
+      return `R${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
     };
-    return colors[color as keyof typeof colors] || colors.gray;
-  };
 
-  return (
-    <div className="py-12">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Admin Dashboard
-          </h1>
-          <p className="text-lg text-gray-600">
-            Manage your Shalean cleaning services platform
+    return (
+      <div className="p-4 md:p-8 bg-gray-50 min-h-screen">
+        <AdminDashboardClient initialDateRange={dateRange}>
+          {/* Header */}
+          <div className="mb-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                  Dashboard
+                </h1>
+                <p className="text-sm md:text-base text-gray-600">
+                  Overview of your business metrics and recent activity
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Metric Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <MetricCard
+              title="Total Revenue"
+              value={formatCurrency(metrics.totalRevenue)}
+              change={metrics.revenueChange}
+              icon={DollarSign}
+            />
+            <MetricCard
+              title="Total Bookings"
+              value={metrics.totalBookings.toString()}
+              change={metrics.bookingsChange}
+              icon={Calendar}
+            />
+            <MetricCard
+              title="Active Customers"
+              value={metrics.activeCustomers.toString()}
+              change={metrics.customersChange}
+              icon={Users}
+            />
+            <MetricCard
+              title="Avg Booking Value"
+              value={formatCurrency(metrics.avgBookingValue)}
+              change={metrics.avgBookingValueChange}
+              icon={TrendingUp}
+            />
+          </div>
+
+          {/* Charts Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <RevenueChart data={revenueTrends} />
+            <BookingsChart data={bookingsTrends} />
+          </div>
+
+          {/* Service Breakdown and Booking Pipeline */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <ServiceBreakdownChart data={serviceBreakdown} />
+            <BookingPipeline data={bookingPipeline} />
+          </div>
+
+          {/* Recent Activity and Pending Items */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <RecentActivity bookings={recentBookings} />
+            <PendingItems
+              pendingQuotes={pendingCounts.pendingQuotes}
+              pendingApplications={pendingCounts.pendingApplications}
+              pendingBookings={pendingCounts.pendingBookings}
+            />
+          </div>
+
+          {/* Quick Actions */}
+          <div className="mb-6">
+            <QuickActions />
+          </div>
+        </AdminDashboardClient>
+      </div>
+    );
+  } catch (error) {
+    console.error("Error loading admin dashboard:", error);
+    return (
+      <div className="p-4 md:p-8 bg-gray-50 min-h-screen">
+        <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Error Loading Dashboard</h2>
+          <p className="text-gray-600">
+            There was an error loading the dashboard data. Please try refreshing the page.
           </p>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {adminCards.map((card) => {
-            const Icon = card.icon;
-            const colorClasses = getColorClasses(card.color);
-
-            return (
-              <Link
-                key={card.title}
-                href={card.href}
-                className={`block p-6 bg-white rounded-xl border-2 border-gray-200 transition-all ${
-                  card.comingSoon
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:border-blue-500 hover:shadow-lg"
-                }`}
-                onClick={(e) => card.comingSoon && e.preventDefault()}
-              >
-                <div className="flex items-start gap-4">
-                  <div className={`p-3 rounded-lg ${colorClasses}`}>
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {card.title}
-                      </h3>
-                      {card.comingSoon && (
-                        <span className="px-2 py-0.5 text-xs bg-yellow-100 text-yellow-700 rounded-full">
-                          Soon
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      {card.description}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* Quick Stats */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-xl border border-gray-200">
-            <div className="text-sm text-gray-600 mb-1">Active Services</div>
-            <div className="text-3xl font-bold text-gray-900">-</div>
-          </div>
-          <div className="bg-white p-6 rounded-xl border border-gray-200">
-            <div className="text-sm text-gray-600 mb-1">Total Bookings</div>
-            <div className="text-3xl font-bold text-gray-900">-</div>
-          </div>
-          <div className="bg-white p-6 rounded-xl border border-gray-200">
-            <div className="text-sm text-gray-600 mb-1">Active Users</div>
-            <div className="text-3xl font-bold text-gray-900">-</div>
-          </div>
-        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
-
-

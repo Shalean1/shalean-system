@@ -2,6 +2,9 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getUserBookings } from "@/lib/storage/bookings-supabase";
 import BookingList from "@/components/dashboard/BookingList";
+import { Booking } from "@/lib/types/booking";
+
+export const dynamic = 'force-dynamic';
 
 export default async function BookingsPage() {
   const supabase = await createClient();
@@ -15,7 +18,13 @@ export default async function BookingsPage() {
     redirect("/auth/login");
   }
 
-  const bookings = await getUserBookings();
+  let bookings: Booking[];
+  try {
+    bookings = await getUserBookings();
+  } catch (error) {
+    console.error("Error fetching bookings:", error);
+    bookings = [];
+  }
 
   return (
     <div className="py-8 md:py-12">

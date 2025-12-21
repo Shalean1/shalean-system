@@ -104,6 +104,7 @@ export async function getCleanerBookings(): Promise<Booking[]> {
 
 /**
  * Get upcoming bookings for the current cleaner
+ * Includes bookings that are confirmed (accepted) and scheduled in the future
  */
 export async function getCleanerUpcomingBookings(): Promise<Booking[]> {
   const cleaner = await getCurrentCleaner();
@@ -117,11 +118,19 @@ export async function getCleanerUpcomingBookings(): Promise<Booking[]> {
   
   const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
 
+  // Normalize cleaner ID
+  const normalizedCleanerId = normalizeCleanerId(cleaner.cleanerId);
+  
+  if (!normalizedCleanerId) {
+    console.warn("getCleanerUpcomingBookings: Could not normalize cleaner ID", cleaner.cleanerId);
+    return [];
+  }
+
   const { data, error } = await supabase
     .from("bookings")
     .select("*")
-    .eq("assigned_cleaner_id", cleaner.cleanerId)
-    .in("status", ["pending", "confirmed"])
+    .eq("assigned_cleaner_id", normalizedCleanerId)
+    .eq("status", "confirmed") // Only confirmed (accepted) bookings show in Upcoming
     .gte("scheduled_date", today)
     .order("scheduled_date", { ascending: true })
     .order("scheduled_time", { ascending: true });
@@ -132,7 +141,7 @@ export async function getCleanerUpcomingBookings(): Promise<Booking[]> {
   }
 
   if (!data || data.length === 0) {
-    console.log(`No upcoming bookings found for cleaner ${cleaner.cleanerId}`);
+    console.log(`No upcoming bookings found for cleaner ${normalizedCleanerId}`);
     return [];
   }
 
@@ -171,14 +180,14 @@ export async function getCleanerBookingStats(): Promise<{
   
   let { data, error } = await supabase
     .from("bookings")
-    .select("status, scheduled_date, created_at")
+    .select("status, scheduled_date, created_at, cleaner_response")
     .eq("assigned_cleaner_id", normalizedCleanerId);
 
   // If no results, try case-insensitive search
   if ((!data || data.length === 0) && normalizedCleanerId !== cleaner.cleanerId) {
     const { data: allData } = await supabase
       .from("bookings")
-      .select("status, scheduled_date, created_at, assigned_cleaner_id");
+      .select("status, scheduled_date, created_at, assigned_cleaner_id, cleaner_response");
     
     if (allData) {
       data = allData.filter(
@@ -200,25 +209,30 @@ export async function getCleanerBookingStats(): Promise<{
   const today = new Date().toISOString().split('T')[0];
   const todayDate = new Date();
   todayDate.setHours(0, 0, 0, 0);
-  const sevenDaysAgo = new Date(todayDate);
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const sevenDaysFromNow = new Date(todayDate);
+  sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+  const sevenDaysFromNowStr = sevenDaysFromNow.toISOString().split('T')[0];
 
   const counts = {
     upcoming: bookings.filter(
       (b) => 
         b &&
-        (b.status === "pending" || b.status === "confirmed") && 
+        b.status === "confirmed" && // Only confirmed (accepted) bookings
         b.scheduled_date &&
         b.scheduled_date >= today
     ).length,
     today: bookings.filter(
-      (b) => b && b.scheduled_date === today
+      (b) => b && b.scheduled_date === today && b.status === "confirmed"
     ).length,
     new: bookings.filter(
       (b) => {
-        if (!b || !b.created_at) return false;
-        const createdAt = new Date(b.created_at);
-        return createdAt >= sevenDaysAgo;
+        if (!b || !b.scheduled_date) return false;
+        // "New" bookings are pending bookings that need acceptance (cleaner_response IS NULL)
+        // Scheduled in the next 7 days (including today)
+        return b.status === "pending" && 
+               !b.cleaner_response && 
+               b.scheduled_date >= today && 
+               b.scheduled_date <= sevenDaysFromNowStr;
       }
     ).length,
     past: bookings.filter(
@@ -256,7 +270,7 @@ export async function getCleanerEarnings(): Promise<{
   
   const { data, error } = await supabase
     .from("bookings")
-    .select("total_amount, status, payment_status")
+    .select("total_amount, cleaner_earnings, status, payment_status")
     .eq("assigned_cleaner_id", cleaner.cleanerId);
 
   if (error) {
@@ -268,14 +282,28 @@ export async function getCleanerEarnings(): Promise<{
   const completedBookings = bookings.filter((b) => b.status === "completed");
   const totalEarnings = completedBookings
     .filter((b) => b.payment_status === "completed")
-    .reduce((sum, b) => sum + (b.total_amount || 0), 0);
+    .reduce((sum, b) => {
+      // Use cleaner_earnings if available, otherwise fallback to old calculation
+      if (b.cleaner_earnings !== null && b.cleaner_earnings !== undefined) {
+        return sum + (b.cleaner_earnings || 0);
+      }
+      // Fallback: use total_amount (for backward compatibility with old bookings)
+      return sum + (b.total_amount || 0);
+    }, 0);
   
   const pendingEarnings = bookings
     .filter((b) => 
       (b.status === "completed" || b.status === "in-progress") && 
       b.payment_status === "pending"
     )
-    .reduce((sum, b) => sum + (b.total_amount || 0), 0);
+    .reduce((sum, b) => {
+      // Use cleaner_earnings if available, otherwise fallback to old calculation
+      if (b.cleaner_earnings !== null && b.cleaner_earnings !== undefined) {
+        return sum + (b.cleaner_earnings || 0);
+      }
+      // Fallback: use total_amount (for backward compatibility with old bookings)
+      return sum + (b.total_amount || 0);
+    }, 0);
 
   const averageEarning = completedBookings.length > 0
     ? totalEarnings / completedBookings.length
@@ -333,9 +361,12 @@ export async function getCleanerWeeklyEarnings(): Promise<{
   const cleaner = await getCurrentCleaner();
   
   if (!cleaner) {
+    // Calculate week range (Monday to Sunday) - same logic as main calculation
     const now = new Date();
+    const dayOfWeek = now.getDay();
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust to Monday start
     const weekStart = new Date(now);
-    weekStart.setDate(now.getDate() - now.getDay()); // Start of week (Sunday)
+    weekStart.setDate(now.getDate() + diff);
     weekStart.setHours(0, 0, 0, 0);
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekStart.getDate() + 6);
@@ -412,15 +443,29 @@ export async function getCleanerWeeklyEarnings(): Promise<{
   const tipsTotal = completedJobs.reduce((sum, b) => sum + (b.tip || 0), 0);
   const earningsTotal = completedJobs
     .filter((b) => b.paymentStatus === "completed")
-    .reduce((sum, b) => sum + (b.totalAmount - (b.tip || 0)), 0);
-  const totalAmount = earningsTotal + tipsTotal;
+    .reduce((sum, b) => {
+      // Use cleaner_earnings if available (already includes tip), otherwise fallback
+      if (b.cleanerEarnings !== undefined && b.cleanerEarnings !== null) {
+        return sum + b.cleanerEarnings;
+      }
+      // Fallback: use totalAmount - tip (for backward compatibility)
+      return sum + (b.totalAmount - (b.tip || 0));
+    }, 0);
+  const totalAmount = earningsTotal;
 
   // Calculate upcoming jobs
   const upcomingJobsCount = upcomingJobs.length;
   const upcomingHours = upcomingJobs.reduce((sum, b) => {
     return sum + estimateJobHours(b.service, b.bedrooms, b.bathrooms);
   }, 0);
-  const estimatedEarnings = upcomingJobs.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+  const estimatedEarnings = upcomingJobs.reduce((sum, b) => {
+    // Use cleaner_earnings if available, otherwise fallback to totalAmount
+    if (b.cleanerEarnings !== undefined && b.cleanerEarnings !== null) {
+      return sum + b.cleanerEarnings;
+    }
+    // Fallback: use totalAmount (for backward compatibility)
+    return sum + (b.totalAmount || 0);
+  }, 0);
 
   return {
     weekStart,
@@ -534,8 +579,15 @@ export async function getCleanerHistoricalEarnings(): Promise<{
       const tips = jobs.reduce((sum, b) => sum + (b.tip || 0), 0);
       const earnings = jobs
         .filter((b) => b.paymentStatus === "completed")
-        .reduce((sum, b) => sum + (b.totalAmount - (b.tip || 0)), 0);
-      const total = earnings + tips;
+        .reduce((sum, b) => {
+          // Use cleaner_earnings if available (already includes tip), otherwise fallback
+          if (b.cleanerEarnings !== undefined && b.cleanerEarnings !== null) {
+            return sum + b.cleanerEarnings;
+          }
+          // Fallback: use totalAmount - tip (for backward compatibility)
+          return sum + (b.totalAmount - (b.tip || 0));
+        }, 0);
+      const total = earnings;
 
       return {
         month: monthName,
@@ -556,8 +608,15 @@ export async function getCleanerHistoricalEarnings(): Promise<{
   const totalTips = bookings.reduce((sum, b) => sum + (b.tip || 0), 0);
   const totalEarnings = bookings
     .filter((b) => b.paymentStatus === "completed")
-    .reduce((sum, b) => sum + (b.totalAmount - (b.tip || 0)), 0);
-  const totalAmount = totalEarnings + totalTips;
+    .reduce((sum, b) => {
+      // Use cleaner_earnings if available (already includes tip), otherwise fallback
+      if (b.cleanerEarnings !== undefined && b.cleanerEarnings !== null) {
+        return sum + b.cleanerEarnings;
+      }
+      // Fallback: use totalAmount - tip (for backward compatibility)
+      return sum + (b.totalAmount - (b.tip || 0));
+    }, 0);
+  const totalAmount = totalEarnings;
 
   return {
     totalJobs,
@@ -628,6 +687,227 @@ export async function updateCleanerBookingStatus(
 }
 
 /**
+ * Accept a booking (for cleaner)
+ * Sets cleaner_response to 'accepted' and status to 'confirmed'
+ */
+export async function acceptBooking(reference: string): Promise<void> {
+  const cleaner = await getCurrentCleaner();
+  
+  if (!cleaner) {
+    throw new Error("Not authenticated as cleaner");
+  }
+
+  const supabase = await createClient();
+  
+  // Verify booking is assigned to this cleaner
+  const { data: booking, error: fetchError } = await supabase
+    .from("bookings")
+    .select("assigned_cleaner_id, status")
+    .eq("booking_reference", reference)
+    .single();
+
+  if (fetchError || !booking) {
+    throw new Error("Booking not found");
+  }
+
+  if (booking.assigned_cleaner_id !== cleaner.cleanerId) {
+    throw new Error("Not authorized to accept this booking");
+  }
+
+  // Only allow accepting if status is pending
+  if (booking.status !== "pending") {
+    throw new Error("Only pending bookings can be accepted");
+  }
+
+  const { error } = await supabase
+    .from("bookings")
+    .update({
+      cleaner_response: "accepted",
+      status: "confirmed",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("booking_reference", reference);
+
+  if (error) {
+    throw new Error(`Failed to accept booking: ${error.message}`);
+  }
+}
+
+/**
+ * Decline a booking (for cleaner)
+ * Sets cleaner_response to 'declined' and unassigns the cleaner
+ */
+export async function declineBooking(reference: string): Promise<void> {
+  const cleaner = await getCurrentCleaner();
+  
+  if (!cleaner) {
+    throw new Error("Not authenticated as cleaner");
+  }
+
+  const supabase = await createClient();
+  
+  // Verify booking is assigned to this cleaner
+  const { data: booking, error: fetchError } = await supabase
+    .from("bookings")
+    .select("assigned_cleaner_id, status")
+    .eq("booking_reference", reference)
+    .single();
+
+  if (fetchError || !booking) {
+    throw new Error("Booking not found");
+  }
+
+  if (booking.assigned_cleaner_id !== cleaner.cleanerId) {
+    throw new Error("Not authorized to decline this booking");
+  }
+
+  // Only allow declining if status is pending
+  if (booking.status !== "pending") {
+    throw new Error("Only pending bookings can be declined");
+  }
+
+  const { error } = await supabase
+    .from("bookings")
+    .update({
+      cleaner_response: "declined",
+      assigned_cleaner_id: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("booking_reference", reference);
+
+  if (error) {
+    throw new Error(`Failed to decline booking: ${error.message}`);
+  }
+}
+
+/**
+ * Update job progress (for cleaner)
+ * Validates the transition and updates job_progress field
+ */
+export async function updateJobProgress(
+  reference: string,
+  progress: "on-my-way" | "arrived" | "started"
+): Promise<void> {
+  const cleaner = await getCurrentCleaner();
+  
+  if (!cleaner) {
+    throw new Error("Not authenticated as cleaner");
+  }
+
+  const supabase = await createClient();
+  
+  // Verify booking is assigned to this cleaner
+  const { data: booking, error: fetchError } = await supabase
+    .from("bookings")
+    .select("assigned_cleaner_id, status, job_progress, scheduled_date")
+    .eq("booking_reference", reference)
+    .single();
+
+  if (fetchError || !booking) {
+    throw new Error("Booking not found");
+  }
+
+  if (booking.assigned_cleaner_id !== cleaner.cleanerId) {
+    throw new Error("Not authorized to update this booking");
+  }
+
+  // Validate that booking is confirmed and scheduled for today
+  if (booking.status !== "confirmed" && booking.status !== "in-progress") {
+    throw new Error("Job progress can only be updated for confirmed or in-progress bookings");
+  }
+
+  // Check if booking is scheduled for today
+  const today = new Date().toISOString().split('T')[0];
+  if (booking.scheduled_date !== today) {
+    throw new Error("Job progress can only be updated for bookings scheduled today");
+  }
+
+  // Validate progress transitions
+  const currentProgress = booking.job_progress;
+  if (progress === "on-my-way" && currentProgress !== null) {
+    throw new Error("Invalid progress transition");
+  }
+  if (progress === "arrived" && currentProgress !== "on-my-way") {
+    throw new Error("Must mark 'On My Way' before 'Arrived'");
+  }
+  if (progress === "started" && currentProgress !== "arrived") {
+    throw new Error("Must mark 'Arrived' before 'Start Job'");
+  }
+
+  // Update job progress
+  // If progress is "started", also update status to "in-progress"
+  const updateData: any = {
+    job_progress: progress,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (progress === "started") {
+    updateData.status = "in-progress";
+  }
+
+  const { error } = await supabase
+    .from("bookings")
+    .update(updateData)
+    .eq("booking_reference", reference);
+
+  if (error) {
+    throw new Error(`Failed to update job progress: ${error.message}`);
+  }
+}
+
+/**
+ * Complete job (for cleaner)
+ * Updates status to completed
+ */
+export async function completeJob(reference: string): Promise<void> {
+  const cleaner = await getCurrentCleaner();
+  
+  if (!cleaner) {
+    throw new Error("Not authenticated as cleaner");
+  }
+
+  const supabase = await createClient();
+  
+  // Verify booking is assigned to this cleaner
+  const { data: booking, error: fetchError } = await supabase
+    .from("bookings")
+    .select("assigned_cleaner_id, status, scheduled_date")
+    .eq("booking_reference", reference)
+    .single();
+
+  if (fetchError || !booking) {
+    throw new Error("Booking not found");
+  }
+
+  if (booking.assigned_cleaner_id !== cleaner.cleanerId) {
+    throw new Error("Not authorized to complete this booking");
+  }
+
+  // Only allow completing if status is in-progress
+  if (booking.status !== "in-progress") {
+    throw new Error("Only in-progress bookings can be completed");
+  }
+
+  // Check if booking is scheduled for today
+  const today = new Date().toISOString().split('T')[0];
+  if (booking.scheduled_date !== today) {
+    throw new Error("Job can only be completed for bookings scheduled today");
+  }
+
+  const { error } = await supabase
+    .from("bookings")
+    .update({
+      status: "completed",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("booking_reference", reference);
+
+  if (error) {
+    throw new Error(`Failed to complete job: ${error.message}`);
+  }
+}
+
+/**
  * Get booking by reference (for cleaner)
  */
 export async function getCleanerBookingByReference(
@@ -688,6 +968,16 @@ function mapDatabaseToBooking(data: any): Booking {
     status: data.status,
     paymentStatus: data.payment_status,
     paymentReference: data.payment_reference,
+    cleanerResponse: data.cleaner_response || null,
+    jobProgress: data.job_progress || null,
     createdAt: data.created_at,
+    // Price breakdown fields
+    subtotal: data.subtotal ?? undefined,
+    frequencyDiscount: data.frequency_discount ?? undefined,
+    discountCodeDiscount: data.discount_code_discount ?? undefined,
+    serviceFee: data.service_fee ?? undefined,
+    // Cleaner earnings fields
+    cleanerEarnings: data.cleaner_earnings ?? undefined,
+    cleanerEarningsPercentage: data.cleaner_earnings_percentage ?? undefined,
   };
 }
