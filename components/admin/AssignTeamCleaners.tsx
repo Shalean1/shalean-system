@@ -43,24 +43,42 @@ export default function AssignTeamCleaners({ booking }: AssignTeamCleanersProps)
       setError(null);
       
       try {
-        const [members, assigned] = await Promise.all([
-          getTeamMembersAction(booking.teamId!),
-          getBookingCleanersAction(booking.id),
-        ]);
+        let cleanersData: CleanerSelectOption[] = [];
         
-        setTeamMembers(members);
+        const teamBooking = !!booking.teamId;
+        const teamService = booking.service === 'deep' || booking.service === 'move-in-out';
+        
+        if (teamBooking && booking.teamId) {
+          // If it's a team booking, get team members
+          const teamMembers = await getTeamMembersAction(booking.teamId);
+          cleanersData = teamMembers.map(m => ({
+            cleanerId: m.cleanerId,
+            cleanerName: m.cleanerName,
+          }));
+        } else if (teamService) {
+          // If it's a deep/move-in-out booking without team, get all cleaners
+          const allCleaners = await getAllActiveCleanersAction();
+          cleanersData = allCleaners.map(c => ({
+            cleanerId: c.cleanerId,
+            cleanerName: c.cleanerName,
+          }));
+        }
+        
+        const assigned = await getBookingCleanersAction(booking.id);
+        
+        setAvailableCleaners(cleanersData);
         setAssignedCleaners(assigned);
         setSelectedCleanerIds(new Set(assigned.map(c => c.cleanerId)));
       } catch (err) {
-        console.error("Error loading team data:", err);
-        setError(err instanceof Error ? err.message : "Failed to load team data");
+        console.error("Error loading cleaner data:", err);
+        setError(err instanceof Error ? err.message : "Failed to load cleaner data");
       } finally {
         setLoading(false);
       }
     }
 
     loadData();
-  }, [booking.teamId, booking.id]);
+  }, [booking.teamId, booking.id, booking.service]);
 
   const handleToggleCleaner = (cleanerId: string) => {
     setSelectedCleanerIds(prev => {
@@ -156,10 +174,18 @@ export default function AssignTeamCleaners({ booking }: AssignTeamCleanersProps)
         </div>
       )}
 
-      {teamMembers.length === 0 ? (
+      {availableCleaners.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
-          <p>No team members found for this team.</p>
-          <p className="text-sm mt-2">Please add cleaners to the team first.</p>
+          <p>
+            {isTeamBooking 
+              ? "No team members found for this team." 
+              : "No cleaners available."}
+          </p>
+          <p className="text-sm mt-2">
+            {isTeamBooking 
+              ? "Please add cleaners to the team first."
+              : "Please ensure cleaners are marked as active in the system."}
+          </p>
         </div>
       ) : (
         <>
@@ -168,8 +194,8 @@ export default function AssignTeamCleaners({ booking }: AssignTeamCleanersProps)
               Select the cleaners who will work on this booking:
             </p>
             <div className="space-y-2">
-              {teamMembers.map((member) => {
-                const isSelected = selectedCleanerIds.has(member.cleanerId);
+              {availableCleaners.map((cleaner) => {
+                const isSelected = selectedCleanerIds.has(cleaner.cleanerId);
                 return (
                   <label
                     key={cleaner.cleanerId}
