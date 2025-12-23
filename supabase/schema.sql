@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS cleaners (
   display_order INTEGER DEFAULT 0,
   is_active BOOLEAN DEFAULT true,
   is_available BOOLEAN DEFAULT true,
+  availability_days JSONB DEFAULT '[]'::jsonb, -- Array of days of the week (e.g., ["Monday", "Tuesday"])
+  working_areas JSONB DEFAULT '[]'::jsonb, -- Array of suburb names where the cleaner provides service (e.g., ["Sea Point", "Camps Bay"])
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -158,7 +160,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   full_name TEXT,
   email TEXT,
   phone TEXT,
-  cleaner_id TEXT REFERENCES cleaners(cleaner_id),
+  cleaner_id TEXT REFERENCES cleaners(cleaner_id) ON DELETE SET NULL,
   is_admin BOOLEAN DEFAULT false,
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

@@ -339,6 +339,7 @@ export interface CleanerFull {
   displayOrder: number;
   isActive: boolean;
   isAvailable: boolean;
+  availabilityDays?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -370,6 +371,7 @@ export async function getAllCleanersFull(): Promise<CleanerFull[]> {
     displayOrder: cleaner.display_order || 0,
     isActive: cleaner.is_active ?? true,
     isAvailable: cleaner.is_available ?? true,
+    availabilityDays: cleaner.availability_days ? (Array.isArray(cleaner.availability_days) ? cleaner.availability_days : []) : [],
     createdAt: cleaner.created_at,
     updatedAt: cleaner.updated_at,
   }));

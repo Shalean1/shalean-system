@@ -293,3 +293,4 @@ That's it! Your booking forms now use dynamic data from Supabase. 🎉
 
 
 
+

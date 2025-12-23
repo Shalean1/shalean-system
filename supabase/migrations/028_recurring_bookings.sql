@@ -54,3 +54,4 @@ COMMENT ON COLUMN bookings.is_recurring IS 'Flag indicating if this booking is p
 
 
 
+

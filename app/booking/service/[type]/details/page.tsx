@@ -137,12 +137,16 @@ export default function ServiceDetailsPage() {
           
           setExtras(
             mappedExtras.filter(service => {
-              // Show deep-only services only for deep and move-in-out
-              if (DEEP_SERVICES_ONLY.includes(service.id)) {
-                return isDeepOrMoveInOut;
+              // For deep and move-in-out: show ONLY deep-only services
+              if (isDeepOrMoveInOut) {
+                return DEEP_SERVICES_ONLY.includes(service.id);
               }
-              // Show all other services for all service types
-              return true;
+              // For standard and airbnb: show all services EXCEPT deep-only services
+              if (currentServiceType === 'standard' || currentServiceType === 'airbnb') {
+                return !DEEP_SERVICES_ONLY.includes(service.id);
+              }
+              // For other service types: don't show extras
+              return false;
             })
           );
         }
@@ -205,21 +209,43 @@ export default function ServiceDetailsPage() {
   useEffect(() => {
     if (allExtras.length > 0 && formData.service) {
       const isDeepOrMoveInOut = formData.service === 'deep' || formData.service === 'move-in-out';
-      const isStandardOrAirbnb = formData.service === 'standard' || formData.service === 'airbnb';
       
-      // Clear selected extras if service doesn't support extras (not standard or airbnb)
-      if (!isStandardOrAirbnb && formData.extras && formData.extras.length > 0) {
-        setFormData((prev) => ({ ...prev, extras: [] }));
+      // Filter out incompatible extras from selected extras
+      if (formData.extras && formData.extras.length > 0) {
+        const compatibleExtras = formData.extras.filter(extraId => {
+          const extra = allExtras.find(e => e.id === extraId);
+          if (!extra) return false;
+          
+          // For deep and move-in-out: only allow deep-only services
+          if (isDeepOrMoveInOut) {
+            return DEEP_SERVICES_ONLY.includes(extra.id);
+          }
+          // For standard and airbnb: only allow non-deep-only services
+          if (formData.service === 'standard' || formData.service === 'airbnb') {
+            return !DEEP_SERVICES_ONLY.includes(extra.id);
+          }
+          // For other service types: no extras allowed
+          return false;
+        });
+        
+        // Only update if there are incompatible extras to remove
+        if (compatibleExtras.length !== formData.extras.length) {
+          setFormData((prev) => ({ ...prev, extras: compatibleExtras }));
+        }
       }
       
       setExtras(
         allExtras.filter(service => {
-          // Show deep-only services only for deep and move-in-out
-          if (DEEP_SERVICES_ONLY.includes(service.id)) {
-            return isDeepOrMoveInOut;
+          // For deep and move-in-out: show ONLY deep-only services
+          if (isDeepOrMoveInOut) {
+            return DEEP_SERVICES_ONLY.includes(service.id);
           }
-          // Show all other services for all service types
-          return true;
+          // For standard and airbnb: show all services EXCEPT deep-only services
+          if (formData.service === 'standard' || formData.service === 'airbnb') {
+            return !DEEP_SERVICES_ONLY.includes(service.id);
+          }
+          // For other service types: don't show extras
+          return false;
         })
       );
     }
@@ -394,8 +420,8 @@ export default function ServiceDetailsPage() {
               </div>
             </section>
 
-            {/* Extras - Only show for standard and airbnb services */}
-            {(formData.service === "standard" || formData.service === "airbnb") && (
+            {/* Extras - Show for standard, airbnb, deep, and move-in-out services */}
+            {(formData.service === "standard" || formData.service === "airbnb" || formData.service === "deep" || formData.service === "move-in-out") && (
               <section className="bg-white border border-gray-200 rounded-xl p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-6">Extras</h2>
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-4">

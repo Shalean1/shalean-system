@@ -19,11 +19,13 @@ import {
   getFrequencyOptions,
   getSystemSetting,
   getServiceLocations,
+  getAdditionalServices,
   ServiceLocation,
   Team,
   FALLBACK_CLEANERS,
   FALLBACK_TEAMS,
   FALLBACK_FREQUENCIES,
+  FALLBACK_EXTRAS,
 } from "@/lib/supabase/booking-data";
 
 const STORAGE_KEY = "shalean_booking_data";
@@ -33,47 +35,9 @@ export default function SchedulePage() {
   const params = useParams();
   const serviceType = params?.type as string;
 
-  // Initialize formData with defaults, then immediately load from localStorage
+  // Initialize formData with consistent defaults (same on server and client)
+  // localStorage will be loaded in useEffect after hydration to avoid mismatch
   const getInitialFormData = (): Partial<BookingFormData> => {
-    if (typeof window === "undefined") {
-      // Server-side: return minimal defaults
-      return {
-        service: serviceType as any,
-        frequency: "one-time",
-        cleanerPreference: "no-preference",
-        streetAddress: "",
-        suburb: "",
-        city: "Cape Town",
-      };
-    }
-    
-    // Client-side: load from localStorage first, then merge with defaults
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        // Merge saved data with defaults to ensure all fields are present
-        return {
-          service: parsed.service || (serviceType as any),
-          bedrooms: parsed.bedrooms ?? 0,
-          bathrooms: parsed.bathrooms ?? 1,
-          extras: parsed.extras || [],
-          scheduledDate: parsed.scheduledDate || null,
-          scheduledTime: parsed.scheduledTime || null,
-          specialInstructions: parsed.specialInstructions || undefined,
-          frequency: parsed.frequency || "one-time",
-          cleanerPreference: parsed.cleanerPreference || "no-preference",
-          streetAddress: parsed.streetAddress || "",
-          aptUnit: parsed.aptUnit || undefined,
-          suburb: parsed.suburb || "",
-          city: parsed.city || "Cape Town",
-        };
-      } catch {
-        // If parse fails, return defaults
-      }
-    }
-    
-    // No saved data: return defaults
     return {
       service: serviceType as any,
       bedrooms: 0,
@@ -88,10 +52,14 @@ export default function SchedulePage() {
   };
 
   const [formData, setFormData] = useState<Partial<BookingFormData>>(getInitialFormData);
+  const [isClient, setIsClient] = useState(false);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [pricingConfig, setPricingConfig] = useState<PricingConfig | null>(null);
+  const [allExtras, setAllExtras] = useState<Array<{ id: string; name: string }>>(
+    FALLBACK_EXTRAS.map(extra => ({ id: extra.id, name: extra.name }))
+  );
   const [cleaners, setCleaners] = useState<{ id: CleanerPreference; name: string; rating?: number }[]>(
     FALLBACK_CLEANERS.map(c => ({ id: c.id as CleanerPreference, name: c.name, rating: c.rating }))
   );
@@ -134,6 +102,12 @@ export default function SchedulePage() {
       try {
         setIsLoadingData(true);
         
+        // Fetch extras data for displaying names
+        const extrasData = await getAdditionalServices();
+        if (extrasData.length > 0) {
+          setAllExtras(extrasData.map(service => ({ id: service.service_id, name: service.name })));
+        }
+        
         if (isTeamService) {
           // For deep/move-in-out services, fetch teams
           const [teamsData, frequencyOptionsData, cityData, locationsData, pricing] = await Promise.all([
@@ -158,24 +132,35 @@ export default function SchedulePage() {
           setTeams(teamsWithMembers);
         } else {
           // For other services, fetch cleaners
+          // Pass date and suburb filters if available from formData
           const [cleanersData, frequencyOptionsData, cityData, locationsData, pricing] = await Promise.all([
-            getCleaners(),
+            getCleaners(formData.scheduledDate || undefined, formData.suburb || undefined),
             getFrequencyOptions(),
             getSystemSetting("default_city"),
             getServiceLocations(),
             fetchPricingConfig(),
           ]);
           
-          // Set cleaners
-          if (cleanersData.length > 0) {
-            setCleaners(
-              cleanersData.map(cleaner => ({
-                id: cleaner.cleaner_id as CleanerPreference,
-                name: cleaner.name,
-                rating: cleaner.rating || undefined,
-              }))
-            );
+          // Extras already fetched above
+          
+          // Set cleaners - always include "no-preference" option
+          const cleanersList = cleanersData.map(cleaner => ({
+            id: cleaner.cleaner_id as CleanerPreference,
+            name: cleaner.name,
+            rating: cleaner.rating || undefined,
+          }));
+          
+          // Ensure "no-preference" is always included
+          const noPreferenceOption = FALLBACK_CLEANERS.find(c => c.id === "no-preference");
+          if (noPreferenceOption && !cleanersList.find(c => c.id === "no-preference")) {
+            cleanersList.unshift({
+              id: "no-preference" as CleanerPreference,
+              name: noPreferenceOption.name,
+              rating: undefined,
+            });
           }
+          
+          setCleaners(cleanersList);
           
           // Set frequency options
           if (frequencyOptionsData.length > 0) {
@@ -265,29 +250,35 @@ export default function SchedulePage() {
     fetchData();
   }, []);
 
-  // Sync formData with localStorage on mount (in case localStorage was updated externally)
+  // Mark as client-side mounted and load from localStorage after hydration
   useEffect(() => {
+    setIsClient(true);
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        // Merge with current formData to preserve any local changes
-        setFormData((prev) => ({
-          ...prev,
-          ...parsed,
-          // Ensure Step 1 fields are preserved
-          bedrooms: parsed.bedrooms ?? prev.bedrooms ?? 0,
-          bathrooms: parsed.bathrooms ?? prev.bathrooms ?? 1,
-          extras: parsed.extras || prev.extras || [],
-          service: parsed.service || prev.service || (serviceType as any),
-          scheduledDate: parsed.scheduledDate ?? prev.scheduledDate ?? null,
-          scheduledTime: parsed.scheduledTime ?? prev.scheduledTime ?? null,
-        }));
+        // Merge saved data with defaults to ensure all fields are present
+        // Preserve ALL step 1 data (bedrooms, bathrooms, extras, date, time, service)
+        setFormData({
+          service: parsed.service || (serviceType as any),
+          bedrooms: parsed.bedrooms ?? 0,
+          bathrooms: parsed.bathrooms ?? 1,
+          extras: parsed.extras || [],
+          scheduledDate: parsed.scheduledDate || null,
+          scheduledTime: parsed.scheduledTime || null,
+          specialInstructions: parsed.specialInstructions || undefined,
+          frequency: parsed.frequency || "one-time",
+          cleanerPreference: parsed.cleanerPreference || "no-preference",
+          streetAddress: parsed.streetAddress || "",
+          aptUnit: parsed.aptUnit || undefined,
+          suburb: parsed.suburb || "",
+          city: parsed.city || "Cape Town",
+        });
       } catch {
-        // Ignore parse errors
+        // Ignore parse errors, keep defaults
       }
     }
-  }, []);
+  }, [serviceType]);
 
   // Sync search query when suburb changes externally (but not from user input)
   useEffect(() => {
@@ -313,21 +304,61 @@ export default function SchedulePage() {
     checkAvailability();
   }, [formData.scheduledDate, isTeamService]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Re-fetch cleaners when date or suburb changes (for non-team services)
   useEffect(() => {
-    // Save to localStorage, ensuring all fields are preserved
-    // This ensures Step 1 data (bedrooms, bathrooms, extras) is never lost
-    const dataToSave: Partial<BookingFormData> = {
-      ...formData,
-      // Explicitly preserve Step 1 fields
-      bedrooms: formData.bedrooms ?? 0,
-      bathrooms: formData.bathrooms ?? 1,
-      extras: formData.extras || [],
-      service: formData.service || (serviceType as any),
-      scheduledDate: formData.scheduledDate || null,
-      scheduledTime: formData.scheduledTime || null,
+    const fetchFilteredCleaners = async () => {
+      if (!isTeamService) {
+        try {
+          const cleanersData = await getCleaners(
+            formData.scheduledDate || undefined,
+            formData.suburb || undefined
+          );
+          
+          // Map cleaners - always include "no-preference" option
+          const cleanersList = cleanersData.map(cleaner => ({
+            id: cleaner.cleaner_id as CleanerPreference,
+            name: cleaner.name,
+            rating: cleaner.rating || undefined,
+          }));
+          
+          // Ensure "no-preference" is always included
+          const noPreferenceOption = FALLBACK_CLEANERS.find(c => c.id === "no-preference");
+          if (noPreferenceOption && !cleanersList.find(c => c.id === "no-preference")) {
+            cleanersList.unshift({
+              id: "no-preference" as CleanerPreference,
+              name: noPreferenceOption.name,
+              rating: undefined,
+            });
+          }
+          
+          setCleaners(cleanersList);
+        } catch (error) {
+          console.error("Error fetching filtered cleaners:", error);
+        }
+      }
     };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-  }, [formData, serviceType]);
+
+    fetchFilteredCleaners();
+  }, [formData.scheduledDate, formData.suburb, isTeamService]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    // Save to localStorage only after client-side hydration
+    // This ensures Step 1 data (bedrooms, bathrooms, extras, date, time) is never lost
+    if (isClient) {
+      const dataToSave: Partial<BookingFormData> = {
+        ...formData,
+        // Explicitly preserve Step 1 fields to prevent data loss
+        bedrooms: formData.bedrooms ?? 0,
+        bathrooms: formData.bathrooms ?? 1,
+        extras: formData.extras || [],
+        service: formData.service || (serviceType as any),
+        scheduledDate: formData.scheduledDate || null,
+        scheduledTime: formData.scheduledTime || null,
+        specialInstructions: formData.specialInstructions || undefined,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+    }
+  }, [formData, serviceType]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -638,6 +669,18 @@ export default function SchedulePage() {
             ) : (
               <section className="bg-white border border-gray-200 rounded-xl p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-6">Select your preferred cleaner</h2>
+                {cleaners.length === 1 && cleaners[0].id === "no-preference" && (formData.scheduledDate || formData.suburb) ? (
+                  <div className="p-4 rounded-lg bg-yellow-50 text-yellow-800 border border-yellow-200 flex items-center gap-3">
+                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold">No specific cleaners available</p>
+                      <p className="text-sm mt-1">
+                        No cleaners match your selected {formData.scheduledDate && formData.suburb ? 'date and location' : formData.scheduledDate ? 'date' : 'location'}. 
+                        You can select "No preference" to let us assign the best available cleaner, or try selecting a different {formData.scheduledDate && formData.suburb ? 'date or location' : formData.scheduledDate ? 'date' : 'location'}.
+                      </p>
+                    </div>
+                  </div>
+                ) : null}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {cleaners.map((cleaner) => (
                     <CleanerCard

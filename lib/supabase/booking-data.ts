@@ -49,6 +49,7 @@ export interface Cleaner {
   is_active: boolean;
   is_available: boolean;
   availability_days?: string[];
+  working_areas?: string[];
 }
 
 export interface FrequencyOption {
@@ -183,14 +184,18 @@ export async function getTimeSlots(): Promise<TimeSlot[]> {
 
 /**
  * Fetch all active and available cleaners
+ * Optionally filter by selected date and suburb
+ * @param selectedDate - Customer's selected booking date (e.g., "2024-12-15")
+ * @param selectedSuburb - Customer's selected suburb (e.g., "Sea Point")
  */
-export async function getCleaners(): Promise<Cleaner[]> {
+export async function getCleaners(selectedDate?: string, selectedSuburb?: string): Promise<Cleaner[]> {
   try {
     const supabase = createClient();
     const { data, error } = await supabase
       .from('cleaners')
       .select('*')
       .eq('is_active', true)
+      .eq('is_available', true)
       .order('display_order', { ascending: true });
 
     if (error) {
@@ -198,7 +203,163 @@ export async function getCleaners(): Promise<Cleaner[]> {
       return [];
     }
 
-    return data || [];
+    if (!data || data.length === 0) {
+      return [];
+    }
+
+    // If no filters provided, return all active cleaners (backward compatibility)
+    if (!selectedDate && !selectedSuburb) {
+      return data;
+    }
+
+    // Filter cleaners based on provided criteria
+    let filteredCleaners = data;
+
+    // Filter by availability days if date is provided
+    if (selectedDate) {
+      try {
+        // Parse date string as local date (YYYY-MM-DD format) to avoid timezone issues
+        // This matches the DatePicker component's approach
+        const parts = selectedDate.split("-");
+        if (parts.length === 3) {
+          const year = parseInt(parts[0], 10);
+          const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
+          const day = parseInt(parts[2], 10);
+          const date = new Date(year, month, day);
+          
+          // Extract day name using consistent locale
+          const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+          
+          console.log(`[getCleaners] Filtering cleaners for date: ${selectedDate} (${dayName})`);
+          console.log(`[getCleaners] Before date filter: ${filteredCleaners.length} cleaners`);
+          
+          // STRICT FILTER: Only show cleaners who explicitly have the selected day in their availability_days
+          filteredCleaners = filteredCleaners.filter(cleaner => {
+            // Handle null, undefined, or invalid availability_days
+            let availabilityDays: string[] = [];
+            if (cleaner.availability_days) {
+              if (Array.isArray(cleaner.availability_days)) {
+                availabilityDays = cleaner.availability_days.filter(day => day != null && typeof day === 'string');
+              } else {
+                console.warn(`[getCleaners] ${cleaner.name} has invalid availability_days format:`, cleaner.availability_days);
+                return false; // Filter out cleaners with invalid data
+              }
+            }
+            
+            // STRICT RULE: Cleaner must have at least one day marked AND Sunday must be in the list
+            // If availability_days is empty/null, cleaner is NOT available
+            if (availabilityDays.length === 0) {
+              console.log(`[getCleaners] ❌ Filtering out ${cleaner.name} - availability_days is empty or null`);
+              return false;
+            }
+            
+            // Check if the selected day (Sunday) is in the availability_days array
+            // Normalize both the day from the array and the selected day for comparison
+            const normalizedSelectedDay = dayName.trim().toLowerCase();
+            const hasSelectedDay = availabilityDays.some(day => {
+              if (!day || typeof day !== 'string') return false;
+              return day.trim().toLowerCase() === normalizedSelectedDay;
+            });
+            
+            if (!hasSelectedDay) {
+              console.log(`[getCleaners] ❌ Filtering out ${cleaner.name} - availability_days: [${availabilityDays.join(', ')}], selected day: ${dayName} (NOT FOUND)`);
+              return false;
+            }
+            
+            console.log(`[getCleaners] ✅ Keeping ${cleaner.name} - availability_days: [${availabilityDays.join(', ')}], selected day: ${dayName} (FOUND)`);
+            return true;
+          });
+          
+          console.log(`[getCleaners] After date filter: ${filteredCleaners.length} cleaners`);
+          
+          // Check for existing bookings on this date and filter out cleaners who are already booked
+          try {
+            const cleanerIds = filteredCleaners.map(c => c.cleaner_id);
+            if (cleanerIds.length > 0) {
+              const { data: bookings, error: bookingsError } = await supabase
+                .from('bookings')
+                .select('assigned_cleaner_id')
+                .eq('scheduled_date', selectedDate)
+                .in('assigned_cleaner_id', cleanerIds)
+                .in('status', ['pending', 'confirmed', 'in-progress']); // Only count active bookings
+              
+              if (bookingsError) {
+                console.error('Error checking cleaner bookings:', bookingsError);
+              } else {
+                const bookedCleanerIds = new Set(
+                  (bookings || [])
+                    .map(b => b.assigned_cleaner_id)
+                    .filter(id => id !== null)
+                );
+                
+                console.log(`[getCleaners] Found ${bookedCleanerIds.size} cleaners with existing bookings on ${selectedDate}`);
+                
+                const beforeBookingFilter = filteredCleaners.length;
+                filteredCleaners = filteredCleaners.filter(cleaner => {
+                  const isBooked = bookedCleanerIds.has(cleaner.cleaner_id);
+                  if (isBooked) {
+                    console.log(`[getCleaners] Filtering out ${cleaner.name} - already has a booking on ${selectedDate}`);
+                  }
+                  return !isBooked;
+                });
+                
+                console.log(`[getCleaners] After booking conflict filter: ${filteredCleaners.length} cleaners (removed ${beforeBookingFilter - filteredCleaners.length})`);
+              }
+            }
+          } catch (bookingCheckError) {
+            console.error('Error checking cleaner booking conflicts:', bookingCheckError);
+            // Continue with filtered cleaners even if booking check fails
+          }
+        } else {
+          console.error('Invalid date format:', selectedDate);
+        }
+      } catch (dateError) {
+        console.error('Error parsing selected date:', dateError);
+        // If date parsing fails, don't filter by date
+      }
+    }
+
+    // Filter by working areas if suburb is provided
+    if (selectedSuburb) {
+      const normalizedSuburb = selectedSuburb.trim().toLowerCase();
+      console.log(`[getCleaners] Filtering cleaners for suburb: ${selectedSuburb}`);
+      console.log(`[getCleaners] Before location filter: ${filteredCleaners.length} cleaners`);
+      
+      filteredCleaners = filteredCleaners.filter(cleaner => {
+        // Always include "no-preference" option - it means "any available cleaner"
+        if (cleaner.cleaner_id === 'no-preference') {
+          console.log(`[getCleaners] ✅ Keeping ${cleaner.name} - special case: no-preference (always included)`);
+          return true;
+        }
+        
+        const workingAreas = cleaner.working_areas || [];
+        
+        // STRICT RULE: Cleaner must have working areas defined AND the suburb must be in the list
+        // If working_areas is empty/null, cleaner is NOT available for this location
+        if (workingAreas.length === 0) {
+          console.log(`[getCleaners] ❌ Filtering out ${cleaner.name} - working_areas is empty or null`);
+          return false;
+        }
+        
+        // Check if the suburb exists in working_areas array (case-insensitive)
+        const hasMatchingArea = workingAreas.some(area => {
+          if (!area || typeof area !== 'string') return false;
+          return area.trim().toLowerCase() === normalizedSuburb;
+        });
+        
+        if (!hasMatchingArea) {
+          console.log(`[getCleaners] ❌ Filtering out ${cleaner.name} - working_areas: [${workingAreas.join(', ')}], selected suburb: ${selectedSuburb} (NOT FOUND)`);
+          return false;
+        }
+        
+        console.log(`[getCleaners] ✅ Keeping ${cleaner.name} - working_areas: [${workingAreas.join(', ')}], selected suburb: ${selectedSuburb} (FOUND)`);
+        return true;
+      });
+      
+      console.log(`[getCleaners] After location filter: ${filteredCleaners.length} cleaners`);
+    }
+
+    return filteredCleaners;
   } catch (error) {
     console.error('Error fetching cleaners:', error);
     return [];

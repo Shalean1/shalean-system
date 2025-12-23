@@ -86,8 +86,8 @@ export default function PriceSummary({
           <p className="font-medium text-gray-900">{getServiceName(service)}</p>
         </div>
 
-        {scheduledDate && (
-          <div>
+        {isMounted && scheduledDate && (
+          <div suppressHydrationWarning>
             <p className="text-sm text-gray-600 mb-1">Schedule</p>
             <p className="font-medium text-gray-900">
               {formatDate(scheduledDate)}
@@ -96,14 +96,14 @@ export default function PriceSummary({
           </div>
         )}
 
-        {address && (
-          <div>
+        {isMounted && address && (
+          <div suppressHydrationWarning>
             <p className="text-sm text-gray-600 mb-1">Address</p>
             <p className="font-medium text-gray-900 text-sm">{address}</p>
           </div>
         )}
 
-        <div>
+        <div suppressHydrationWarning>
           <p className="text-sm text-gray-600 mb-1">Property</p>
           <p className="font-medium text-gray-900">
             {bedrooms} bed, {bathrooms} {bathrooms === 1 ? "bath" : "baths"}
@@ -119,8 +119,8 @@ export default function PriceSummary({
           </div>
         )}
 
-        {selectedCleanerName && (
-          <div>
+        {isMounted && selectedCleanerName && (
+          <div suppressHydrationWarning>
             <p className="text-sm text-gray-600 mb-1">
               {cleanerPreference && cleanerPreference.startsWith('team-') ? 'Team' : 'Cleaner'}
             </p>
@@ -138,7 +138,7 @@ export default function PriceSummary({
         </div>
 
         {(bedrooms > 0 || bathrooms > 0) && (
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between text-sm" suppressHydrationWarning>
             <span className="text-gray-600">
               Bedrooms & Bathrooms ({bedrooms} bed, {bathrooms} {bathrooms === 1 ? "bath" : "baths"})
             </span>

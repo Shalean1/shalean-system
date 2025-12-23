@@ -6,6 +6,11 @@ import {
   CleanerFull,
 } from "@/app/actions/admin-bookings";
 import {
+  addCleaner,
+  updateCleaner,
+  deleteCleaner,
+} from "@/app/actions/cleaners";
+import {
   Users,
   RefreshCw,
   Search,
@@ -15,13 +20,72 @@ import {
   XCircle,
   Clock,
   User,
+  Plus,
+  Edit,
+  Trash2,
+  X,
+  Save,
+  AlertTriangle,
+  MapPin,
 } from "lucide-react";
+import CleanerAreasModal from "@/components/admin/CleanerAreasModal";
+import { getServiceLocations, ServiceLocation } from "@/lib/supabase/booking-data";
+
+interface CleanerFormData {
+  cleaner_id: string;
+  name: string;
+  bio: string;
+  rating: string;
+  total_jobs: string;
+  avatar_url: string;
+  display_order: string;
+  is_active: boolean;
+  is_available: boolean;
+  availability_days: string[];
+}
+
+const DAYS_OF_WEEK = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
 
 export default function CleanersPage() {
   const [cleaners, setCleaners] = useState<CleanerFull[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive" | "available" | "unavailable">("all");
+  
+  // Modal and form state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCleaner, setEditingCleaner] = useState<CleanerFull | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<CleanerFull | null>(null);
+  const [formLoading, setFormLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  
+  // Areas modal state
+  const [isAreasModalOpen, setIsAreasModalOpen] = useState(false);
+  const [selectedCleanerForAreas, setSelectedCleanerForAreas] = useState<CleanerFull | null>(null);
+  const [serviceLocations, setServiceLocations] = useState<ServiceLocation[]>([]);
+  
+  // Form data
+  const [formData, setFormData] = useState<CleanerFormData>({
+    cleaner_id: "",
+    name: "",
+    bio: "",
+    rating: "",
+    total_jobs: "0",
+    avatar_url: "",
+    display_order: "",
+    is_active: true,
+    is_available: true,
+  });
 
   const fetchCleaners = async () => {
     setLoading(true);
@@ -37,7 +101,208 @@ export default function CleanersPage() {
 
   useEffect(() => {
     fetchCleaners();
+    // Fetch service locations for areas modal
+    const loadServiceLocations = async () => {
+      try {
+        const locations = await getServiceLocations();
+        setServiceLocations(locations);
+      } catch (error) {
+        console.error("Error fetching service locations:", error);
+      }
+    };
+    loadServiceLocations();
   }, []);
+
+  // Reset form when modal opens/closes
+  useEffect(() => {
+    if (!isModalOpen) {
+      setEditingCleaner(null);
+      setFormError(null);
+      setSuccessMessage(null);
+      setFormData({
+        cleaner_id: "",
+        name: "",
+        bio: "",
+        rating: "",
+        total_jobs: "0",
+        avatar_url: "",
+        display_order: "",
+        is_active: true,
+        is_available: true,
+        availability_days: [],
+      });
+    }
+  }, [isModalOpen]);
+
+  // Populate form when editing
+  useEffect(() => {
+    if (editingCleaner) {
+      setFormData({
+        cleaner_id: editingCleaner.cleanerId,
+        name: editingCleaner.name,
+        bio: editingCleaner.bio || "",
+        rating: editingCleaner.rating?.toString() || "",
+        total_jobs: editingCleaner.totalJobs.toString(),
+        avatar_url: editingCleaner.avatarUrl || "",
+        display_order: editingCleaner.displayOrder.toString(),
+        is_active: editingCleaner.isActive,
+        is_available: editingCleaner.isAvailable,
+        availability_days: editingCleaner.availabilityDays || [],
+      });
+    }
+  }, [editingCleaner]);
+
+  const handleOpenAddModal = () => {
+    setEditingCleaner(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEditModal = (cleaner: CleanerFull) => {
+    setEditingCleaner(cleaner);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleOpenDeleteDialog = (cleaner: CleanerFull) => {
+    setDeleteTarget(cleaner);
+    setIsDeleting(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setIsDeleting(false);
+    setDeleteTarget(null);
+  };
+
+  const handleOpenAreasModal = (cleaner: CleanerFull) => {
+    setSelectedCleanerForAreas(cleaner);
+    setIsAreasModalOpen(true);
+  };
+
+  const handleCloseAreasModal = () => {
+    setIsAreasModalOpen(false);
+    setSelectedCleanerForAreas(null);
+  };
+
+  const handleAreasModalSuccess = () => {
+    // Refresh cleaners list to show updated areas
+    fetchCleaners();
+  };
+
+  const validateForm = (): boolean => {
+    setFormError(null);
+
+    if (!formData.cleaner_id.trim()) {
+      setFormError("Cleaner ID is required");
+      return false;
+    }
+
+    // Validate cleaner_id format (lowercase, hyphens, alphanumeric)
+    const cleanerIdPattern = /^[a-z0-9-]+$/;
+    if (!cleanerIdPattern.test(formData.cleaner_id.trim())) {
+      setFormError("Cleaner ID must be lowercase with hyphens only (e.g., 'natasha-m')");
+      return false;
+    }
+
+    if (!formData.name.trim() || formData.name.trim().length < 2) {
+      setFormError("Name is required and must be at least 2 characters");
+      return false;
+    }
+
+    if (formData.rating && (parseFloat(formData.rating) < 0 || parseFloat(formData.rating) > 5)) {
+      setFormError("Rating must be between 0 and 5");
+      return false;
+    }
+
+    if (formData.total_jobs && parseInt(formData.total_jobs) < 0) {
+      setFormError("Total jobs must be 0 or greater");
+      return false;
+    }
+
+    if (formData.display_order && parseInt(formData.display_order) < 0) {
+      setFormError("Display order must be 0 or greater");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setFormLoading(true);
+    setFormError(null);
+    setSuccessMessage(null);
+
+    try {
+      const input = {
+        cleaner_id: formData.cleaner_id.trim().toLowerCase(),
+        name: formData.name.trim(),
+        bio: formData.bio.trim() || undefined,
+        rating: formData.rating ? parseFloat(formData.rating) : undefined,
+        total_jobs: formData.total_jobs ? parseInt(formData.total_jobs) : undefined,
+        avatar_url: formData.avatar_url.trim() || undefined,
+        display_order: formData.display_order ? parseInt(formData.display_order) : undefined,
+        is_active: formData.is_active,
+        is_available: formData.is_available,
+        availability_days: formData.availability_days.length > 0 ? formData.availability_days : undefined,
+      };
+
+      let result;
+      if (editingCleaner) {
+        result = await updateCleaner(editingCleaner.id, input);
+      } else {
+        result = await addCleaner(input);
+      }
+
+      if (result.success) {
+        setSuccessMessage(editingCleaner ? "Cleaner updated successfully!" : "Cleaner created successfully!");
+        await fetchCleaners();
+        setTimeout(() => {
+          handleCloseModal();
+        }, 1000);
+      } else {
+        setFormError(result.error || "An error occurred");
+      }
+    } catch (error) {
+      console.error("Error saving cleaner:", error);
+      setFormError("An unexpected error occurred");
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+
+    setFormLoading(true);
+    setFormError(null);
+
+    try {
+      const result = await deleteCleaner(deleteTarget.id);
+      
+      if (result.success) {
+        setSuccessMessage("Cleaner deleted successfully!");
+        await fetchCleaners();
+        setTimeout(() => {
+          handleCloseDeleteDialog();
+        }, 1000);
+      } else {
+        setFormError(result.error || "An error occurred");
+      }
+    } catch (error) {
+      console.error("Error deleting cleaner:", error);
+      setFormError("An unexpected error occurred");
+    } finally {
+      setFormLoading(false);
+    }
+  };
 
   // Filter cleaners
   const filteredCleaners = useMemo(() => {
@@ -99,6 +364,13 @@ export default function CleanersPage() {
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <button
+              onClick={handleOpenAddModal}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors touch-manipulation"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add Cleaner</span>
+            </button>
             <button
               onClick={fetchCleaners}
               className="flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors touch-manipulation"
@@ -300,6 +572,23 @@ export default function CleanersPage() {
                   </div>
                 </div>
 
+                {/* Availability Days */}
+                {cleaner.availabilityDays && cleaner.availabilityDays.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-gray-200">
+                    <div className="text-xs text-gray-600 mb-1 font-medium">Available Days:</div>
+                    <div className="flex flex-wrap gap-1">
+                      {cleaner.availabilityDays.map((day) => (
+                        <span
+                          key={day}
+                          className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700"
+                        >
+                          {day.substring(0, 3)}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Display Order */}
                 <div className="mt-3 pt-3 border-t border-gray-100">
                   <div className="flex items-center justify-between text-xs text-gray-500">
@@ -310,11 +599,360 @@ export default function CleanersPage() {
                     </span>
                   </div>
                 </div>
+
+                {/* Action Buttons */}
+                <div className="mt-4 pt-4 border-t border-gray-200 flex items-center justify-end gap-2 flex-wrap">
+                  <button
+                    onClick={() => handleOpenAreasModal(cleaner)}
+                    className="flex items-center justify-center gap-1 px-3 py-1.5 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 active:bg-purple-200 transition-colors touch-manipulation"
+                    title="Manage working areas"
+                  >
+                    <MapPin className="w-4 h-4" />
+                    <span className="hidden sm:inline">Areas</span>
+                  </button>
+                  <button
+                    onClick={() => handleOpenEditModal(cleaner)}
+                    className="flex items-center justify-center gap-1 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors touch-manipulation"
+                    title="Edit cleaner"
+                  >
+                    <Edit className="w-4 h-4" />
+                    <span className="hidden sm:inline">Edit</span>
+                  </button>
+                  <button
+                    onClick={() => handleOpenDeleteDialog(cleaner)}
+                    className="flex items-center justify-center gap-1 px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 active:bg-red-200 transition-colors touch-manipulation"
+                    title="Delete cleaner"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span className="hidden sm:inline">Delete</span>
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Create/Edit Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-gray-900">
+                {editingCleaner ? "Edit Cleaner" : "Add New Cleaner"}
+              </h2>
+              <button
+                onClick={handleCloseModal}
+                className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+                disabled={formLoading}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              {formError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-start gap-2">
+                  <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm">{formError}</p>
+                </div>
+              )}
+
+              {successMessage && (
+                <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm">{successMessage}</p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Cleaner ID */}
+                <div>
+                  <label htmlFor="cleaner_id" className="block text-sm font-medium text-gray-700 mb-1">
+                    Cleaner ID <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="cleaner_id"
+                    value={formData.cleaner_id}
+                    onChange={(e) => setFormData({ ...formData, cleaner_id: e.target.value })}
+                    disabled={formLoading || !!editingCleaner}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    placeholder="e.g., natasha-m"
+                    required
+                  />
+                  <p className="mt-1 text-xs text-gray-500">Lowercase with hyphens only</p>
+                </div>
+
+                {/* Name */}
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                    Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    disabled={formLoading}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    placeholder="Cleaner name"
+                    required
+                  />
+                </div>
+
+                {/* Bio */}
+                <div className="md:col-span-2">
+                  <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
+                    Bio
+                  </label>
+                  <textarea
+                    id="bio"
+                    value={formData.bio}
+                    onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                    disabled={formLoading}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    placeholder="Cleaner biography or description"
+                  />
+                </div>
+
+                {/* Rating */}
+                <div>
+                  <label htmlFor="rating" className="block text-sm font-medium text-gray-700 mb-1">
+                    Rating
+                  </label>
+                  <input
+                    type="number"
+                    id="rating"
+                    value={formData.rating}
+                    onChange={(e) => setFormData({ ...formData, rating: e.target.value })}
+                    disabled={formLoading}
+                    min="0"
+                    max="5"
+                    step="0.01"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    placeholder="0.00 - 5.00"
+                  />
+                </div>
+
+                {/* Total Jobs */}
+                <div>
+                  <label htmlFor="total_jobs" className="block text-sm font-medium text-gray-700 mb-1">
+                    Total Jobs
+                  </label>
+                  <input
+                    type="number"
+                    id="total_jobs"
+                    value={formData.total_jobs}
+                    onChange={(e) => setFormData({ ...formData, total_jobs: e.target.value })}
+                    disabled={formLoading}
+                    min="0"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    placeholder="0"
+                  />
+                </div>
+
+                {/* Avatar URL */}
+                <div className="md:col-span-2">
+                  <label htmlFor="avatar_url" className="block text-sm font-medium text-gray-700 mb-1">
+                    Avatar URL
+                  </label>
+                  <input
+                    type="url"
+                    id="avatar_url"
+                    value={formData.avatar_url}
+                    onChange={(e) => setFormData({ ...formData, avatar_url: e.target.value })}
+                    disabled={formLoading}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    placeholder="https://example.com/avatar.jpg"
+                  />
+                </div>
+
+                {/* Display Order */}
+                <div>
+                  <label htmlFor="display_order" className="block text-sm font-medium text-gray-700 mb-1">
+                    Display Order
+                  </label>
+                  <input
+                    type="number"
+                    id="display_order"
+                    value={formData.display_order}
+                    onChange={(e) => setFormData({ ...formData, display_order: e.target.value })}
+                    disabled={formLoading}
+                    min="0"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    placeholder="Auto"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">Leave empty for auto-increment</p>
+                </div>
+
+                {/* Status Checkboxes */}
+                <div className="md:col-span-2 space-y-2">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.is_active}
+                      onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                      disabled={formLoading}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:cursor-not-allowed"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Active</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.is_available}
+                      onChange={(e) => setFormData({ ...formData, is_available: e.target.checked })}
+                      disabled={formLoading}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:cursor-not-allowed"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Available</span>
+                  </label>
+                </div>
+
+                {/* Availability Days */}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Available Days
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                    {DAYS_OF_WEEK.map((day) => (
+                      <label
+                        key={day}
+                        className="flex items-center gap-2 p-2 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={formData.availability_days.includes(day)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setFormData({
+                                ...formData,
+                                availability_days: [...formData.availability_days, day],
+                              });
+                            } else {
+                              setFormData({
+                                ...formData,
+                                availability_days: formData.availability_days.filter((d) => d !== day),
+                              });
+                            }
+                          }}
+                          disabled={formLoading}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:cursor-not-allowed"
+                        />
+                        <span className="text-sm text-gray-700">{day}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-xs text-gray-500">
+                    Select the days of the week this cleaner is available to work
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  disabled={formLoading}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={formLoading}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {formLoading ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      {editingCleaner ? "Update Cleaner" : "Create Cleaner"}
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      {isDeleting && deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="p-6">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-gray-900 mb-1">Delete Cleaner</h3>
+                  <p className="text-sm text-gray-600">
+                    Are you sure you want to delete <span className="font-semibold">{deleteTarget.name}</span>? This action cannot be undone.
+                  </p>
+                </div>
+              </div>
+
+              {formError && (
+                <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                  {formError}
+                </div>
+              )}
+
+              {successMessage && (
+                <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
+                  {successMessage}
+                </div>
+              )}
+
+              <div className="flex items-center justify-end gap-3">
+                <button
+                  onClick={handleCloseDeleteDialog}
+                  disabled={formLoading}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={formLoading}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {formLoading ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      Deleting...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4" />
+                      Delete
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Areas Management Modal */}
+      {isAreasModalOpen && selectedCleanerForAreas && (
+        <CleanerAreasModal
+          cleanerId={selectedCleanerForAreas.cleanerId}
+          cleanerName={selectedCleanerForAreas.name}
+          availableLocations={serviceLocations}
+          onClose={handleCloseAreasModal}
+          onSuccess={handleAreasModalSuccess}
+        />
+      )}
     </div>
   );
 }
