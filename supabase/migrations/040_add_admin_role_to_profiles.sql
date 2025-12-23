@@ -9,3 +9,4 @@ CREATE INDEX IF NOT EXISTS idx_profiles_is_admin ON profiles(is_admin);
 
 -- Comment for documentation
 COMMENT ON COLUMN profiles.is_admin IS 'Indicates if the user has admin role and can access admin dashboard';
+

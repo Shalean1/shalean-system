@@ -53,3 +53,4 @@ COMMENT ON COLUMN bookings.parent_booking_id IS 'Reference to the original booki
 COMMENT ON COLUMN bookings.is_recurring IS 'Flag indicating if this booking is part of a recurring series. True for all bookings in a recurring series.';
 
 
+

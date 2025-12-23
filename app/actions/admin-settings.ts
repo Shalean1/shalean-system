@@ -74,3 +74,4 @@ export async function updateSystemSetting(
     return { success: false, error: "Failed to update system setting" };
   }
 }
+
