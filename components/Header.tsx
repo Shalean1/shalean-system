@@ -76,7 +76,7 @@ export default function Header() {
               </Link>
             )}
             <Link
-              href="/booking/service/standard/details"
+              href="/booking/quote"
               className="px-4 py-2 bg-white hover:bg-gray-50 text-gray-900 font-medium rounded-lg transition-colors border border-gray-300 text-sm"
             >
               Get Free Quote
@@ -139,7 +139,7 @@ export default function Header() {
                   </Link>
                 )}
                 <Link
-                  href="/booking/service/standard/details"
+                  href="/booking/quote"
                   className="px-6 py-2 bg-white hover:bg-gray-50 text-gray-900 font-medium rounded-lg transition-colors border border-gray-300 text-center"
                   onClick={() => setIsMenuOpen(false)}
                 >

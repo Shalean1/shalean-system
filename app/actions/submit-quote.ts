@@ -80,31 +80,71 @@ export async function submitQuote(
       submittedAt: new Date().toISOString(),
     });
 
+    // Check if service role key is configured
+    const hasServiceRoleKey = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
+    console.log("Service role key configured:", hasServiceRoleKey);
+
     // Save quote to database
     const supabase = createServiceRoleClient();
-    const { error: dbError } = await supabase
+    
+    // Generate quote ID in format: QT-{timestamp}
+    const quoteId = `QT-${Date.now()}`;
+    
+    // Map service ID to service type name for database
+    const serviceTypeMap: Record<string, string> = {
+      "standard-cleaning": "Standard",
+      "deep-cleaning": "Deep",
+      "moving-cleaning": "Move In/Out",
+      "airbnb-cleaning": "Airbnb",
+    };
+    
+    const serviceType = data.service ? serviceTypeMap[data.service] || data.service : null;
+    
+    const { data: insertData, error: dbError } = await supabase
       .from("quotes")
       .insert({
+        id: quoteId, // Generate ID in format QT-{timestamp}
         first_name: data.firstName,
         last_name: data.lastName,
         email: data.email,
         phone: data.phone,
         location: data.location,
         custom_location: data.customLocation || null,
-        service: data.service || null,
+        service_type: serviceType, // Column renamed from service to service_type
         bedrooms: data.bedrooms,
         bathrooms: data.bathrooms,
-        additional_services: data.additionalServices || [],
-        note: data.note || null,
+        extras: data.additionalServices || [], // Column renamed from additional_services to extras (TEXT[])
+        notes: data.note || null, // Column renamed from note to notes
         status: "pending",
-      });
+      })
+      .select()
+      .single();
 
     if (dbError) {
       console.error("Error saving quote to database:", dbError);
-      // Continue with email sending even if DB save fails
-    } else {
-      console.log("Quote saved to database successfully");
+      console.error("Error details:", {
+        message: dbError.message,
+        details: dbError.details,
+        hint: dbError.hint,
+        code: dbError.code,
+      });
+      
+      // Return error to user so they know the quote wasn't saved
+      return {
+        success: false,
+        message: `Failed to save quote to database: ${dbError.message}. Please try again or contact support.`,
+      };
     }
+
+    if (!insertData) {
+      console.error("Quote insert returned no data");
+      return {
+        success: false,
+        message: "Failed to save quote. Please try again or contact support.",
+      };
+    }
+
+    console.log("Quote saved to database successfully:", insertData.id);
 
     // Send notification email to business
     await sendQuoteEmail(data);

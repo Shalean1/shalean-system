@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Grid, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator, ChevronDown, FileText } from "lucide-react";
+import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Grid, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator, ChevronDown, FileText, Layers, Car, Sofa, Square, Sparkles, ShoppingBasket, Building2, AppWindow } from "lucide-react";
 import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
 import { 
   getServiceLocations, 
@@ -14,7 +14,7 @@ import {
   type AdditionalService
 } from "@/lib/supabase/booking-data";
 
-// Icon mapping for additional services
+// Icon mapping for additional services (by icon_name from database)
 const iconMap: Record<string, any> = {
   Refrigerator,
   ChefHat,
@@ -22,6 +22,19 @@ const iconMap: Record<string, any> = {
   Grid,
   Paintbrush,
   Shirt,
+  Layers,
+  Car,
+  Sofa,
+  Square,
+  Home,
+};
+
+// Service-specific icon mapping (overrides database icon_name for better visual distinction)
+const serviceIconMap: Record<string, any> = {
+  'ironing': Sparkles, // Ironing icon (sparkles represent pressed/ironed clothes)
+  'laundry': ShoppingBasket, // Laundry basket icon
+  'balcony-cleaning': Building2, // Balcony/building icon
+  'exterior-windows': AppWindow, // Window icon for exterior windows
 };
 
 const services = [
@@ -30,6 +43,42 @@ const services = [
   { id: "moving-cleaning", name: "Moving Cleaning", icon: Package },
   { id: "airbnb-cleaning", name: "Airbnb Cleaning", icon: Calendar },
 ];
+
+// Define which extras are available for each service type
+const SERVICE_EXTRAS_MAP: Record<string, string[]> = {
+  'standard-cleaning': [
+    'inside-fridge',
+    'inside-oven',
+    'inside-cabinets',
+    'interior-windows',
+    'interior-walls',
+    'ironing',
+    'laundry',
+  ],
+  'airbnb-cleaning': [
+    'inside-fridge',
+    'inside-oven',
+    'inside-cabinets',
+    'interior-windows',
+    'interior-walls',
+    'ironing',
+    'laundry',
+  ],
+  'deep-cleaning': [
+    'carpet-cleaning',
+    'ceiling-cleaning',
+    'garage-cleaning',
+    'balcony-cleaning',
+    'couch-cleaning',
+  ],
+  'moving-cleaning': [
+    'carpet-cleaning',
+    'ceiling-cleaning',
+    'garage-cleaning',
+    'balcony-cleaning',
+    'couch-cleaning',
+  ],
+};
 
 export default function QuotePage() {
   const router = useRouter();
@@ -54,7 +103,11 @@ export default function QuotePage() {
   // Dynamic data from Supabase
   const [locations, setLocations] = useState<string[]>(FALLBACK_LOCATIONS);
   const [additionalServices, setAdditionalServices] = useState<Array<{ id: string; name: string; icon: any }>>(
-    FALLBACK_EXTRAS.map(extra => ({ ...extra, icon: iconMap[extra.icon] || Shirt }))
+    FALLBACK_EXTRAS.map(extra => {
+      // Use service-specific icon if available, otherwise use icon from fallback
+      const icon = serviceIconMap[extra.id] || iconMap[extra.icon] || Shirt;
+      return { ...extra, icon };
+    })
   );
   const [isLoadingData, setIsLoadingData] = useState(true);
 
@@ -74,11 +127,15 @@ export default function QuotePage() {
         const additionalServicesData = await getAdditionalServices();
         if (additionalServicesData.length > 0) {
           setAdditionalServices(
-            additionalServicesData.map(service => ({
-              id: service.service_id,
-              name: service.name,
-              icon: iconMap[service.icon_name || "Shirt"] || Shirt,
-            }))
+            additionalServicesData.map(service => {
+              // Use service-specific icon if available, otherwise use icon_name from database
+              const icon = serviceIconMap[service.service_id] || iconMap[service.icon_name || "Shirt"] || Shirt;
+              return {
+                id: service.service_id,
+                name: service.name,
+                icon: icon,
+              };
+            })
           );
         }
       } catch (error) {
@@ -105,6 +162,27 @@ export default function QuotePage() {
   };
 
   const handleServiceSelect = (serviceId: string) => {
+    // Set the selected service in formData
+    handleInputChange("service", serviceId);
+    
+    // Clear any additional services that are not valid for the new service
+    const validExtras = SERVICE_EXTRAS_MAP[serviceId] || [];
+
+    // Filter out invalid extras
+    setFormData((prev) => ({
+      ...prev,
+      additionalServices: prev.additionalServices.filter(id => validExtras.includes(id)),
+    }));
+  };
+
+  // Function to redirect to full booking form (used by "Skip to Full Booking" link)
+  const handleSkipToBooking = () => {
+    if (!formData.service) {
+      // If no service selected, go to standard booking
+      router.push("/booking/service/standard/details");
+      return;
+    }
+    
     // Map quote page service IDs to booking form types
     const serviceTypeMap: Record<string, string> = {
       "standard-cleaning": "standard",
@@ -113,7 +191,7 @@ export default function QuotePage() {
       "airbnb-cleaning": "airbnb"
     };
     
-    const serviceType = serviceTypeMap[serviceId] || "standard";
+    const serviceType = serviceTypeMap[formData.service] || "standard";
     router.push(`/booking/service/${serviceType}/details`);
   };
 
@@ -125,6 +203,18 @@ export default function QuotePage() {
         : [...current, serviceId];
       return { ...prev, additionalServices: updated };
     });
+  };
+
+  // Filter additional services based on selected service type
+  const getFilteredAdditionalServices = () => {
+    if (!formData.service) {
+      return []; // Show no extras if no service is selected
+    }
+
+    const validExtras = SERVICE_EXTRAS_MAP[formData.service] || [];
+    
+    // Filter additional services to only show those valid for the selected service
+    return additionalServices.filter(service => validExtras.includes(service.id));
   };
 
   const validateForm = (): boolean => {
@@ -212,9 +302,9 @@ export default function QuotePage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white" suppressHydrationWarning>
       {/* Header */}
-      <div className="sticky top-0 z-50 border-b border-gray-200 bg-white shadow-sm">
+      <div className="sticky top-0 z-50 border-b border-gray-200 bg-white shadow-sm" suppressHydrationWarning>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
@@ -326,7 +416,7 @@ export default function QuotePage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} suppressHydrationWarning>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Left Column - Form Sections */}
               <div className="lg:col-span-2 space-y-8">
@@ -581,32 +671,39 @@ export default function QuotePage() {
 
                 {/* Section 4: Additional Services */}
                 <section className="bg-white border border-gray-200 rounded-xl p-6">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">
+                  <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <Boxes className="w-6 h-6 text-gray-700" />
                     4. Additional Services (Optional)
                   </h2>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {additionalServices.map((service) => {
-                      const Icon = service.icon;
-                      const isSelected = formData.additionalServices.includes(service.id);
-                      return (
-                        <button
-                          key={service.id}
-                          type="button"
-                          onClick={() => handleAdditionalServiceToggle(service.id)}
-                          className={`p-4 border-2 rounded-lg transition-all text-center ${
-                            isSelected
-                              ? "border-blue-500 bg-blue-50"
-                              : "border-gray-200 hover:border-gray-300 bg-white"
-                          }`}
-                        >
-                          <Icon className={`w-8 h-8 mx-auto mb-2 ${isSelected ? "text-blue-500" : "text-gray-400"}`} />
-                          <p className={`text-sm font-medium ${isSelected ? "text-blue-600" : "text-gray-700"}`}>
-                            {service.name}
-                          </p>
-                        </button>
-                      );
-                    })}
-                  </div>
+                  {formData.service ? (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {getFilteredAdditionalServices().map((service) => {
+                        const Icon = service.icon;
+                        const isSelected = formData.additionalServices.includes(service.id);
+                        return (
+                          <button
+                            key={service.id}
+                            type="button"
+                            onClick={() => handleAdditionalServiceToggle(service.id)}
+                            className={`p-4 border-2 rounded-lg transition-all text-center ${
+                              isSelected
+                                ? "border-blue-500 bg-blue-50"
+                                : "border-gray-200 hover:border-gray-300 bg-white"
+                            }`}
+                          >
+                            <Icon className={`w-8 h-8 mx-auto mb-2 ${isSelected ? "text-blue-500" : "text-gray-400"}`} />
+                            <p className={`text-sm font-medium ${isSelected ? "text-blue-600" : "text-gray-700"}`}>
+                              {service.name}
+                            </p>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 italic">
+                      Please select a service first to see available additional services.
+                    </p>
+                  )}
                 </section>
 
                 {/* Section 5: Additional Notes */}
@@ -661,13 +758,19 @@ export default function QuotePage() {
                     <div>
                       <p className="text-sm text-gray-600 mb-1">Home details</p>
                       <p className="font-medium text-gray-900">
-                        {formData.bedrooms} bd • {formData.bathrooms} ba
+                        {formData.bedrooms} Bed • {formData.bathrooms} Bath
                       </p>
                     </div>
 
                     <div>
                       <p className="text-sm text-gray-600 mb-1">Extras</p>
-                      <p className="font-medium text-gray-900">{formData.additionalServices.length}</p>
+                      <p className="font-medium text-gray-900">
+                        {formData.additionalServices.length > 0
+                          ? formData.additionalServices
+                              .map((id) => additionalServices.find((s) => s.id === id)?.name || id)
+                              .join(", ")
+                          : "None"}
+                      </p>
                     </div>
                   </div>
 
@@ -687,12 +790,13 @@ export default function QuotePage() {
                     {!isSubmitting && <span>→</span>}
                   </button>
 
-                  <Link
-                    href="#"
+                  <button
+                    type="button"
+                    onClick={handleSkipToBooking}
                     className="block w-full px-6 py-3 bg-white hover:bg-gray-50 text-gray-900 font-semibold rounded-lg transition-colors border border-gray-300 text-center"
                   >
                     Skip to Full Booking
-                  </Link>
+                  </button>
 
                   <p className="mt-4 text-xs text-gray-500 text-center">
                     We will email this quote to your email.
