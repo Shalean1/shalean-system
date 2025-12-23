@@ -32,15 +32,7 @@ export async function submitBooking(
   }
 
   // For carpet cleaning, bedrooms/bathrooms validation is more lenient
-  if (data.service !== 'carpet-cleaning') {
-    if (data.bedrooms === undefined || data.bedrooms === null || data.bedrooms < 0) {
-      errors.bedrooms = "Invalid number of bedrooms";
-    }
-
-    if (data.bathrooms === undefined || data.bathrooms === null || data.bathrooms < 1) {
-      errors.bathrooms = "At least one bathroom is required";
-    }
-  } else {
+  if (data.service === 'carpet-cleaning') {
     // For carpet cleaning, allow 0 for bedrooms/bathrooms
     if (data.bedrooms !== undefined && data.bedrooms !== null && data.bedrooms < 0) {
       errors.bedrooms = "Invalid number of bedrooms";
@@ -48,6 +40,24 @@ export async function submitBooking(
 
     if (data.bathrooms !== undefined && data.bathrooms !== null && data.bathrooms < 0) {
       errors.bathrooms = "Invalid number of bathrooms";
+    }
+  } else if (data.service === 'office') {
+    // For office service, validate officeSize instead of bedrooms
+    if (!data.officeSize || !['small', 'medium', 'large'].includes(data.officeSize)) {
+      errors.officeSize = "Please select office size";
+    }
+
+    if (data.bathrooms === undefined || data.bathrooms === null || data.bathrooms < 1) {
+      errors.bathrooms = "At least one bathroom is required";
+    }
+  } else {
+    // For other services, validate bedrooms/bathrooms
+    if (data.bedrooms === undefined || data.bedrooms === null || data.bedrooms < 0) {
+      errors.bedrooms = "Invalid number of bedrooms";
+    }
+
+    if (data.bathrooms === undefined || data.bathrooms === null || data.bathrooms < 1) {
+      errors.bathrooms = "At least one bathroom is required";
     }
   }
 

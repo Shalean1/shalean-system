@@ -258,7 +258,7 @@ export default function SchedulePage() {
       try {
         const parsed = JSON.parse(saved);
         // Merge saved data with defaults to ensure all fields are present
-        // Preserve ALL step 1 data (bedrooms, bathrooms, extras, date, time, service, carpet cleaning details)
+        // Preserve ALL step 1 data (bedrooms, bathrooms, extras, date, time, service, carpet cleaning details, office details)
         setFormData({
           service: parsed.service || (serviceType as any),
           bedrooms: parsed.bedrooms ?? 0,
@@ -271,6 +271,8 @@ export default function SchedulePage() {
           fittedRoomsCount: parsed.fittedRoomsCount ?? undefined,
           looseCarpetsCount: parsed.looseCarpetsCount ?? undefined,
           roomsFurnitureStatus: parsed.roomsFurnitureStatus ?? undefined,
+          // Office cleaning specific fields
+          officeSize: parsed.officeSize ?? undefined,
           frequency: parsed.frequency || "one-time",
           cleanerPreference: parsed.cleanerPreference || "no-preference",
           streetAddress: parsed.streetAddress || "",
@@ -364,6 +366,8 @@ export default function SchedulePage() {
         fittedRoomsCount: formData.fittedRoomsCount ?? undefined,
         looseCarpetsCount: formData.looseCarpetsCount ?? undefined,
         roomsFurnitureStatus: formData.roomsFurnitureStatus ?? undefined,
+        // Preserve office cleaning specific fields
+        officeSize: formData.officeSize ?? undefined,
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
     }
@@ -761,6 +765,7 @@ export default function SchedulePage() {
               fittedRoomsCount={formData.fittedRoomsCount}
               looseCarpetsCount={formData.looseCarpetsCount}
               roomsFurnitureStatus={formData.roomsFurnitureStatus}
+              officeSize={formData.officeSize}
             />
           </div>
         </div>

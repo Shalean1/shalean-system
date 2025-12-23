@@ -27,6 +27,7 @@ export default function AdminEditBookingModal({ booking, isOpen, onClose, onSucc
     service: booking.service,
     bedrooms: booking.bedrooms,
     bathrooms: booking.bathrooms,
+    officeSize: booking.officeSize,
     extras: booking.extras || [],
     scheduledDate: booking.scheduledDate,
     scheduledTime: booking.scheduledTime,
@@ -90,6 +91,7 @@ export default function AdminEditBookingModal({ booking, isOpen, onClose, onSucc
         service: booking.service,
         bedrooms: booking.bedrooms,
         bathrooms: booking.bathrooms,
+        officeSize: booking.officeSize,
         extras: booking.extras || [],
         scheduledDate: booking.scheduledDate,
         scheduledTime: booking.scheduledTime,
@@ -235,33 +237,76 @@ export default function AdminEditBookingModal({ booking, isOpen, onClose, onSucc
                   {errors.frequency && <p className="mt-1 text-sm text-red-600">{errors.frequency}</p>}
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Bedrooms *
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={formData.bedrooms}
-                    onChange={(e) => handleInputChange("bedrooms", parseInt(e.target.value) || 0)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  {errors.bedrooms && <p className="mt-1 text-sm text-red-600">{errors.bedrooms}</p>}
-                </div>
+                {formData.service === "office" ? (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Office Size *
+                      </label>
+                      <select
+                        value={formData.officeSize || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '' || !['small', 'medium', 'large'].includes(value)) {
+                            handleInputChange("officeSize", undefined);
+                          } else {
+                            handleInputChange("officeSize", value as 'small' | 'medium' | 'large');
+                          }
+                        }}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="">Select office size</option>
+                        <option value="small">Small (1-3 rooms)</option>
+                        <option value="medium">Medium (4-10 rooms)</option>
+                        <option value="large">Large (10+ rooms)</option>
+                      </select>
+                      {errors.officeSize && <p className="mt-1 text-sm text-red-600">{errors.officeSize}</p>}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Bathrooms *
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={formData.bathrooms}
+                        onChange={(e) => handleInputChange("bathrooms", parseInt(e.target.value) || 1)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                      {errors.bathrooms && <p className="mt-1 text-sm text-red-600">{errors.bathrooms}</p>}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Bedrooms *
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={formData.bedrooms}
+                        onChange={(e) => handleInputChange("bedrooms", parseInt(e.target.value) || 0)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                      {errors.bedrooms && <p className="mt-1 text-sm text-red-600">{errors.bedrooms}</p>}
+                    </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Bathrooms *
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={formData.bathrooms}
-                    onChange={(e) => handleInputChange("bathrooms", parseInt(e.target.value) || 1)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  {errors.bathrooms && <p className="mt-1 text-sm text-red-600">{errors.bathrooms}</p>}
-                </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Bathrooms *
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={formData.bathrooms}
+                        onChange={(e) => handleInputChange("bathrooms", parseInt(e.target.value) || 1)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                      {errors.bathrooms && <p className="mt-1 text-sm text-red-600">{errors.bathrooms}</p>}
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Additional Services */}

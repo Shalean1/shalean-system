@@ -217,7 +217,19 @@ export function calculatePrice(
     // Standard room pricing for other services
     const roomPricing = config.roomPricing || FALLBACK_PRICING_CONFIG.roomPricing;
     const servicePricing = roomPricing[service] || { bedroom: 30, bathroom: 40 };
-    roomPrice = bedrooms * servicePricing.bedroom + bathrooms * servicePricing.bathroom;
+    
+    // Special handling for office service: map office size to bedroom count
+    let effectiveBedrooms = bedrooms;
+    if (service === "office" && data.officeSize && ['small', 'medium', 'large'].includes(data.officeSize)) {
+      const officeSizeMapping: Record<'small' | 'medium' | 'large', number> = {
+        small: 2,
+        medium: 5,
+        large: 8,
+      };
+      effectiveBedrooms = officeSizeMapping[data.officeSize as 'small' | 'medium' | 'large'];
+    }
+    
+    roomPrice = effectiveBedrooms * servicePricing.bedroom + bathrooms * servicePricing.bathroom;
 
     // Extras pricing (from config)
     extrasPrice = extras.reduce((total, extra) => {

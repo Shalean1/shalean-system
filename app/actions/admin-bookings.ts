@@ -20,6 +20,7 @@ function mapDatabaseToBooking(data: any): Booking {
     fittedRoomsCount: data.fitted_rooms_count ?? undefined,
     looseCarpetsCount: data.loose_carpets_count ?? undefined,
     roomsFurnitureStatus: data.rooms_furniture_status || undefined,
+    officeSize: data.office_size ?? undefined,
     streetAddress: data.street_address,
     aptUnit: data.apt_unit,
     suburb: data.suburb,

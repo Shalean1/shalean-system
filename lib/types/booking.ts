@@ -54,6 +54,8 @@ export interface BookingFormData {
   fittedRoomsCount?: number;
   looseCarpetsCount?: number;
   roomsFurnitureStatus?: 'furnished' | 'empty';
+  // Office cleaning specific fields
+  officeSize?: 'small' | 'medium' | 'large';
 
   // Step 2: Schedule & Cleaner
   streetAddress: string;

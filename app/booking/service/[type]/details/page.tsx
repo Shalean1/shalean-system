@@ -216,6 +216,8 @@ export default function ServiceDetailsPage() {
           fittedRoomsCount: parsedData.fittedRoomsCount,
           looseCarpetsCount: parsedData.looseCarpetsCount,
           roomsFurnitureStatus: parsedData.roomsFurnitureStatus,
+          // Preserve office cleaning fields
+          officeSize: parsedData.officeSize,
         });
       } catch {
         // If parse fails, keep defaults
@@ -319,7 +321,20 @@ export default function ServiceDetailsPage() {
   );
 
   const handleServiceSelect = (service: ServiceType) => {
-    setFormData((prev) => ({ ...prev, service }));
+    setFormData((prev) => {
+      const updates: Partial<BookingFormData> = { service };
+      // Clear officeSize when switching away from office service
+      if (prev.service === 'office' && service !== 'office') {
+        updates.officeSize = undefined;
+      }
+      // Clear carpet cleaning fields when switching away from carpet-cleaning
+      if (prev.service === 'carpet-cleaning' && service !== 'carpet-cleaning') {
+        updates.fittedRoomsCount = undefined;
+        updates.looseCarpetsCount = undefined;
+        updates.roomsFurnitureStatus = undefined;
+      }
+      return { ...prev, ...updates };
+    });
     // Update URL to reflect the selected service
     const serviceSlug = getServiceSlug(service);
     router.replace(`/booking/service/${serviceSlug}/details`);
@@ -381,6 +396,13 @@ export default function ServiceDetailsPage() {
       
       if (!formData.roomsFurnitureStatus) {
         newErrors.roomsFurnitureStatus = "Please indicate if rooms have furniture or are empty";
+      }
+    }
+
+    // Validate office cleaning specific fields
+    if (formData.service === 'office') {
+      if (!formData.officeSize) {
+        newErrors.officeSize = "Please select office size";
       }
     }
 
@@ -447,8 +469,78 @@ export default function ServiceDetailsPage() {
               </div>
             </section>
 
-            {/* House Details - Hide for carpet-cleaning service */}
-            {formData.service !== "carpet-cleaning" && (
+            {/* Office Details - Show for office service */}
+            {formData.service === "office" && (
+              <section className="bg-white border border-gray-200 rounded-xl p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-6">Office details</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="officeSize" className="block text-sm font-medium text-gray-700 mb-2">
+                      Office Size
+                    </label>
+                    <div className="relative">
+                      <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                      <select
+                        id="officeSize"
+                        value={formData.officeSize || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '' || !['small', 'medium', 'large'].includes(value)) {
+                            setFormData((prev) => ({ ...prev, officeSize: undefined }));
+                          } else {
+                            setFormData((prev) => ({ ...prev, officeSize: value as 'small' | 'medium' | 'large' }));
+                          }
+                          if (errors.officeSize) {
+                            setErrors((prev) => {
+                              const newErrors = { ...prev };
+                              delete newErrors.officeSize;
+                              return newErrors;
+                            });
+                          }
+                        }}
+                        className={`w-full px-4 pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white ${
+                          errors.officeSize ? "border-red-500" : "border-gray-300"
+                        }`}
+                      >
+                        <option value="">Select office size</option>
+                        <option value="small">Small (1-3 rooms)</option>
+                        <option value="medium">Medium (4-10 rooms)</option>
+                        <option value="large">Large (10+ rooms)</option>
+                      </select>
+                    </div>
+                    {errors.officeSize && (
+                      <p className="mt-1 text-sm text-red-600">{errors.officeSize}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label htmlFor="bathrooms" className="block text-sm font-medium text-gray-700 mb-2">
+                      Bathrooms
+                    </label>
+                    <div className="relative">
+                      <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                      <select
+                        id="bathrooms"
+                        value={formData.bathrooms || 1}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, bathrooms: parseInt(e.target.value) }))
+                        }
+                        className="w-full px-4 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+                      >
+                        {Array.from({ length: 10 }, (_, i) => (
+                          <option key={i + 1} value={i + 1}>
+                            {i + 1} {i === 0 ? "Bathroom" : "Bathrooms"}
+                          </option>
+                        ))}
+                        <option value={11}>10+ Bathrooms</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* House Details - Show for non-office, non-carpet-cleaning services */}
+            {formData.service !== "carpet-cleaning" && formData.service !== "office" && (
               <section className="bg-white border border-gray-200 rounded-xl p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-6">House details</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -838,6 +930,7 @@ export default function ServiceDetailsPage() {
               fittedRoomsCount={formData.fittedRoomsCount}
               looseCarpetsCount={formData.looseCarpetsCount}
               roomsFurnitureStatus={formData.roomsFurnitureStatus}
+              officeSize={formData.officeSize}
             />
           </div>
         </div>

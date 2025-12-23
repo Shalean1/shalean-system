@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   booking_reference TEXT UNIQUE NOT NULL,
   
   -- Service details
-  service_type TEXT NOT NULL CHECK (service_type IN ('standard', 'deep', 'move-in-out', 'airbnb', 'carpet-cleaning')),
+  service_type TEXT NOT NULL CHECK (service_type IN ('standard', 'deep', 'move-in-out', 'airbnb', 'carpet-cleaning', 'office', 'holiday')),
   frequency TEXT NOT NULL CHECK (frequency IN ('one-time', 'weekly', 'bi-weekly', 'monthly')),
   scheduled_date TEXT NOT NULL,
   scheduled_time TEXT NOT NULL,

@@ -27,6 +27,8 @@ interface PriceSummaryProps {
   fittedRoomsCount?: number;
   looseCarpetsCount?: number;
   roomsFurnitureStatus?: 'furnished' | 'empty';
+  // Office cleaning specific fields
+  officeSize?: 'small' | 'medium' | 'large';
 }
 
 export default function PriceSummary({
@@ -44,6 +46,7 @@ export default function PriceSummary({
   fittedRoomsCount,
   looseCarpetsCount,
   roomsFurnitureStatus,
+  officeSize,
 }: PriceSummaryProps) {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -83,6 +86,7 @@ export default function PriceSummary({
 
   const selectedCleanerName = getSelectedCleanerName();
   const isCarpetCleaning = service === "carpet-cleaning";
+  const isOffice = service === "office";
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-6 sticky top-24">
@@ -139,8 +143,18 @@ export default function PriceSummary({
               </div>
             )}
           </>
+        ) : isOffice ? (
+          /* Show office details for office service */
+          officeSize && ['small', 'medium', 'large'].includes(officeSize) ? (
+            <div suppressHydrationWarning>
+              <p className="text-sm text-gray-600 mb-1">Office</p>
+              <p className="font-medium text-gray-900">
+                {officeSize.charAt(0).toUpperCase() + officeSize.slice(1)} office, {bathrooms} {bathrooms === 1 ? "bathroom" : "bathrooms"}
+              </p>
+            </div>
+          ) : null
         ) : (
-          /* Show property details for non-carpet-cleaning services */
+          /* Show property details for other services (not office, not carpet-cleaning) */
           <div suppressHydrationWarning>
             <p className="text-sm text-gray-600 mb-1">Property</p>
             <p className="font-medium text-gray-900">
@@ -208,8 +222,20 @@ export default function PriceSummary({
               </div>
             )}
           </>
+        ) : isOffice ? (
+          /* Show office pricing for office service */
+          officeSize && ['small', 'medium', 'large'].includes(officeSize) && priceBreakdown.roomPrice > 0 ? (
+            <div className="flex justify-between text-sm" suppressHydrationWarning>
+              <span className="text-gray-600">
+                Office Size & Bathrooms ({officeSize.charAt(0).toUpperCase() + officeSize.slice(1)} office, {bathrooms} {bathrooms === 1 ? "bathroom" : "bathrooms"})
+              </span>
+              <span className="font-medium text-gray-900" suppressHydrationWarning>
+                {isMounted ? formatPrice(priceBreakdown.roomPrice) : `R ${priceBreakdown.roomPrice.toFixed(2)}`}
+              </span>
+            </div>
+          ) : null
         ) : (
-          /* Show room pricing for non-carpet-cleaning services */
+          /* Show room pricing for other services (not office, not carpet-cleaning) */
           (bedrooms > 0 || bathrooms > 0) && (
             <div className="flex justify-between text-sm" suppressHydrationWarning>
               <span className="text-gray-600">

@@ -34,7 +34,12 @@ export async function adminUpdateBooking(
     // Validate updates
     const errors: Record<string, string> = {};
 
-    if (updates.bedrooms !== undefined && (updates.bedrooms < 0 || updates.bedrooms === null)) {
+    // For office service, validate officeSize instead of bedrooms
+    if (updates.service === 'office' || (booking.service === 'office' && updates.service === undefined)) {
+      if (updates.officeSize !== undefined && (!updates.officeSize || !['small', 'medium', 'large'].includes(updates.officeSize))) {
+        errors.officeSize = "Please select office size";
+      }
+    } else if (updates.bedrooms !== undefined && (updates.bedrooms < 0 || updates.bedrooms === null)) {
       errors.bedrooms = "Invalid number of bedrooms";
     }
 
@@ -86,6 +91,9 @@ export async function adminUpdateBooking(
     if (updates.bathrooms !== undefined) {
       updateData.bathrooms = updates.bathrooms;
     }
+    if (updates.officeSize !== undefined) {
+      updateData.office_size = updates.officeSize || null;
+    }
     if (updates.extras !== undefined) {
       updateData.extras = updates.extras || [];
     }
@@ -134,6 +142,7 @@ export async function adminUpdateBooking(
       updates.service !== undefined ||
       updates.bedrooms !== undefined ||
       updates.bathrooms !== undefined ||
+      updates.officeSize !== undefined ||
       updates.extras !== undefined ||
       updates.frequency !== undefined ||
       updates.discountCode !== undefined;
@@ -145,6 +154,7 @@ export async function adminUpdateBooking(
           service: updates.service ?? booking.service,
           bedrooms: updates.bedrooms ?? booking.bedrooms,
           bathrooms: updates.bathrooms ?? booking.bathrooms,
+          officeSize: updates.officeSize ?? booking.officeSize,
           extras: updates.extras ?? booking.extras ?? [],
           scheduledDate: updates.scheduledDate ?? booking.scheduledDate,
           scheduledTime: updates.scheduledTime ?? booking.scheduledTime,

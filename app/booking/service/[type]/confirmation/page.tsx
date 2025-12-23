@@ -226,6 +226,7 @@ export default function ConfirmationPage() {
             bedrooms: typeof parsed.bedrooms === "number" ? parsed.bedrooms : 0,
             bathrooms: typeof parsed.bathrooms === "number" && parsed.bathrooms >= 1 ? parsed.bathrooms : 1,
             extras: Array.isArray(parsed.extras) ? parsed.extras : [],
+            officeSize: parsed.officeSize && ['small', 'medium', 'large'].includes(parsed.officeSize) ? parsed.officeSize : undefined,
             streetAddress: parsed.streetAddress?.trim() || "",
             aptUnit: parsed.aptUnit?.trim() || undefined,
             suburb: parsed.suburb?.trim() || "",
@@ -243,6 +244,8 @@ export default function ConfirmationPage() {
             roomsFurnitureStatus: parsed.roomsFurnitureStatus === 'furnished' || parsed.roomsFurnitureStatus === 'empty' 
               ? parsed.roomsFurnitureStatus 
               : undefined,
+            // Office cleaning specific fields
+            officeSize: parsed.officeSize && ['small', 'medium', 'large'].includes(parsed.officeSize) ? parsed.officeSize : undefined,
           };
               
               // Validate required fields before submitting
@@ -523,11 +526,23 @@ export default function ConfirmationPage() {
 
               {booking.service !== "carpet-cleaning" && (
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Property</p>
-                  <p className="font-medium text-gray-900">
-                    {booking.bedrooms || 0} bed, {booking.bathrooms || 1}{" "}
-                    {booking.bathrooms === 1 ? "bath" : "baths"}
-                  </p>
+                  {booking.service === "office" && booking.officeSize && ['small', 'medium', 'large'].includes(booking.officeSize) ? (
+                    <>
+                      <p className="text-sm text-gray-600 mb-1">Office</p>
+                      <p className="font-medium text-gray-900">
+                        {booking.officeSize.charAt(0).toUpperCase() + booking.officeSize.slice(1)} office, {booking.bathrooms || 1}{" "}
+                        {booking.bathrooms === 1 ? "bathroom" : "bathrooms"}
+                      </p>
+                    </>
+                  ) : booking.service !== "office" ? (
+                    <>
+                      <p className="text-sm text-gray-600 mb-1">Property</p>
+                      <p className="font-medium text-gray-900">
+                        {booking.bedrooms || 0} bed, {booking.bathrooms || 1}{" "}
+                        {booking.bathrooms === 1 ? "bath" : "baths"}
+                      </p>
+                    </>
+                  ) : null}
                 </div>
               )}
 

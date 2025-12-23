@@ -29,6 +29,7 @@ import {
   Square,
   CreditCard,
   Coins,
+  Building,
 } from "lucide-react";
 import ServiceCard from "@/components/booking/ServiceCard";
 import PriceSummary from "@/components/booking/PriceSummary";
@@ -102,7 +103,7 @@ export default function ReviewPage() {
       try {
         const parsed = JSON.parse(saved) as Partial<BookingFormData>;
         // Ensure all fields from Steps 1 and 2 are preserved
-        return {
+          return {
           service: parsed.service || (serviceType as ServiceType),
           bedrooms: parsed.bedrooms ?? 0,
           bathrooms: parsed.bathrooms ?? 1,
@@ -113,6 +114,7 @@ export default function ReviewPage() {
           fittedRoomsCount: parsed.fittedRoomsCount,
           looseCarpetsCount: parsed.looseCarpetsCount,
           roomsFurnitureStatus: parsed.roomsFurnitureStatus,
+          officeSize: parsed.officeSize,
           frequency: parsed.frequency || ("one-time" as FrequencyType),
           cleanerPreference: parsed.cleanerPreference || ("no-preference" as CleanerPreference),
           streetAddress: parsed.streetAddress || "",
@@ -241,6 +243,7 @@ export default function ReviewPage() {
               fittedRoomsCount: parsed.fittedRoomsCount ?? formData.fittedRoomsCount,
               looseCarpetsCount: parsed.looseCarpetsCount ?? formData.looseCarpetsCount,
               roomsFurnitureStatus: parsed.roomsFurnitureStatus || formData.roomsFurnitureStatus,
+              officeSize: parsed.officeSize ?? formData.officeSize,
               frequency: (parsed.frequency || formData.frequency || "one-time") as FrequencyType,
               cleanerPreference: (parsed.cleanerPreference || formData.cleanerPreference || "no-preference") as CleanerPreference,
               tip: parsed.tip || formData.tip || undefined,
@@ -276,10 +279,11 @@ export default function ReviewPage() {
                 extras: loadedFormData.extras || updatedData.extras || [],
                 scheduledDate: loadedFormData.scheduledDate ?? updatedData.scheduledDate ?? null,
                 scheduledTime: loadedFormData.scheduledTime ?? updatedData.scheduledTime ?? null,
-                fittedRoomsCount: loadedFormData.fittedRoomsCount ?? updatedData.fittedRoomsCount,
-                looseCarpetsCount: loadedFormData.looseCarpetsCount ?? updatedData.looseCarpetsCount,
-                roomsFurnitureStatus: loadedFormData.roomsFurnitureStatus || updatedData.roomsFurnitureStatus,
-                frequency: (loadedFormData.frequency || updatedData.frequency || "one-time") as FrequencyType,
+                  fittedRoomsCount: loadedFormData.fittedRoomsCount ?? updatedData.fittedRoomsCount,
+                  looseCarpetsCount: loadedFormData.looseCarpetsCount ?? updatedData.looseCarpetsCount,
+                  roomsFurnitureStatus: loadedFormData.roomsFurnitureStatus || updatedData.roomsFurnitureStatus,
+                  officeSize: loadedFormData.officeSize ?? updatedData.officeSize,
+                  frequency: (loadedFormData.frequency || updatedData.frequency || "one-time") as FrequencyType,
                 cleanerPreference: (loadedFormData.cleanerPreference || updatedData.cleanerPreference || "no-preference") as CleanerPreference,
                 streetAddress: loadedFormData.streetAddress || updatedData.streetAddress || "",
                 suburb: loadedFormData.suburb || updatedData.suburb || "",
@@ -426,6 +430,8 @@ export default function ReviewPage() {
         fittedRoomsCount: formData.fittedRoomsCount,
         looseCarpetsCount: formData.looseCarpetsCount,
         roomsFurnitureStatus: formData.roomsFurnitureStatus,
+        // Preserve office cleaning fields
+        officeSize: formData.officeSize,
         // Explicitly preserve Step 2 fields
         frequency: (formData.frequency || "one-time") as FrequencyType,
         cleanerPreference: (formData.cleanerPreference || "no-preference") as CleanerPreference,
@@ -460,6 +466,7 @@ export default function ReviewPage() {
                   fittedRoomsCount: prevData.fittedRoomsCount ?? updatedData.fittedRoomsCount,
                   looseCarpetsCount: prevData.looseCarpetsCount ?? updatedData.looseCarpetsCount,
                   roomsFurnitureStatus: prevData.roomsFurnitureStatus || updatedData.roomsFurnitureStatus,
+                  officeSize: prevData.officeSize ?? updatedData.officeSize,
                   frequency: (prevData.frequency || updatedData.frequency || "one-time") as FrequencyType,
                   cleanerPreference: (prevData.cleanerPreference || updatedData.cleanerPreference || "no-preference") as CleanerPreference,
                   streetAddress: prevData.streetAddress || updatedData.streetAddress || "",
@@ -891,8 +898,61 @@ export default function ReviewPage() {
                     </div>
                   </div>
 
-                  {/* Bedrooms & Bathrooms - Hidden for carpet-cleaning */}
-                  {tempFormData.service !== 'carpet-cleaning' && (
+                  {/* Office Details - Show for office service */}
+                  {tempFormData.service === 'office' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="officeSize" className="block text-sm font-medium text-gray-700 mb-2">
+                          Office Size
+                        </label>
+                        <div className="relative">
+                          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                          <select
+                            id="officeSize"
+                            value={tempFormData.officeSize || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value === '' || !['small', 'medium', 'large'].includes(value)) {
+                                handleTempDataChange({ officeSize: undefined });
+                              } else {
+                                handleTempDataChange({ officeSize: value as 'small' | 'medium' | 'large' });
+                              }
+                            }}
+                            className="w-full px-4 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+                          >
+                            <option value="">Select office size</option>
+                            <option value="small">Small (1-3 rooms)</option>
+                            <option value="medium">Medium (4-10 rooms)</option>
+                            <option value="large">Large (10+ rooms)</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <label htmlFor="bathrooms" className="block text-sm font-medium text-gray-700 mb-2">
+                          Bathrooms
+                        </label>
+                        <div className="relative">
+                          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                          <select
+                            id="bathrooms"
+                            value={tempFormData.bathrooms ?? 1}
+                            onChange={(e) => handleTempDataChange({ bathrooms: parseInt(e.target.value) })}
+                            className="w-full px-4 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+                          >
+                            {Array.from({ length: 10 }, (_, i) => (
+                              <option key={i + 1} value={i + 1}>
+                                {i + 1} {i === 0 ? "Bathroom" : "Bathrooms"}
+                              </option>
+                            ))}
+                            <option value={11}>10+ Bathrooms</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Bedrooms & Bathrooms - Show for non-office, non-carpet-cleaning services */}
+                  {tempFormData.service !== 'carpet-cleaning' && tempFormData.service !== 'office' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="bedrooms" className="block text-sm font-medium text-gray-700 mb-2">
@@ -981,8 +1041,32 @@ export default function ReviewPage() {
               ) : (
                 <div className="space-y-2">
                   <p><strong>Service Type:</strong> {getServiceName(formData.service || "standard")}</p>
-                  {/* Bedrooms & Bathrooms - Hidden for carpet-cleaning */}
-                  {formData.service !== 'carpet-cleaning' && (
+                  {/* Office Details - Show for office service */}
+                  {isMounted && formData.service === 'office' && (
+                    <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Building className="w-5 h-5 text-blue-600" />
+                        <h3 className="font-semibold text-gray-900">Office Details</h3>
+                      </div>
+                      <div className="space-y-2">
+                        {formData.officeSize && ['small', 'medium', 'large'].includes(formData.officeSize) ? (
+                          <p suppressHydrationWarning className="text-gray-700">
+                            <strong>Office Size:</strong> {formData.officeSize.charAt(0).toUpperCase() + formData.officeSize.slice(1)} ({formData.officeSize === 'small' ? '1-3 rooms' : formData.officeSize === 'medium' ? '4-10 rooms' : '10+ rooms'})
+                          </p>
+                        ) : (
+                          <p suppressHydrationWarning className="text-gray-500 italic">
+                            Office size not specified
+                          </p>
+                        )}
+                        <p suppressHydrationWarning className="text-gray-700">
+                          <strong>Bathrooms:</strong> {formData.bathrooms ?? 1} {formData.bathrooms === 1 ? 'bathroom' : 'bathrooms'}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Bedrooms & Bathrooms - Show for non-office, non-carpet-cleaning services */}
+                  {formData.service !== 'carpet-cleaning' && formData.service !== 'office' && (
                     <>
                       <p suppressHydrationWarning>
                         <strong>Bedrooms:</strong> {isMounted ? (formData.bedrooms ?? 0) : 0}
@@ -1610,6 +1694,7 @@ export default function ReviewPage() {
               fittedRoomsCount={dataForPricing.fittedRoomsCount}
               looseCarpetsCount={dataForPricing.looseCarpetsCount}
               roomsFurnitureStatus={dataForPricing.roomsFurnitureStatus}
+              officeSize={dataForPricing.officeSize}
             />
           </div>
         </div>

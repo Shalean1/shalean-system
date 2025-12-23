@@ -197,6 +197,31 @@ export default async function AdminBookingDetailPage({
                     </p>
                   </div>
                 </>
+              ) : booking.service === 'office' ? (
+                <>
+                  {booking.officeSize && ['small', 'medium', 'large'].includes(booking.officeSize) ? (
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Office Size</p>
+                      <p className="font-medium text-gray-900">
+                        {booking.officeSize.charAt(0).toUpperCase() + booking.officeSize.slice(1)} 
+                        {booking.officeSize === 'small' ? ' (1-3 rooms)' : 
+                         booking.officeSize === 'medium' ? ' (4-10 rooms)' : 
+                         ' (10+ rooms)'}
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Office Size</p>
+                      <p className="font-medium text-gray-900">Not specified</p>
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">Bathrooms</p>
+                    <p className="font-medium text-gray-900">
+                      {booking.bathrooms} bathroom{booking.bathrooms !== 1 ? "s" : ""}
+                    </p>
+                  </div>
+                </>
               ) : (
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Bedrooms & Bathrooms</p>
