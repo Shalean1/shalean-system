@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import {
@@ -48,8 +48,8 @@ const iconMap: Record<string, any> = {
 };
 
 // Services that are only available for deep and move-in-out
+// Note: carpet-cleaning is removed from this list since it's now a main service AND can be added as extra to any service
 const DEEP_SERVICES_ONLY = [
-  'carpet-cleaning',
   'ceiling-cleaning',
   'garage-cleaning',
   'balcony-cleaning',
@@ -57,17 +57,20 @@ const DEEP_SERVICES_ONLY = [
   'exterior-windows',
 ];
 
-const services: ServiceType[] = ["standard", "deep", "move-in-out", "airbnb", "office", "holiday"];
+const services: ServiceType[] = ["standard", "deep", "move-in-out", "airbnb", "office", "holiday", "carpet-cleaning"];
 
 const STORAGE_KEY = "shalean_booking_data";
 
 export default function ServiceDetailsPage() {
   const router = useRouter();
   const params = useParams();
-  const serviceTypeFromUrl = params?.type as string;
+  // Ensure type is always a string (not an array)
+  const serviceTypeFromUrl = Array.isArray(params?.type) 
+    ? params.type[0] 
+    : (params?.type as string | undefined) || 'standard';
 
-  // Map URL param to service type
-  const getServiceType = (): ServiceType => {
+  // Map URL param to service type - memoized to ensure stable reference
+  const urlServiceType = useMemo((): ServiceType => {
     const mapping: Record<string, ServiceType> = {
       standard: "standard",
       deep: "deep",
@@ -75,14 +78,20 @@ export default function ServiceDetailsPage() {
       airbnb: "airbnb",
       office: "office",
       holiday: "holiday",
+      "carpet-cleaning": "carpet-cleaning",
     };
     return mapping[serviceTypeFromUrl] || "standard";
+  }, [serviceTypeFromUrl]);
+
+  // Map service type to URL slug
+  const getServiceSlug = (service: ServiceType): string => {
+    return service; // Service types already match URL slugs
   };
 
   // Initialize formData with defaults - always same on server and client to avoid hydration mismatch
   const getInitialFormData = (): Partial<BookingFormData> => {
     return {
-      service: getServiceType(),
+      service: urlServiceType,
       bedrooms: 2,
       bathrooms: 1,
       extras: [],
@@ -97,6 +106,10 @@ export default function ServiceDetailsPage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isClient, setIsClient] = useState(false);
+  
+  // Carpet cleaning specific state
+  const [hasFittedCarpets, setHasFittedCarpets] = useState(false);
+  const [hasLooseCarpets, setHasLooseCarpets] = useState(false);
   
   // Dynamic data from Supabase
   const [allExtras, setAllExtras] = useState<Array<{ id: string; name: string; icon: any }>>(
@@ -132,11 +145,15 @@ export default function ServiceDetailsPage() {
           setAllExtras(mappedExtras);
           
           // Filter based on current service type
-          const currentServiceType = formData.service || getServiceType();
+          const currentServiceType = formData.service || urlServiceType;
           const isDeepOrMoveInOut = currentServiceType === 'deep' || currentServiceType === 'move-in-out';
           
           setExtras(
             mappedExtras.filter(service => {
+              // Carpet cleaning can be added as extra to any service type
+              if (service.id === 'carpet-cleaning') {
+                return true;
+              }
               // For deep and move-in-out: show ONLY deep-only services
               if (isDeepOrMoveInOut) {
                 return DEEP_SERVICES_ONLY.includes(service.id);
@@ -145,7 +162,11 @@ export default function ServiceDetailsPage() {
               if (currentServiceType === 'standard' || currentServiceType === 'airbnb') {
                 return !DEEP_SERVICES_ONLY.includes(service.id);
               }
-              // For other service types: don't show extras
+              // For other service types (office, holiday, carpet-cleaning): show carpet-cleaning and standard extras
+              if (currentServiceType === 'office' || currentServiceType === 'holiday' || currentServiceType === 'carpet-cleaning') {
+                return !DEEP_SERVICES_ONLY.includes(service.id);
+              }
+              // Default: don't show extras
               return false;
             })
           );
@@ -182,7 +203,7 @@ export default function ServiceDetailsPage() {
           ...defaults,
           ...parsedData,
           // Ensure service matches URL if navigating to a different service type
-          service: (parsedData.service || getServiceType()) as ServiceType,
+          service: (parsedData.service || urlServiceType) as ServiceType,
           // Preserve Step 1 specific fields
           bedrooms: parsedData.bedrooms ?? defaults.bedrooms,
           bathrooms: parsedData.bathrooms ?? defaults.bathrooms,
@@ -191,6 +212,10 @@ export default function ServiceDetailsPage() {
           scheduledTime: parsedData.scheduledTime ?? defaults.scheduledTime,
           frequency: (parsedData.frequency || defaults.frequency) as FrequencyType,
           cleanerPreference: (parsedData.cleanerPreference || defaults.cleanerPreference) as CleanerPreference,
+          // Preserve carpet cleaning fields
+          fittedRoomsCount: parsedData.fittedRoomsCount,
+          looseCarpetsCount: parsedData.looseCarpetsCount,
+          roomsFurnitureStatus: parsedData.roomsFurnitureStatus,
         });
       } catch {
         // If parse fails, keep defaults
@@ -198,12 +223,26 @@ export default function ServiceDetailsPage() {
     }
   }, []);
 
+  // Initialize carpet cleaning state from formData
   useEffect(() => {
-    // Set service from URL if not already set
-    if (!formData.service) {
-      setFormData((prev) => ({ ...prev, service: getServiceType() }));
+    if (formData.service === 'carpet-cleaning') {
+      setHasFittedCarpets((formData.fittedRoomsCount ?? 0) > 0);
+      setHasLooseCarpets((formData.looseCarpetsCount ?? 0) > 0);
+    } else {
+      setHasFittedCarpets(false);
+      setHasLooseCarpets(false);
     }
-  }, [serviceTypeFromUrl]);
+  }, [formData.service, formData.fittedRoomsCount, formData.looseCarpetsCount]);
+
+  useEffect(() => {
+    // Sync service from URL - update if URL service differs from current service
+    setFormData((prev) => {
+      if (prev.service !== urlServiceType) {
+        return { ...prev, service: urlServiceType };
+      }
+      return prev;
+    });
+  }, [urlServiceType]);
 
   // Filter extras when service type changes
   useEffect(() => {
@@ -216,6 +255,10 @@ export default function ServiceDetailsPage() {
           const extra = allExtras.find(e => e.id === extraId);
           if (!extra) return false;
           
+          // Carpet cleaning can be added as extra to any service type
+          if (extra.id === 'carpet-cleaning') {
+            return true;
+          }
           // For deep and move-in-out: only allow deep-only services
           if (isDeepOrMoveInOut) {
             return DEEP_SERVICES_ONLY.includes(extra.id);
@@ -224,7 +267,11 @@ export default function ServiceDetailsPage() {
           if (formData.service === 'standard' || formData.service === 'airbnb') {
             return !DEEP_SERVICES_ONLY.includes(extra.id);
           }
-          // For other service types: no extras allowed
+          // For other service types (office, holiday, carpet-cleaning): allow non-deep-only services
+          if (formData.service === 'office' || formData.service === 'holiday' || formData.service === 'carpet-cleaning') {
+            return !DEEP_SERVICES_ONLY.includes(extra.id);
+          }
+          // Default: no extras allowed
           return false;
         });
         
@@ -236,6 +283,10 @@ export default function ServiceDetailsPage() {
       
       setExtras(
         allExtras.filter(service => {
+          // Carpet cleaning can be added as extra to any service type
+          if (service.id === 'carpet-cleaning') {
+            return true;
+          }
           // For deep and move-in-out: show ONLY deep-only services
           if (isDeepOrMoveInOut) {
             return DEEP_SERVICES_ONLY.includes(service.id);
@@ -244,7 +295,11 @@ export default function ServiceDetailsPage() {
           if (formData.service === 'standard' || formData.service === 'airbnb') {
             return !DEEP_SERVICES_ONLY.includes(service.id);
           }
-          // For other service types: don't show extras
+          // For other service types (office, holiday, carpet-cleaning): show carpet-cleaning and standard extras
+          if (formData.service === 'office' || formData.service === 'holiday' || formData.service === 'carpet-cleaning') {
+            return !DEEP_SERVICES_ONLY.includes(service.id);
+          }
+          // Default: don't show extras
           return false;
         })
       );
@@ -265,6 +320,9 @@ export default function ServiceDetailsPage() {
 
   const handleServiceSelect = (service: ServiceType) => {
     setFormData((prev) => ({ ...prev, service }));
+    // Update URL to reflect the selected service
+    const serviceSlug = getServiceSlug(service);
+    router.replace(`/booking/service/${serviceSlug}/details`);
   };
 
   const handleExtrasToggle = (extraId: string) => {
@@ -302,6 +360,28 @@ export default function ServiceDetailsPage() {
 
     if (!formData.scheduledTime) {
       newErrors.scheduledTime = "Please select a time";
+    }
+
+    // Validate carpet cleaning specific fields
+    if (formData.service === 'carpet-cleaning') {
+      const hasFitted = (formData.fittedRoomsCount ?? 0) > 0;
+      const hasLoose = (formData.looseCarpetsCount ?? 0) > 0;
+      
+      if (!hasFitted && !hasLoose) {
+        newErrors.carpetType = "Please select at least one carpet type (fitted or loose)";
+      }
+      
+      if (hasFitted && (!formData.fittedRoomsCount || formData.fittedRoomsCount <= 0)) {
+        newErrors.fittedRoomsCount = "Please enter the number of rooms with fitted carpets";
+      }
+      
+      if (hasLoose && (!formData.looseCarpetsCount || formData.looseCarpetsCount <= 0)) {
+        newErrors.looseCarpetsCount = "Please enter the number of loose carpets";
+      }
+      
+      if (!formData.roomsFurnitureStatus) {
+        newErrors.roomsFurnitureStatus = "Please indicate if rooms have furniture or are empty";
+      }
     }
 
     setErrors(newErrors);
@@ -367,58 +447,257 @@ export default function ServiceDetailsPage() {
               </div>
             </section>
 
-            {/* House Details */}
-            <section className="bg-white border border-gray-200 rounded-xl p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">House details</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label htmlFor="bedrooms" className="block text-sm font-medium text-gray-700 mb-2">
-                    Bedrooms
-                  </label>
-                  <div className="relative">
-                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                    <select
-                      id="bedrooms"
-                      value={formData.bedrooms || 0}
-                      onChange={(e) =>
-                        setFormData((prev) => ({ ...prev, bedrooms: parseInt(e.target.value) }))
-                      }
-                      className="w-full px-4 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                    >
-                      {Array.from({ length: 11 }, (_, i) => (
-                        <option key={i} value={i}>
-                          {i} {i === 1 ? "Bedroom" : "Bedrooms"}
-                        </option>
-                      ))}
-                      <option value={11}>10+ Bedrooms</option>
-                    </select>
+            {/* House Details - Hide for carpet-cleaning service */}
+            {formData.service !== "carpet-cleaning" && (
+              <section className="bg-white border border-gray-200 rounded-xl p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-6">House details</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="bedrooms" className="block text-sm font-medium text-gray-700 mb-2">
+                      Bedrooms
+                    </label>
+                    <div className="relative">
+                      <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                      <select
+                        id="bedrooms"
+                        value={formData.bedrooms || 0}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, bedrooms: parseInt(e.target.value) }))
+                        }
+                        className="w-full px-4 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+                      >
+                        {Array.from({ length: 11 }, (_, i) => (
+                          <option key={i} value={i}>
+                            {i} {i === 1 ? "Bedroom" : "Bedrooms"}
+                          </option>
+                        ))}
+                        <option value={11}>10+ Bedrooms</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label htmlFor="bathrooms" className="block text-sm font-medium text-gray-700 mb-2">
+                      Bathrooms
+                    </label>
+                    <div className="relative">
+                      <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                      <select
+                        id="bathrooms"
+                        value={formData.bathrooms || 1}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, bathrooms: parseInt(e.target.value) }))
+                        }
+                        className="w-full px-4 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+                      >
+                        {Array.from({ length: 10 }, (_, i) => (
+                          <option key={i + 1} value={i + 1}>
+                            {i + 1} {i === 0 ? "Bathroom" : "Bathrooms"}
+                          </option>
+                        ))}
+                        <option value={11}>10+ Bathrooms</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <label htmlFor="bathrooms" className="block text-sm font-medium text-gray-700 mb-2">
-                    Bathrooms
+              </section>
+            )}
+
+            {/* Carpet Cleaning Details - Show only for carpet-cleaning service */}
+            {formData.service === "carpet-cleaning" && (
+              <section className="bg-white border border-gray-200 rounded-xl p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-6">Carpet Details</h2>
+                
+                {/* Carpet Type Selection */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    What type of carpets do you have?
                   </label>
-                  <div className="relative">
-                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                    <select
-                      id="bathrooms"
-                      value={formData.bathrooms || 1}
-                      onChange={(e) =>
-                        setFormData((prev) => ({ ...prev, bathrooms: parseInt(e.target.value) }))
-                      }
-                      className="w-full px-4 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                    >
-                      {Array.from({ length: 10 }, (_, i) => (
-                        <option key={i + 1} value={i + 1}>
-                          {i + 1} {i === 0 ? "Bathroom" : "Bathrooms"}
-                        </option>
-                      ))}
-                      <option value={11}>10+ Bathrooms</option>
-                    </select>
+                  <div className="space-y-3">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={hasFittedCarpets}
+                        onChange={(e) => {
+                          setHasFittedCarpets(e.target.checked);
+                          if (!e.target.checked) {
+                            setFormData((prev) => ({ ...prev, fittedRoomsCount: undefined }));
+                          } else {
+                            setFormData((prev) => ({ ...prev, fittedRoomsCount: prev.fittedRoomsCount || 1 }));
+                          }
+                          if (errors.carpetType || errors.fittedRoomsCount) {
+                            setErrors((prev) => {
+                              const newErrors = { ...prev };
+                              delete newErrors.carpetType;
+                              delete newErrors.fittedRoomsCount;
+                              return newErrors;
+                            });
+                          }
+                        }}
+                        className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <span className="text-gray-700">Fitted in rooms</span>
+                    </label>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={hasLooseCarpets}
+                        onChange={(e) => {
+                          setHasLooseCarpets(e.target.checked);
+                          if (!e.target.checked) {
+                            setFormData((prev) => ({ ...prev, looseCarpetsCount: undefined }));
+                          } else {
+                            setFormData((prev) => ({ ...prev, looseCarpetsCount: prev.looseCarpetsCount || 1 }));
+                          }
+                          if (errors.carpetType || errors.looseCarpetsCount) {
+                            setErrors((prev) => {
+                              const newErrors = { ...prev };
+                              delete newErrors.carpetType;
+                              delete newErrors.looseCarpetsCount;
+                              return newErrors;
+                            });
+                          }
+                        }}
+                        className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <span className="text-gray-700">Loose carpets</span>
+                    </label>
                   </div>
+                  {errors.carpetType && (
+                    <p className="mt-2 text-sm text-red-600">{errors.carpetType}</p>
+                  )}
                 </div>
-              </div>
-            </section>
+
+                {/* Fitted Rooms Count */}
+                {hasFittedCarpets && (
+                  <div className="mb-6">
+                    <label htmlFor="fittedRoomsCount" className="block text-sm font-medium text-gray-700 mb-2">
+                      Number of rooms with fitted carpets
+                    </label>
+                    <div className="relative">
+                      <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                      <select
+                        id="fittedRoomsCount"
+                        value={formData.fittedRoomsCount || 0}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value);
+                          setFormData((prev) => ({ ...prev, fittedRoomsCount: value }));
+                          if (errors.fittedRoomsCount) {
+                            setErrors((prev) => {
+                              const newErrors = { ...prev };
+                              delete newErrors.fittedRoomsCount;
+                              return newErrors;
+                            });
+                          }
+                        }}
+                        className={`w-full px-4 pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white ${
+                          errors.fittedRoomsCount ? "border-red-500" : "border-gray-300"
+                        }`}
+                      >
+                        {Array.from({ length: 21 }, (_, i) => (
+                          <option key={i} value={i}>
+                            {i} {i === 1 ? "Room" : "Rooms"}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {errors.fittedRoomsCount && (
+                      <p className="mt-1 text-sm text-red-600">{errors.fittedRoomsCount}</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Loose Carpets Count */}
+                {hasLooseCarpets && (
+                  <div className="mb-6">
+                    <label htmlFor="looseCarpetsCount" className="block text-sm font-medium text-gray-700 mb-2">
+                      Number of loose carpets
+                    </label>
+                    <div className="relative">
+                      <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                      <select
+                        id="looseCarpetsCount"
+                        value={formData.looseCarpetsCount || 0}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value);
+                          setFormData((prev) => ({ ...prev, looseCarpetsCount: value }));
+                          if (errors.looseCarpetsCount) {
+                            setErrors((prev) => {
+                              const newErrors = { ...prev };
+                              delete newErrors.looseCarpetsCount;
+                              return newErrors;
+                            });
+                          }
+                        }}
+                        className={`w-full px-4 pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white ${
+                          errors.looseCarpetsCount ? "border-red-500" : "border-gray-300"
+                        }`}
+                      >
+                        {Array.from({ length: 21 }, (_, i) => (
+                          <option key={i} value={i}>
+                            {i} {i === 1 ? "Carpet" : "Carpets"}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {errors.looseCarpetsCount && (
+                      <p className="mt-1 text-sm text-red-600">{errors.looseCarpetsCount}</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Furniture Status */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Do the rooms have furniture inside or are they empty?
+                  </label>
+                  <div className="space-y-3">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="roomsFurnitureStatus"
+                        value="furnished"
+                        checked={formData.roomsFurnitureStatus === 'furnished'}
+                        onChange={(e) => {
+                          setFormData((prev) => ({ ...prev, roomsFurnitureStatus: 'furnished' }));
+                          if (errors.roomsFurnitureStatus) {
+                            setErrors((prev) => {
+                              const newErrors = { ...prev };
+                              delete newErrors.roomsFurnitureStatus;
+                              return newErrors;
+                            });
+                          }
+                        }}
+                        className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
+                      />
+                      <span className="text-gray-700">Rooms have furniture inside</span>
+                    </label>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="roomsFurnitureStatus"
+                        value="empty"
+                        checked={formData.roomsFurnitureStatus === 'empty'}
+                        onChange={(e) => {
+                          setFormData((prev) => ({ ...prev, roomsFurnitureStatus: 'empty' }));
+                          if (errors.roomsFurnitureStatus) {
+                            setErrors((prev) => {
+                              const newErrors = { ...prev };
+                              delete newErrors.roomsFurnitureStatus;
+                              return newErrors;
+                            });
+                          }
+                        }}
+                        className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
+                      />
+                      <span className="text-gray-700">Empty rooms</span>
+                    </label>
+                  </div>
+                  {errors.roomsFurnitureStatus && (
+                    <p className="mt-2 text-sm text-red-600">{errors.roomsFurnitureStatus}</p>
+                  )}
+                </div>
+              </section>
+            )}
 
             {/* Extras - Show for standard, airbnb, deep, and move-in-out services */}
             {(formData.service === "standard" || formData.service === "airbnb" || formData.service === "deep" || formData.service === "move-in-out") && (
@@ -556,6 +835,9 @@ export default function ServiceDetailsPage() {
               extras={formData.extras || []}
               scheduledDate={formData.scheduledDate || null}
               scheduledTime={formData.scheduledTime || null}
+              fittedRoomsCount={formData.fittedRoomsCount}
+              looseCarpetsCount={formData.looseCarpetsCount}
+              roomsFurnitureStatus={formData.roomsFurnitureStatus}
             />
           </div>
         </div>

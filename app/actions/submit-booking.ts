@@ -31,12 +31,24 @@ export async function submitBooking(
     errors.service = "Service is required";
   }
 
-  if (data.bedrooms === undefined || data.bedrooms === null || data.bedrooms < 0) {
-    errors.bedrooms = "Invalid number of bedrooms";
-  }
+  // For carpet cleaning, bedrooms/bathrooms validation is more lenient
+  if (data.service !== 'carpet-cleaning') {
+    if (data.bedrooms === undefined || data.bedrooms === null || data.bedrooms < 0) {
+      errors.bedrooms = "Invalid number of bedrooms";
+    }
 
-  if (data.bathrooms === undefined || data.bathrooms === null || data.bathrooms < 1) {
-    errors.bathrooms = "At least one bathroom is required";
+    if (data.bathrooms === undefined || data.bathrooms === null || data.bathrooms < 1) {
+      errors.bathrooms = "At least one bathroom is required";
+    }
+  } else {
+    // For carpet cleaning, allow 0 for bedrooms/bathrooms
+    if (data.bedrooms !== undefined && data.bedrooms !== null && data.bedrooms < 0) {
+      errors.bedrooms = "Invalid number of bedrooms";
+    }
+
+    if (data.bathrooms !== undefined && data.bathrooms !== null && data.bathrooms < 0) {
+      errors.bathrooms = "Invalid number of bathrooms";
+    }
   }
 
   if (!data.scheduledDate || (typeof data.scheduledDate === "string" && data.scheduledDate.trim() === "")) {
@@ -73,6 +85,23 @@ export async function submitBooking(
 
   if (!data.phone?.trim()) {
     errors.phone = "Phone number is required";
+  }
+
+  // Validate carpet cleaning specific fields
+  if (data.service === 'carpet-cleaning') {
+    const hasFitted = (data.fittedRoomsCount ?? 0) > 0;
+    const hasLoose = (data.looseCarpetsCount ?? 0) > 0;
+    
+    if (!hasFitted && !hasLoose) {
+      errors.carpetType = "Please select at least one carpet type (fitted or loose)";
+    }
+    
+    // Note: hasFitted and hasLoose already validate that counts are > 0,
+    // so no additional validation needed here
+    
+    if (!data.roomsFurnitureStatus) {
+      errors.roomsFurnitureStatus = "Please indicate if rooms have furniture or are empty";
+    }
   }
 
   if (Object.keys(errors).length > 0) {

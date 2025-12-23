@@ -1,4 +1,4 @@
-export type ServiceType = "standard" | "deep" | "move-in-out" | "airbnb" | "office" | "holiday";
+export type ServiceType = "standard" | "deep" | "move-in-out" | "airbnb" | "office" | "holiday" | "carpet-cleaning";
 
 export type FrequencyType = "one-time" | "weekly" | "bi-weekly" | "monthly";
 
@@ -50,6 +50,10 @@ export interface BookingFormData {
   scheduledDate: string | null;
   scheduledTime: string | null;
   specialInstructions?: string;
+  // Carpet cleaning specific fields
+  fittedRoomsCount?: number;
+  looseCarpetsCount?: number;
+  roomsFurnitureStatus?: 'furnished' | 'empty';
 
   // Step 2: Schedule & Cleaner
   streetAddress: string;
@@ -102,6 +106,7 @@ export interface PriceBreakdown {
   basePrice: number;
   roomPrice: number;
   extrasPrice: number;
+  furnitureFee?: number; // For carpet cleaning service when rooms have furniture
   subtotal: number;
   frequencyDiscount: number;
   discountCodeDiscount: number;

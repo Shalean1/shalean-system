@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   booking_reference TEXT UNIQUE NOT NULL,
   
   -- Service details
-  service_type TEXT NOT NULL CHECK (service_type IN ('standard', 'deep', 'move-in-out', 'airbnb')),
+  service_type TEXT NOT NULL CHECK (service_type IN ('standard', 'deep', 'move-in-out', 'airbnb', 'carpet-cleaning')),
   frequency TEXT NOT NULL CHECK (frequency IN ('one-time', 'weekly', 'bi-weekly', 'monthly')),
   scheduled_date TEXT NOT NULL,
   scheduled_time TEXT NOT NULL,
@@ -42,6 +42,11 @@ CREATE TABLE IF NOT EXISTS bookings (
   bedrooms INTEGER DEFAULT 0,
   bathrooms INTEGER DEFAULT 1,
   extras JSONB DEFAULT '[]'::jsonb,
+  
+  -- Carpet cleaning specific fields
+  fitted_rooms_count INTEGER,
+  loose_carpets_count INTEGER,
+  rooms_furniture_status TEXT CHECK (rooms_furniture_status IN ('furnished', 'empty') OR rooms_furniture_status IS NULL),
   
   -- Address
   street_address TEXT NOT NULL,
@@ -374,5 +379,8 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- ============================================================================
 COMMENT ON COLUMN bookings.assigned_cleaner_id IS 'The cleaner_id assigned to complete this booking (may differ from cleaner_preference)';
 COMMENT ON COLUMN profiles.cleaner_id IS 'Links user account to cleaner record if this is a cleaner account';
+COMMENT ON COLUMN bookings.fitted_rooms_count IS 'Number of rooms with fitted carpets (for carpet-cleaning service)';
+COMMENT ON COLUMN bookings.loose_carpets_count IS 'Number of loose carpets (for carpet-cleaning service)';
+COMMENT ON COLUMN bookings.rooms_furniture_status IS 'Whether rooms have furniture (furnished) or are empty (for carpet-cleaning service)';
 
 

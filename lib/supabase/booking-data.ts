@@ -50,6 +50,7 @@ export interface Cleaner {
   is_available: boolean;
   availability_days?: string[];
   working_areas?: string[];
+  carpet_cleaning_skill?: boolean;
 }
 
 export interface FrequencyOption {
@@ -184,19 +185,22 @@ export async function getTimeSlots(): Promise<TimeSlot[]> {
 
 /**
  * Fetch all active and available cleaners
- * Optionally filter by selected date and suburb
+ * Optionally filter by selected date, suburb, and service type
  * @param selectedDate - Customer's selected booking date (e.g., "2024-12-15")
  * @param selectedSuburb - Customer's selected suburb (e.g., "Sea Point")
+ * @param serviceType - Service type to filter cleaners by (e.g., "carpet-cleaning")
  */
-export async function getCleaners(selectedDate?: string, selectedSuburb?: string): Promise<Cleaner[]> {
+export async function getCleaners(selectedDate?: string, selectedSuburb?: string, serviceType?: string): Promise<Cleaner[]> {
   try {
     const supabase = createClient();
-    const { data, error } = await supabase
+    const query = supabase
       .from('cleaners')
       .select('*')
       .eq('is_active', true)
       .eq('is_available', true)
       .order('display_order', { ascending: true });
+    
+    const { data, error } = await query;
 
     if (error) {
       console.error('Error fetching cleaners:', error);
@@ -207,13 +211,42 @@ export async function getCleaners(selectedDate?: string, selectedSuburb?: string
       return [];
     }
 
-    // If no filters provided, return all active cleaners (backward compatibility)
-    if (!selectedDate && !selectedSuburb) {
-      return data;
+    // Apply carpet cleaning skill filter first (before other filters)
+    // This ensures cleaners without the skill are filtered out even when no date/suburb is selected
+    let filteredCleaners = data;
+    if (serviceType === 'carpet-cleaning') {
+      console.log(`[getCleaners] Filtering cleaners for carpet cleaning service`);
+      console.log(`[getCleaners] Before carpet cleaning skill filter: ${filteredCleaners.length} cleaners`);
+      
+      filteredCleaners = filteredCleaners.filter(cleaner => {
+        // Always include "no-preference" option - it means "any available cleaner"
+        if (cleaner.cleaner_id === 'no-preference') {
+          console.log(`[getCleaners] ✅ Keeping ${cleaner.name} - special case: no-preference (always included)`);
+          return true;
+        }
+        
+        // Only show cleaners who have carpet cleaning skill
+        const hasCarpetCleaningSkill = cleaner.carpet_cleaning_skill === true;
+        
+        if (!hasCarpetCleaningSkill) {
+          console.log(`[getCleaners] ❌ Filtering out ${cleaner.name} - does not have carpet cleaning skill`);
+          return false;
+        }
+        
+        console.log(`[getCleaners] ✅ Keeping ${cleaner.name} - has carpet cleaning skill`);
+        return true;
+      });
+      
+      console.log(`[getCleaners] After carpet cleaning skill filter: ${filteredCleaners.length} cleaners`);
     }
 
-    // Filter cleaners based on provided criteria
-    let filteredCleaners = data;
+    // If no other filters provided, return filtered cleaners (with carpet cleaning filter applied if applicable)
+    if (!selectedDate && !selectedSuburb) {
+      return filteredCleaners;
+    }
+
+    // Continue filtering cleaners based on provided criteria (date, suburb)
+    // filteredCleaners already has carpet cleaning filter applied if applicable
 
     // Filter by availability days if date is provided
     if (selectedDate) {

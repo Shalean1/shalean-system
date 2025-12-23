@@ -81,7 +81,26 @@ export default function BookingCard({ booking }: BookingCardProps) {
             <Clock className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
           </div>
           <span>
-            {booking.bedrooms} bed, {booking.bathrooms} bath •{" "}
+            {booking.service === 'carpet-cleaning' ? (
+              <>
+                {((booking.fittedRoomsCount ?? 0) > 0 || (booking.looseCarpetsCount ?? 0) > 0) && (
+                  <>
+                    {(booking.fittedRoomsCount ?? 0) > 0 && (
+                      <>{booking.fittedRoomsCount} fitted room{(booking.fittedRoomsCount ?? 0) !== 1 ? 's' : ''}</>
+                    )}
+                    {(booking.fittedRoomsCount ?? 0) > 0 && (booking.looseCarpetsCount ?? 0) > 0 && ', '}
+                    {(booking.looseCarpetsCount ?? 0) > 0 && (
+                      <>{booking.looseCarpetsCount} loose carpet{(booking.looseCarpetsCount ?? 0) !== 1 ? 's' : ''}</>
+                    )}
+                    {' • '}
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                {booking.bedrooms} bed, {booking.bathrooms} bath •{" "}
+              </>
+            )}
             {booking.frequency === "one-time"
               ? "One-time"
               : booking.frequency.charAt(0).toUpperCase() +

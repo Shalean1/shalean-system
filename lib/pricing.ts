@@ -19,6 +19,12 @@ export interface PricingConfig {
   extrasPricing: Record<string, number>;
   serviceFeePercentage: number;
   frequencyDiscounts: Record<FrequencyType, number>;
+  // Carpet cleaning specific pricing
+  carpetCleaningPricing?: {
+    pricePerFittedRoom: number;
+    pricePerLooseCarpet: number;
+    furnitureFee: number;
+  };
 }
 
 // ============================================================================
@@ -33,6 +39,7 @@ const FALLBACK_PRICING_CONFIG: PricingConfig = {
     airbnb: 350,
     office: 300,
     holiday: 450,
+    "carpet-cleaning": 350,
   },
   roomPricing: {
     standard: { bedroom: 20, bathroom: 30 },
@@ -41,6 +48,7 @@ const FALLBACK_PRICING_CONFIG: PricingConfig = {
     airbnb: { bedroom: 18, bathroom: 26 },
     office: { bedroom: 30, bathroom: 40 },
     holiday: { bedroom: 30, bathroom: 40 },
+    "carpet-cleaning": { bedroom: 0, bathroom: 0 },
   },
   extrasPricing: {
     "inside-fridge": 50,
@@ -57,6 +65,11 @@ const FALLBACK_PRICING_CONFIG: PricingConfig = {
     weekly: 0.15, // 15%
     "bi-weekly": 0.1, // 10%
     monthly: 0.05, // 5%
+  },
+  carpetCleaningPricing: {
+    pricePerFittedRoom: 180,
+    pricePerLooseCarpet: 150,
+    furnitureFee: 200,
   },
 };
 
@@ -75,7 +88,12 @@ export async function fetchPricingConfig(): Promise<PricingConfig> {
       getServiceTypePricing(),
       getAdditionalServices(),
       getFrequencyOptions(),
-      getSystemSettings(['service_fee_percentage']),
+      getSystemSettings([
+        'service_fee_percentage',
+        'carpet_cleaning_price_per_fitted_room',
+        'carpet_cleaning_price_per_loose_carpet',
+        'carpet_cleaning_furniture_fee'
+      ]),
       getRoomPricing().catch(() => []), // Return empty array if it fails
     ]);
 
@@ -124,12 +142,26 @@ export async function fetchPricingConfig(): Promise<PricingConfig> {
       ? Number(systemSettings.service_fee_percentage) / 100 
       : FALLBACK_PRICING_CONFIG.serviceFeePercentage;
 
+    // Get carpet cleaning pricing
+    const carpetCleaningPricing = {
+      pricePerFittedRoom: systemSettings.carpet_cleaning_price_per_fitted_room
+        ? Number(systemSettings.carpet_cleaning_price_per_fitted_room)
+        : FALLBACK_PRICING_CONFIG.carpetCleaningPricing!.pricePerFittedRoom,
+      pricePerLooseCarpet: systemSettings.carpet_cleaning_price_per_loose_carpet
+        ? Number(systemSettings.carpet_cleaning_price_per_loose_carpet)
+        : FALLBACK_PRICING_CONFIG.carpetCleaningPricing!.pricePerLooseCarpet,
+      furnitureFee: systemSettings.carpet_cleaning_furniture_fee
+        ? Number(systemSettings.carpet_cleaning_furniture_fee)
+        : FALLBACK_PRICING_CONFIG.carpetCleaningPricing!.furnitureFee,
+    };
+
     return {
       basePrices,
       roomPricing,
       extrasPricing,
       serviceFeePercentage,
       frequencyDiscounts,
+      carpetCleaningPricing,
     };
   } catch (error) {
     console.error('Error fetching pricing config, using fallback:', error);
@@ -161,19 +193,40 @@ export function calculatePrice(
   // Base price (from config)
   const basePrice = config.basePrices[service] || 0;
 
-  // Room pricing (service-specific from config)
-  // Safety check: ensure roomPricing exists and has the service type
-  const roomPricing = config.roomPricing || FALLBACK_PRICING_CONFIG.roomPricing;
-  const servicePricing = roomPricing[service] || { bedroom: 30, bathroom: 40 };
-  const roomPrice = bedrooms * servicePricing.bedroom + bathrooms * servicePricing.bathroom;
+  let roomPrice = 0;
+  let extrasPrice = 0;
+  let furnitureFee = 0;
 
-  // Extras pricing (from config)
-  const extrasPrice = extras.reduce((total, extra) => {
-    return total + (config.extrasPricing[extra] || 0);
-  }, 0);
+  // Special handling for carpet cleaning service
+  if (service === "carpet-cleaning") {
+    const carpetPricing = config.carpetCleaningPricing || FALLBACK_PRICING_CONFIG.carpetCleaningPricing!;
+    const fittedRoomsCount = data.fittedRoomsCount || 0;
+    const looseCarpetsCount = data.looseCarpetsCount || 0;
+    
+    // Calculate fitted rooms price (stored in roomPrice)
+    roomPrice = fittedRoomsCount * carpetPricing.pricePerFittedRoom;
+    
+    // Calculate loose carpets price (stored in extrasPrice)
+    extrasPrice = looseCarpetsCount * carpetPricing.pricePerLooseCarpet;
+    
+    // Calculate furniture fee if rooms have furniture
+    if (data.roomsFurnitureStatus === 'furnished') {
+      furnitureFee = carpetPricing.furnitureFee;
+    }
+  } else {
+    // Standard room pricing for other services
+    const roomPricing = config.roomPricing || FALLBACK_PRICING_CONFIG.roomPricing;
+    const servicePricing = roomPricing[service] || { bedroom: 30, bathroom: 40 };
+    roomPrice = bedrooms * servicePricing.bedroom + bathrooms * servicePricing.bathroom;
+
+    // Extras pricing (from config)
+    extrasPrice = extras.reduce((total, extra) => {
+      return total + (config.extrasPricing[extra] || 0);
+    }, 0);
+  }
 
   // Subtotal before discounts
-  const subtotal = basePrice + roomPrice + extrasPrice;
+  const subtotal = basePrice + roomPrice + extrasPrice + furnitureFee;
 
   // Frequency discount (from config)
   const frequencyDiscountRate = config.frequencyDiscounts[frequency] || 0;
@@ -198,6 +251,7 @@ export function calculatePrice(
     basePrice,
     roomPrice,
     extrasPrice,
+    furnitureFee: furnitureFee > 0 ? furnitureFee : undefined,
     subtotal,
     frequencyDiscount: Math.round(frequencyDiscount),
     discountCodeDiscount: Math.round(discountCodeDiscount),
@@ -229,6 +283,7 @@ export function getServiceName(service: ServiceType): string {
     airbnb: "Airbnb Cleaning",
     office: "Office Cleaning",
     holiday: "Holiday Cleaning",
+    "carpet-cleaning": "Carpet Cleaning",
   };
   return names[service];
 }

@@ -42,6 +42,7 @@ interface CleanerFormData {
   is_active: boolean;
   is_available: boolean;
   availability_days: string[];
+  carpet_cleaning_skill: boolean;
 }
 
 const DAYS_OF_WEEK = [
@@ -130,6 +131,7 @@ export default function CleanersPage() {
         is_active: true,
         is_available: true,
         availability_days: [],
+        carpet_cleaning_skill: false,
       });
     }
   }, [isModalOpen]);
@@ -148,6 +150,7 @@ export default function CleanersPage() {
         is_active: editingCleaner.isActive,
         is_available: editingCleaner.isAvailable,
         availability_days: editingCleaner.availabilityDays || [],
+        carpet_cleaning_skill: editingCleaner.carpetCleaningSkill ?? false,
       });
     }
   }, [editingCleaner]);
@@ -252,6 +255,7 @@ export default function CleanersPage() {
         is_active: formData.is_active,
         is_available: formData.is_available,
         availability_days: formData.availability_days.length > 0 ? formData.availability_days : undefined,
+        carpet_cleaning_skill: formData.carpet_cleaning_skill,
       };
 
       let result;
@@ -589,6 +593,16 @@ export default function CleanersPage() {
                   </div>
                 )}
 
+                {/* Carpet Cleaning Skill */}
+                {cleaner.carpetCleaningSkill && (
+                  <div className="mt-3 pt-3 border-t border-gray-200">
+                    <div className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-700">
+                      <span className="mr-1">🧹</span>
+                      Carpet Cleaning Skill
+                    </div>
+                  </div>
+                )}
+
                 {/* Display Order */}
                 <div className="mt-3 pt-3 border-t border-gray-100">
                   <div className="flex items-center justify-between text-xs text-gray-500">
@@ -808,6 +822,16 @@ export default function CleanersPage() {
                       className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:cursor-not-allowed"
                     />
                     <span className="text-sm font-medium text-gray-700">Available</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.carpet_cleaning_skill}
+                      onChange={(e) => setFormData({ ...formData, carpet_cleaning_skill: e.target.checked })}
+                      disabled={formLoading}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:cursor-not-allowed"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Carpet Cleaning Skill</span>
                   </label>
                 </div>
 

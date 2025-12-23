@@ -69,8 +69,8 @@ const iconMap: Record<string, any> = {
 };
 
 // Services that are only available for deep and move-in-out
+// Note: carpet-cleaning is removed from this list since it's now a main service AND can be added as extra to any service
 const DEEP_SERVICES_ONLY = [
-  'carpet-cleaning',
   'ceiling-cleaning',
   'garage-cleaning',
   'balcony-cleaning',
@@ -78,7 +78,7 @@ const DEEP_SERVICES_ONLY = [
   'exterior-windows',
 ];
 
-const services: ServiceType[] = ["standard", "deep", "move-in-out", "airbnb", "office", "holiday"];
+const services: ServiceType[] = ["standard", "deep", "move-in-out", "airbnb", "office", "holiday", "carpet-cleaning"];
 const frequencies: FrequencyType[] = ["one-time", "weekly", "bi-weekly", "monthly"];
 
 const STORAGE_KEY = "shalean_booking_data";
@@ -110,6 +110,9 @@ export default function ReviewPage() {
           scheduledDate: parsed.scheduledDate || null,
           scheduledTime: parsed.scheduledTime || null,
           specialInstructions: parsed.specialInstructions || undefined,
+          fittedRoomsCount: parsed.fittedRoomsCount,
+          looseCarpetsCount: parsed.looseCarpetsCount,
+          roomsFurnitureStatus: parsed.roomsFurnitureStatus,
           frequency: parsed.frequency || ("one-time" as FrequencyType),
           cleanerPreference: parsed.cleanerPreference || ("no-preference" as CleanerPreference),
           streetAddress: parsed.streetAddress || "",
@@ -235,6 +238,9 @@ export default function ReviewPage() {
               extras: parsed.extras || formData.extras || [],
               scheduledDate: parsed.scheduledDate ?? formData.scheduledDate ?? null,
               scheduledTime: parsed.scheduledTime ?? formData.scheduledTime ?? null,
+              fittedRoomsCount: parsed.fittedRoomsCount ?? formData.fittedRoomsCount,
+              looseCarpetsCount: parsed.looseCarpetsCount ?? formData.looseCarpetsCount,
+              roomsFurnitureStatus: parsed.roomsFurnitureStatus || formData.roomsFurnitureStatus,
               frequency: (parsed.frequency || formData.frequency || "one-time") as FrequencyType,
               cleanerPreference: (parsed.cleanerPreference || formData.cleanerPreference || "no-preference") as CleanerPreference,
               tip: parsed.tip || formData.tip || undefined,
@@ -270,6 +276,9 @@ export default function ReviewPage() {
                 extras: loadedFormData.extras || updatedData.extras || [],
                 scheduledDate: loadedFormData.scheduledDate ?? updatedData.scheduledDate ?? null,
                 scheduledTime: loadedFormData.scheduledTime ?? updatedData.scheduledTime ?? null,
+                fittedRoomsCount: loadedFormData.fittedRoomsCount ?? updatedData.fittedRoomsCount,
+                looseCarpetsCount: loadedFormData.looseCarpetsCount ?? updatedData.looseCarpetsCount,
+                roomsFurnitureStatus: loadedFormData.roomsFurnitureStatus || updatedData.roomsFurnitureStatus,
                 frequency: (loadedFormData.frequency || updatedData.frequency || "one-time") as FrequencyType,
                 cleanerPreference: (loadedFormData.cleanerPreference || updatedData.cleanerPreference || "no-preference") as CleanerPreference,
                 streetAddress: loadedFormData.streetAddress || updatedData.streetAddress || "",
@@ -365,10 +374,19 @@ export default function ReviewPage() {
             
             setExtras(
               mappedExtras.filter(service => {
+                // Carpet cleaning can be added as extra to any service type
+                if (service.id === 'carpet-cleaning') {
+                  return true;
+                }
+                // Deep-only services only for deep and move-in-out
                 if (DEEP_SERVICES_ONLY.includes(service.id)) {
                   return isDeepOrMoveInOut;
                 }
-                return isStandardOrAirbnb && !DEEP_SERVICES_ONLY.includes(service.id);
+                // Standard extras for standard, airbnb, office, holiday, and carpet-cleaning
+                if (isStandardOrAirbnb || currentServiceType === 'office' || currentServiceType === 'holiday' || currentServiceType === 'carpet-cleaning') {
+                  return !DEEP_SERVICES_ONLY.includes(service.id);
+                }
+                return false;
               })
             );
           } else {
@@ -404,6 +422,10 @@ export default function ReviewPage() {
         service: formData.service || (serviceType as ServiceType),
         scheduledDate: formData.scheduledDate || null,
         scheduledTime: formData.scheduledTime || null,
+        // Preserve carpet cleaning fields
+        fittedRoomsCount: formData.fittedRoomsCount,
+        looseCarpetsCount: formData.looseCarpetsCount,
+        roomsFurnitureStatus: formData.roomsFurnitureStatus,
         // Explicitly preserve Step 2 fields
         frequency: (formData.frequency || "one-time") as FrequencyType,
         cleanerPreference: (formData.cleanerPreference || "no-preference") as CleanerPreference,
@@ -435,6 +457,9 @@ export default function ReviewPage() {
                   extras: prevData.extras || updatedData.extras || [],
                   scheduledDate: prevData.scheduledDate ?? updatedData.scheduledDate ?? null,
                   scheduledTime: prevData.scheduledTime ?? updatedData.scheduledTime ?? null,
+                  fittedRoomsCount: prevData.fittedRoomsCount ?? updatedData.fittedRoomsCount,
+                  looseCarpetsCount: prevData.looseCarpetsCount ?? updatedData.looseCarpetsCount,
+                  roomsFurnitureStatus: prevData.roomsFurnitureStatus || updatedData.roomsFurnitureStatus,
                   frequency: (prevData.frequency || updatedData.frequency || "one-time") as FrequencyType,
                   cleanerPreference: (prevData.cleanerPreference || updatedData.cleanerPreference || "no-preference") as CleanerPreference,
                   streetAddress: prevData.streetAddress || updatedData.streetAddress || "",
@@ -708,16 +733,25 @@ export default function ReviewPage() {
       
       setExtras(
         allExtras.filter(service => {
+          // Carpet cleaning can be added as extra to any service type
+          if (service.id === 'carpet-cleaning') {
+            return true;
+          }
+          // Deep-only services only for deep and move-in-out
           if (DEEP_SERVICES_ONLY.includes(service.id)) {
             return isDeepOrMoveInOut;
           }
-          return isStandardOrAirbnb && !DEEP_SERVICES_ONLY.includes(service.id);
+          // Standard extras for standard, airbnb, office, holiday, and carpet-cleaning
+          if (isStandardOrAirbnb || updates.service === 'office' || updates.service === 'holiday' || updates.service === 'carpet-cleaning') {
+            return !DEEP_SERVICES_ONLY.includes(service.id);
+          }
+          return false;
         })
       );
       
-      // Clear extras if service doesn't support them
-      if (!isStandardOrAirbnb) {
-        updated.extras = [];
+      // Clear extras if service doesn't support them (but keep carpet-cleaning)
+      if (!isStandardOrAirbnb && updates.service !== 'office' && updates.service !== 'holiday' && updates.service !== 'carpet-cleaning') {
+        updated.extras = (updated.extras || []).filter((id: string) => id === 'carpet-cleaning');
       }
     }
   };
@@ -857,51 +891,53 @@ export default function ReviewPage() {
                     </div>
                   </div>
 
-                  {/* Bedrooms & Bathrooms */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="bedrooms" className="block text-sm font-medium text-gray-700 mb-2">
-                        Bedrooms
-                      </label>
-                      <div className="relative">
-                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                        <select
-                          id="bedrooms"
-                          value={tempFormData.bedrooms ?? 0}
-                          onChange={(e) => handleTempDataChange({ bedrooms: parseInt(e.target.value) })}
-                          className="w-full px-4 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                        >
-                          {Array.from({ length: 11 }, (_, i) => (
-                            <option key={i} value={i}>
-                              {i} {i === 1 ? "Bedroom" : "Bedrooms"}
-                            </option>
-                          ))}
-                          <option value={11}>10+ Bedrooms</option>
-                        </select>
+                  {/* Bedrooms & Bathrooms - Hidden for carpet-cleaning */}
+                  {tempFormData.service !== 'carpet-cleaning' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="bedrooms" className="block text-sm font-medium text-gray-700 mb-2">
+                          Bedrooms
+                        </label>
+                        <div className="relative">
+                          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                          <select
+                            id="bedrooms"
+                            value={tempFormData.bedrooms ?? 0}
+                            onChange={(e) => handleTempDataChange({ bedrooms: parseInt(e.target.value) })}
+                            className="w-full px-4 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+                          >
+                            {Array.from({ length: 11 }, (_, i) => (
+                              <option key={i} value={i}>
+                                {i} {i === 1 ? "Bedroom" : "Bedrooms"}
+                              </option>
+                            ))}
+                            <option value={11}>10+ Bedrooms</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <label htmlFor="bathrooms" className="block text-sm font-medium text-gray-700 mb-2">
+                          Bathrooms
+                        </label>
+                        <div className="relative">
+                          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                          <select
+                            id="bathrooms"
+                            value={tempFormData.bathrooms ?? 1}
+                            onChange={(e) => handleTempDataChange({ bathrooms: parseInt(e.target.value) })}
+                            className="w-full px-4 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+                          >
+                            {Array.from({ length: 10 }, (_, i) => (
+                              <option key={i + 1} value={i + 1}>
+                                {i + 1} {i === 0 ? "Bathroom" : "Bathrooms"}
+                              </option>
+                            ))}
+                            <option value={11}>10+ Bathrooms</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <label htmlFor="bathrooms" className="block text-sm font-medium text-gray-700 mb-2">
-                        Bathrooms
-                      </label>
-                      <div className="relative">
-                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                        <select
-                          id="bathrooms"
-                          value={tempFormData.bathrooms ?? 1}
-                          onChange={(e) => handleTempDataChange({ bathrooms: parseInt(e.target.value) })}
-                          className="w-full px-4 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                        >
-                          {Array.from({ length: 10 }, (_, i) => (
-                            <option key={i + 1} value={i + 1}>
-                              {i + 1} {i === 0 ? "Bathroom" : "Bathrooms"}
-                            </option>
-                          ))}
-                          <option value={11}>10+ Bathrooms</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
+                  )}
 
                   {/* Extras - Only show for standard and airbnb services */}
                   {((tempFormData.service === "standard" || tempFormData.service === "airbnb") && extras.length > 0) && (
@@ -945,12 +981,37 @@ export default function ReviewPage() {
               ) : (
                 <div className="space-y-2">
                   <p><strong>Service Type:</strong> {getServiceName(formData.service || "standard")}</p>
-                  <p suppressHydrationWarning>
-                    <strong>Bedrooms:</strong> {isMounted ? (formData.bedrooms ?? 0) : 0}
-                  </p>
-                  <p suppressHydrationWarning>
-                    <strong>Bathrooms:</strong> {isMounted ? (formData.bathrooms ?? 1) : 1}
-                  </p>
+                  {/* Bedrooms & Bathrooms - Hidden for carpet-cleaning */}
+                  {formData.service !== 'carpet-cleaning' && (
+                    <>
+                      <p suppressHydrationWarning>
+                        <strong>Bedrooms:</strong> {isMounted ? (formData.bedrooms ?? 0) : 0}
+                      </p>
+                      <p suppressHydrationWarning>
+                        <strong>Bathrooms:</strong> {isMounted ? (formData.bathrooms ?? 1) : 1}
+                      </p>
+                    </>
+                  )}
+                  {/* Carpet Cleaning Details */}
+                  {isMounted && formData.service === 'carpet-cleaning' && (
+                    <>
+                      {(formData.fittedRoomsCount ?? 0) > 0 && (
+                        <p suppressHydrationWarning>
+                          <strong>Fitted Rooms:</strong> {formData.fittedRoomsCount} {formData.fittedRoomsCount === 1 ? 'room' : 'rooms'}
+                        </p>
+                      )}
+                      {(formData.looseCarpetsCount ?? 0) > 0 && (
+                        <p suppressHydrationWarning>
+                          <strong>Loose Carpets:</strong> {formData.looseCarpetsCount} {formData.looseCarpetsCount === 1 ? 'carpet' : 'carpets'}
+                        </p>
+                      )}
+                      {formData.roomsFurnitureStatus && (
+                        <p suppressHydrationWarning>
+                          <strong>Room Status:</strong> {formData.roomsFurnitureStatus === 'furnished' ? 'Rooms have furniture' : 'Empty rooms'}
+                        </p>
+                      )}
+                    </>
+                  )}
                   {isMounted && formData.extras && formData.extras.length > 0 ? (
                     <p suppressHydrationWarning>
                       <strong>Extras:</strong> {formData.extras.length} selected
@@ -1546,6 +1607,9 @@ export default function ReviewPage() {
               address={address}
               cleanerPreference={formData.cleanerPreference}
               cleaners={isTeamService ? teams : cleaners}
+              fittedRoomsCount={dataForPricing.fittedRoomsCount}
+              looseCarpetsCount={dataForPricing.looseCarpetsCount}
+              roomsFurnitureStatus={dataForPricing.roomsFurnitureStatus}
             />
           </div>
         </div>

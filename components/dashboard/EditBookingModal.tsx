@@ -14,7 +14,7 @@ interface EditBookingModalProps {
   onSuccess?: () => void;
 }
 
-const services: ServiceType[] = ["standard", "deep", "move-in-out", "airbnb", "office", "holiday"];
+const services: ServiceType[] = ["standard", "deep", "move-in-out", "airbnb", "office", "holiday", "carpet-cleaning"];
 
 export default function EditBookingModal({ booking, isOpen, onClose, onSuccess }: EditBookingModalProps) {
   const router = useRouter();

@@ -15,6 +15,7 @@ export interface CleanerInput {
   is_active?: boolean;
   is_available?: boolean;
   availability_days?: string[];
+  carpet_cleaning_skill?: boolean;
 }
 
 // Add a new cleaner
@@ -58,6 +59,7 @@ export async function addCleaner(
       is_active: input.is_active ?? true,
       is_available: input.is_available ?? true,
       availability_days: input.availability_days && input.availability_days.length > 0 ? input.availability_days : [],
+      carpet_cleaning_skill: input.carpet_cleaning_skill ?? false,
     })
     .select()
     .single();
@@ -86,6 +88,7 @@ export async function addCleaner(
     displayOrder: data.display_order || 0,
     isActive: data.is_active ?? true,
     isAvailable: data.is_available ?? true,
+    carpetCleaningSkill: data.carpet_cleaning_skill ?? false,
     createdAt: data.created_at,
     updatedAt: data.updated_at,
   };
@@ -121,6 +124,7 @@ export async function updateCleaner(
   if (updates.is_active !== undefined) updateData.is_active = updates.is_active;
   if (updates.is_available !== undefined) updateData.is_available = updates.is_available;
   if (updates.availability_days !== undefined) updateData.availability_days = updates.availability_days && updates.availability_days.length > 0 ? updates.availability_days : [];
+  if (updates.carpet_cleaning_skill !== undefined) updateData.carpet_cleaning_skill = updates.carpet_cleaning_skill;
 
   // Add updated_at timestamp
   updateData.updated_at = new Date().toISOString();
@@ -157,6 +161,7 @@ export async function updateCleaner(
     isActive: data.is_active ?? true,
     isAvailable: data.is_available ?? true,
     availabilityDays: data.availability_days ? (Array.isArray(data.availability_days) ? data.availability_days : []) : [],
+    carpetCleaningSkill: data.carpet_cleaning_skill ?? false,
     createdAt: data.created_at,
     updatedAt: data.updated_at,
   };

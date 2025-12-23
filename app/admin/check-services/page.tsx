@@ -134,7 +134,7 @@ export default function CheckServicesPage() {
 
     // Check 2: Service Type Pricing
     const activeServiceTypes = serviceTypePricing.filter((s) => s.is_active);
-    const expectedServiceTypes = ["standard", "deep", "move-in-out", "airbnb", "office", "holiday"];
+    const expectedServiceTypes = ["standard", "deep", "move-in-out", "airbnb", "office", "holiday", "carpet-cleaning"];
     const configuredTypes = activeServiceTypes.map((s) => s.service_type);
     const missingTypes = expectedServiceTypes.filter((type) => !configuredTypes.includes(type));
 

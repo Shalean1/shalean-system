@@ -115,6 +115,9 @@ export async function getPricingSettings(): Promise<SystemSetting[]> {
         "service_fee_percentage",
         "price_per_bedroom",
         "price_per_bathroom",
+        "carpet_cleaning_price_per_fitted_room",
+        "carpet_cleaning_price_per_loose_carpet",
+        "carpet_cleaning_furniture_fee",
       ])
       .order("setting_key", { ascending: true });
 

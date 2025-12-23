@@ -188,6 +188,10 @@ export default function ConfirmationPage() {
                       suburb: parsed.suburb || metadataBookingData.suburb,
                       city: parsed.city || metadataBookingData.city,
                       aptUnit: parsed.aptUnit || metadataBookingData.aptUnit,
+                      // Preserve carpet cleaning fields
+                      fittedRoomsCount: parsed.fittedRoomsCount ?? metadataBookingData.fittedRoomsCount,
+                      looseCarpetsCount: parsed.looseCarpetsCount ?? metadataBookingData.looseCarpetsCount,
+                      roomsFurnitureStatus: parsed.roomsFurnitureStatus || metadataBookingData.roomsFurnitureStatus,
                     };
                     dataSource = "Paystack metadata";
                     console.log("Merged booking data:", parsed);
@@ -233,6 +237,12 @@ export default function ConfirmationPage() {
             email: parsed.email?.trim() || "",
             phone: parsed.phone?.trim() || "",
             discountCode: parsed.discountCode?.trim() || undefined,
+            // Carpet cleaning specific fields
+            fittedRoomsCount: typeof parsed.fittedRoomsCount === "number" ? parsed.fittedRoomsCount : undefined,
+            looseCarpetsCount: typeof parsed.looseCarpetsCount === "number" ? parsed.looseCarpetsCount : undefined,
+            roomsFurnitureStatus: parsed.roomsFurnitureStatus === 'furnished' || parsed.roomsFurnitureStatus === 'empty' 
+              ? parsed.roomsFurnitureStatus 
+              : undefined,
           };
               
               // Validate required fields before submitting
@@ -494,12 +504,14 @@ export default function ConfirmationPage() {
                 </p>
               </div>
 
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Frequency</p>
-                <p className="font-medium text-gray-900">
-                  {getFrequencyName(booking.frequency || "one-time")}
-                </p>
-              </div>
+              {booking.service !== "carpet-cleaning" && (
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Frequency</p>
+                  <p className="font-medium text-gray-900">
+                    {getFrequencyName(booking.frequency || "one-time")}
+                  </p>
+                </div>
+              )}
 
               <div>
                 <p className="text-sm text-gray-600 mb-1">Schedule</p>
@@ -509,13 +521,15 @@ export default function ConfirmationPage() {
                 </p>
               </div>
 
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Property</p>
-                <p className="font-medium text-gray-900">
-                  {booking.bedrooms || 0} bed, {booking.bathrooms || 1}{" "}
-                  {booking.bathrooms === 1 ? "bath" : "baths"}
-                </p>
-              </div>
+              {booking.service !== "carpet-cleaning" && (
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Property</p>
+                  <p className="font-medium text-gray-900">
+                    {booking.bedrooms || 0} bed, {booking.bathrooms || 1}{" "}
+                    {booking.bathrooms === 1 ? "bath" : "baths"}
+                  </p>
+                </div>
+              )}
 
               <div>
                 <p className="text-sm text-gray-600 mb-1">Service Address</p>
@@ -542,7 +556,7 @@ export default function ConfirmationPage() {
                 {priceBreakdown && (priceBreakdown.frequencyDiscount > 0 || priceBreakdown.discountCodeDiscount > 0) && (
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <p className="text-sm text-gray-600 mb-2">Discounts Applied</p>
-                    {priceBreakdown.frequencyDiscount > 0 && (
+                    {priceBreakdown.frequencyDiscount > 0 && booking.service !== "carpet-cleaning" && (
                       <div className="mb-2">
                         <div className="flex justify-between items-center mb-1">
                           <span className="text-sm text-gray-700">

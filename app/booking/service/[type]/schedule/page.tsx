@@ -132,9 +132,9 @@ export default function SchedulePage() {
           setTeams(teamsWithMembers);
         } else {
           // For other services, fetch cleaners
-          // Pass date and suburb filters if available from formData
+          // Pass date, suburb, and service type filters if available from formData
           const [cleanersData, frequencyOptionsData, cityData, locationsData, pricing] = await Promise.all([
-            getCleaners(formData.scheduledDate || undefined, formData.suburb || undefined),
+            getCleaners(formData.scheduledDate || undefined, formData.suburb || undefined, serviceType),
             getFrequencyOptions(),
             getSystemSetting("default_city"),
             getServiceLocations(),
@@ -258,7 +258,7 @@ export default function SchedulePage() {
       try {
         const parsed = JSON.parse(saved);
         // Merge saved data with defaults to ensure all fields are present
-        // Preserve ALL step 1 data (bedrooms, bathrooms, extras, date, time, service)
+        // Preserve ALL step 1 data (bedrooms, bathrooms, extras, date, time, service, carpet cleaning details)
         setFormData({
           service: parsed.service || (serviceType as any),
           bedrooms: parsed.bedrooms ?? 0,
@@ -267,6 +267,10 @@ export default function SchedulePage() {
           scheduledDate: parsed.scheduledDate || null,
           scheduledTime: parsed.scheduledTime || null,
           specialInstructions: parsed.specialInstructions || undefined,
+          // Carpet cleaning specific fields
+          fittedRoomsCount: parsed.fittedRoomsCount ?? undefined,
+          looseCarpetsCount: parsed.looseCarpetsCount ?? undefined,
+          roomsFurnitureStatus: parsed.roomsFurnitureStatus ?? undefined,
           frequency: parsed.frequency || "one-time",
           cleanerPreference: parsed.cleanerPreference || "no-preference",
           streetAddress: parsed.streetAddress || "",
@@ -311,7 +315,8 @@ export default function SchedulePage() {
         try {
           const cleanersData = await getCleaners(
             formData.scheduledDate || undefined,
-            formData.suburb || undefined
+            formData.suburb || undefined,
+            serviceType
           );
           
           // Map cleaners - always include "no-preference" option
@@ -355,6 +360,10 @@ export default function SchedulePage() {
         scheduledDate: formData.scheduledDate || null,
         scheduledTime: formData.scheduledTime || null,
         specialInstructions: formData.specialInstructions || undefined,
+        // Preserve carpet cleaning specific fields
+        fittedRoomsCount: formData.fittedRoomsCount ?? undefined,
+        looseCarpetsCount: formData.looseCarpetsCount ?? undefined,
+        roomsFurnitureStatus: formData.roomsFurnitureStatus ?? undefined,
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
     }
@@ -698,8 +707,8 @@ export default function SchedulePage() {
               </section>
             )}
 
-            {/* Frequency Selection */}
-            {!isTeamService && (
+            {/* Frequency Selection - Hidden for carpet cleaning */}
+            {!isTeamService && serviceType !== 'carpet-cleaning' && (
               <section className="bg-white border border-gray-200 rounded-xl p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-6">
                   How often do you need cleaning?
@@ -749,6 +758,9 @@ export default function SchedulePage() {
               address={address}
               cleanerPreference={formData.cleanerPreference}
               cleaners={isTeamService ? teams.map(t => ({ id: t.team_id as CleanerPreference, name: t.name })) : cleaners}
+              fittedRoomsCount={formData.fittedRoomsCount}
+              looseCarpetsCount={formData.looseCarpetsCount}
+              roomsFurnitureStatus={formData.roomsFurnitureStatus}
             />
           </div>
         </div>

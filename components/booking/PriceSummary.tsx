@@ -23,6 +23,10 @@ interface PriceSummaryProps {
   address?: string;
   cleanerPreference?: CleanerPreference;
   cleaners?: Cleaner[];
+  // Carpet cleaning specific fields
+  fittedRoomsCount?: number;
+  looseCarpetsCount?: number;
+  roomsFurnitureStatus?: 'furnished' | 'empty';
 }
 
 export default function PriceSummary({
@@ -37,6 +41,9 @@ export default function PriceSummary({
   address,
   cleanerPreference,
   cleaners,
+  fittedRoomsCount,
+  looseCarpetsCount,
+  roomsFurnitureStatus,
 }: PriceSummaryProps) {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -75,6 +82,7 @@ export default function PriceSummary({
   };
 
   const selectedCleanerName = getSelectedCleanerName();
+  const isCarpetCleaning = service === "carpet-cleaning";
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-6 sticky top-24">
@@ -103,12 +111,43 @@ export default function PriceSummary({
           </div>
         )}
 
-        <div suppressHydrationWarning>
-          <p className="text-sm text-gray-600 mb-1">Property</p>
-          <p className="font-medium text-gray-900">
-            {bedrooms} bed, {bathrooms} {bathrooms === 1 ? "bath" : "baths"}
-          </p>
-        </div>
+        {/* Show carpet cleaning details for carpet-cleaning service */}
+        {isCarpetCleaning ? (
+          <>
+            {(fittedRoomsCount && fittedRoomsCount > 0) && (
+              <div suppressHydrationWarning>
+                <p className="text-sm text-gray-600 mb-1">Fitted Carpets</p>
+                <p className="font-medium text-gray-900">
+                  {fittedRoomsCount} {fittedRoomsCount === 1 ? "Room" : "Rooms"}
+                </p>
+              </div>
+            )}
+            {(looseCarpetsCount && looseCarpetsCount > 0) && (
+              <div suppressHydrationWarning>
+                <p className="text-sm text-gray-600 mb-1">Loose Carpets</p>
+                <p className="font-medium text-gray-900">
+                  {looseCarpetsCount} {looseCarpetsCount === 1 ? "Carpet" : "Carpets"}
+                </p>
+              </div>
+            )}
+            {roomsFurnitureStatus && (
+              <div suppressHydrationWarning>
+                <p className="text-sm text-gray-600 mb-1">Furniture Status</p>
+                <p className="font-medium text-gray-900">
+                  {roomsFurnitureStatus === 'furnished' ? 'Rooms have furniture inside' : 'Empty rooms'}
+                </p>
+              </div>
+            )}
+          </>
+        ) : (
+          /* Show property details for non-carpet-cleaning services */
+          <div suppressHydrationWarning>
+            <p className="text-sm text-gray-600 mb-1">Property</p>
+            <p className="font-medium text-gray-900">
+              {bedrooms} bed, {bathrooms} {bathrooms === 1 ? "bath" : "baths"}
+            </p>
+          </div>
+        )}
 
         {extras.length > 0 && (
           <div suppressHydrationWarning>
@@ -137,18 +176,54 @@ export default function PriceSummary({
           </span>
         </div>
 
-        {(bedrooms > 0 || bathrooms > 0) && (
-          <div className="flex justify-between text-sm" suppressHydrationWarning>
-            <span className="text-gray-600">
-              Bedrooms & Bathrooms ({bedrooms} bed, {bathrooms} {bathrooms === 1 ? "bath" : "baths"})
-            </span>
-            <span className="font-medium text-gray-900" suppressHydrationWarning>
-              {isMounted ? formatPrice(priceBreakdown.roomPrice) : `R ${priceBreakdown.roomPrice.toFixed(2)}`}
-            </span>
-          </div>
+        {/* Show carpet cleaning pricing breakdown for carpet-cleaning service */}
+        {isCarpetCleaning ? (
+          <>
+            {(fittedRoomsCount && fittedRoomsCount > 0) && priceBreakdown.roomPrice > 0 && (
+              <div className="flex justify-between text-sm" suppressHydrationWarning>
+                <span className="text-gray-600">
+                  Fitted Carpets ({fittedRoomsCount} {fittedRoomsCount === 1 ? "Room" : "Rooms"})
+                </span>
+                <span className="font-medium text-gray-900" suppressHydrationWarning>
+                  {isMounted ? formatPrice(priceBreakdown.roomPrice) : `R ${priceBreakdown.roomPrice.toFixed(2)}`}
+                </span>
+              </div>
+            )}
+            {(looseCarpetsCount && looseCarpetsCount > 0) && priceBreakdown.extrasPrice > 0 && (
+              <div className="flex justify-between text-sm" suppressHydrationWarning>
+                <span className="text-gray-600">
+                  Loose Carpets ({looseCarpetsCount} {looseCarpetsCount === 1 ? "Carpet" : "Carpets"})
+                </span>
+                <span className="font-medium text-gray-900" suppressHydrationWarning>
+                  {isMounted ? formatPrice(priceBreakdown.extrasPrice) : `R ${priceBreakdown.extrasPrice.toFixed(2)}`}
+                </span>
+              </div>
+            )}
+            {priceBreakdown.furnitureFee && priceBreakdown.furnitureFee > 0 && (
+              <div className="flex justify-between text-sm" suppressHydrationWarning>
+                <span className="text-gray-600">Furniture Fee</span>
+                <span className="font-medium text-gray-900" suppressHydrationWarning>
+                  {isMounted ? formatPrice(priceBreakdown.furnitureFee) : `R ${priceBreakdown.furnitureFee.toFixed(2)}`}
+                </span>
+              </div>
+            )}
+          </>
+        ) : (
+          /* Show room pricing for non-carpet-cleaning services */
+          (bedrooms > 0 || bathrooms > 0) && (
+            <div className="flex justify-between text-sm" suppressHydrationWarning>
+              <span className="text-gray-600">
+                Bedrooms & Bathrooms ({bedrooms} bed, {bathrooms} {bathrooms === 1 ? "bath" : "baths"})
+              </span>
+              <span className="font-medium text-gray-900" suppressHydrationWarning>
+                {isMounted ? formatPrice(priceBreakdown.roomPrice) : `R ${priceBreakdown.roomPrice.toFixed(2)}`}
+              </span>
+            </div>
+          )
         )}
 
-        {priceBreakdown.extrasPrice > 0 && (
+        {/* Show extras only for non-carpet-cleaning services */}
+        {!isCarpetCleaning && priceBreakdown.extrasPrice > 0 && (
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Extras</span>
             <span className="font-medium text-gray-900" suppressHydrationWarning>

@@ -177,12 +177,41 @@ export default async function BookingDetailPage({
               Property Details
             </h2>
             <div className="space-y-3">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Bedrooms & Bathrooms</p>
-                <p className="font-medium text-gray-900">
-                  {booking.bedrooms} bedroom{booking.bedrooms !== 1 ? "s" : ""}, {booking.bathrooms} bathroom{booking.bathrooms !== 1 ? "s" : ""}
-                </p>
-              </div>
+              {booking.service === 'carpet-cleaning' ? (
+                <>
+                  {(booking.fittedRoomsCount ?? 0) > 0 && (
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Fitted Rooms</p>
+                      <p className="font-medium text-gray-900">
+                        {booking.fittedRoomsCount} {booking.fittedRoomsCount === 1 ? 'room' : 'rooms'} with fitted carpets
+                      </p>
+                    </div>
+                  )}
+                  {(booking.looseCarpetsCount ?? 0) > 0 && (
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Loose Carpets</p>
+                      <p className="font-medium text-gray-900">
+                        {booking.looseCarpetsCount} {booking.looseCarpetsCount === 1 ? 'carpet' : 'carpets'}
+                      </p>
+                    </div>
+                  )}
+                  {booking.roomsFurnitureStatus && (
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Room Status</p>
+                      <p className="font-medium text-gray-900">
+                        {booking.roomsFurnitureStatus === 'furnished' ? 'Rooms have furniture' : 'Empty rooms'}
+                      </p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Bedrooms & Bathrooms</p>
+                  <p className="font-medium text-gray-900">
+                    {booking.bedrooms} bedroom{booking.bedrooms !== 1 ? "s" : ""}, {booking.bathrooms} bathroom{booking.bathrooms !== 1 ? "s" : ""}
+                  </p>
+                </div>
+              )}
               {booking.extras && booking.extras.length > 0 && (
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Additional Services</p>

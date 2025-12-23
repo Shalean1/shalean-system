@@ -17,6 +17,9 @@ function mapDatabaseToBooking(data: any): Booking {
     bedrooms: data.bedrooms,
     bathrooms: data.bathrooms,
     extras: data.extras || [],
+    fittedRoomsCount: data.fitted_rooms_count ?? undefined,
+    looseCarpetsCount: data.loose_carpets_count ?? undefined,
+    roomsFurnitureStatus: data.rooms_furniture_status || undefined,
     streetAddress: data.street_address,
     aptUnit: data.apt_unit,
     suburb: data.suburb,
@@ -340,6 +343,7 @@ export interface CleanerFull {
   isActive: boolean;
   isAvailable: boolean;
   availabilityDays?: string[];
+  carpetCleaningSkill?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -372,6 +376,7 @@ export async function getAllCleanersFull(): Promise<CleanerFull[]> {
     isActive: cleaner.is_active ?? true,
     isAvailable: cleaner.is_available ?? true,
     availabilityDays: cleaner.availability_days ? (Array.isArray(cleaner.availability_days) ? cleaner.availability_days : []) : [],
+    carpetCleaningSkill: cleaner.carpet_cleaning_skill ?? false,
     createdAt: cleaner.created_at,
     updatedAt: cleaner.updated_at,
   }));

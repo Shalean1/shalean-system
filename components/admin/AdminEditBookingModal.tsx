@@ -14,7 +14,7 @@ interface AdminEditBookingModalProps {
   onSuccess?: () => void;
 }
 
-const services: ServiceType[] = ["standard", "deep", "move-in-out", "airbnb", "office", "holiday"];
+const services: ServiceType[] = ["standard", "deep", "move-in-out", "airbnb", "office", "holiday", "carpet-cleaning"];
 
 export default function AdminEditBookingModal({ booking, isOpen, onClose, onSuccess }: AdminEditBookingModalProps) {
   const router = useRouter();
