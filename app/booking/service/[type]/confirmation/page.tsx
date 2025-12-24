@@ -480,8 +480,8 @@ export default function ConfirmationPage() {
         <div className="max-w-2xl mx-auto">
           {/* Success Icon and Message */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
-              <CheckCircle2 className="w-12 h-12 text-green-600" />
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-full mb-6">
+              <CheckCircle2 className="w-12 h-12 text-blue-600" />
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
               Booking Confirmed!
@@ -567,7 +567,7 @@ export default function ConfirmationPage() {
                 <p className="text-2xl font-bold text-blue-600">
                   {booking.totalAmount ? formatPrice(booking.totalAmount) : "N/A"}
                 </p>
-                <p className="text-xs text-green-600 mt-1">✓ Payment Confirmed</p>
+                <p className="text-xs text-blue-600 mt-1">✓ Payment Confirmed</p>
                 
                 {/* Discount Information */}
                 {priceBreakdown && (priceBreakdown.frequencyDiscount > 0 || priceBreakdown.discountCodeDiscount > 0) && (
@@ -579,11 +579,11 @@ export default function ConfirmationPage() {
                           <span className="text-sm text-gray-700">
                             {getFrequencyName(booking.frequency || "one-time")} Discount
                           </span>
-                          <span className="text-sm font-medium text-green-600">
+                          <span className="text-sm font-medium text-blue-600">
                             -{formatPrice(priceBreakdown.frequencyDiscount)}
                           </span>
                         </div>
-                        <p className="text-xs text-green-600">✓ Frequency Discount Applied</p>
+                        <p className="text-xs text-blue-600">✓ Frequency Discount Applied</p>
                       </div>
                     )}
                     {priceBreakdown.discountCodeDiscount > 0 && (
@@ -592,11 +592,11 @@ export default function ConfirmationPage() {
                           <span className="text-sm text-gray-700">
                             Discount Code {booking.discountCode ? `(${booking.discountCode.toUpperCase()})` : ""}
                           </span>
-                          <span className="text-sm font-medium text-green-600">
+                          <span className="text-sm font-medium text-blue-600">
                             -{formatPrice(priceBreakdown.discountCodeDiscount)}
                           </span>
                         </div>
-                        <p className="text-xs text-green-600">✓ Discount Code Applied</p>
+                        <p className="text-xs text-blue-600">✓ Discount Code Applied</p>
                       </div>
                     )}
                   </div>

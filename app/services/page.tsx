@@ -519,8 +519,8 @@ export default async function ServicesPage() {
                     title: "Eco-Friendly Products",
                     description: "We use environmentally safe cleaning products that are effective and gentle",
                     icon: Leaf,
-                    color: "text-green-600",
-                    bgColor: "bg-green-50",
+                    color: "text-blue-600",
+                    bgColor: "bg-blue-50",
                   },
                 ].map((feature, idx) => {
                   const Icon = feature.icon;

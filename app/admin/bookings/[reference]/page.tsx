@@ -340,7 +340,7 @@ export default async function AdminBookingDetailPage({
             {booking.frequencyDiscount !== undefined && booking.frequencyDiscount > 0 && (
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">Frequency Discount</span>
-                <span className="font-medium text-green-600">-R{booking.frequencyDiscount.toFixed(2)}</span>
+                <span className="font-medium text-blue-600">-R{booking.frequencyDiscount.toFixed(2)}</span>
               </div>
             )}
             {booking.discountCode && (
@@ -352,7 +352,7 @@ export default async function AdminBookingDetailPage({
             {booking.discountCodeDiscount !== undefined && booking.discountCodeDiscount > 0 && (
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">Discount Amount</span>
-                <span className="font-medium text-green-600">-R{booking.discountCodeDiscount.toFixed(2)}</span>
+                <span className="font-medium text-blue-600">-R{booking.discountCodeDiscount.toFixed(2)}</span>
               </div>
             )}
             {booking.serviceFee !== undefined && booking.serviceFee > 0 && (
@@ -364,7 +364,7 @@ export default async function AdminBookingDetailPage({
             {booking.tip && booking.tip > 0 && (
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">Tip for Cleaner</span>
-                <span className="font-medium text-green-600">R{booking.tip.toFixed(2)}</span>
+                <span className="font-medium text-blue-600">R{booking.tip.toFixed(2)}</span>
               </div>
             )}
             {booking.cleanerEarnings !== undefined && (

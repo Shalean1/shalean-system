@@ -270,16 +270,16 @@ export default function RebookPaymentPage() {
           </div>
 
           {originalBooking.discountCode && (
-            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
               <p className="text-sm text-gray-600">Discount Code Applied</p>
-              <p className="font-medium text-green-700">{originalBooking.discountCode}</p>
+              <p className="font-medium text-blue-700">{originalBooking.discountCode}</p>
             </div>
           )}
 
           {originalBooking.tip && originalBooking.tip > 0 && (
-            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
               <p className="text-sm text-gray-600">Tip for Cleaner</p>
-              <p className="font-medium text-green-700">{formatPrice(originalBooking.tip)}</p>
+              <p className="font-medium text-blue-700">{formatPrice(originalBooking.tip)}</p>
             </div>
           )}
 

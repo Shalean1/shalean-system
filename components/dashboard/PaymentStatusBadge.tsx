@@ -14,7 +14,7 @@ export default function PaymentStatusBadge({
     },
     completed: {
       label: "Paid",
-      className: "bg-green-100 text-green-800 border-green-300",
+      className: "bg-blue-100 text-blue-800 border-blue-300",
     },
     failed: {
       label: "Payment Failed",

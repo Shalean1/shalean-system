@@ -42,7 +42,7 @@ export default function TransactionHistory({ limit = 50 }: TransactionHistoryPro
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "completed":
-        return <CheckCircle className="w-4 h-4 text-green-600" />;
+        return <CheckCircle className="w-4 h-4 text-blue-600" />;
       case "pending":
         return <Clock className="w-4 h-4 text-yellow-600" />;
       case "failed":
@@ -126,7 +126,7 @@ export default function TransactionHistory({ limit = 50 }: TransactionHistoryPro
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {transaction.transactionType === "purchase" ? (
-                  <ArrowUpCircle className="w-5 h-5 text-green-600" />
+                  <ArrowUpCircle className="w-5 h-5 text-blue-600" />
                 ) : (
                   <ArrowDownCircle className="w-5 h-5 text-red-600" />
                 )}
@@ -150,7 +150,7 @@ export default function TransactionHistory({ limit = 50 }: TransactionHistoryPro
                 <p
                   className={`font-bold ${
                     transaction.transactionType === "purchase"
-                      ? "text-green-600"
+                      ? "text-blue-600"
                       : "text-red-600"
                   }`}
                 >
@@ -174,6 +174,7 @@ export default function TransactionHistory({ limit = 50 }: TransactionHistoryPro
     </div>
   );
 }
+
 
 
 

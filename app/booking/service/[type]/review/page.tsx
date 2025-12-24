@@ -804,7 +804,7 @@ export default function ReviewPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleSaveAll}
-                className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
+                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
               >
                 <Save className="w-4 h-4" />
                 Save All Changes
@@ -849,7 +849,7 @@ export default function ReviewPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={handleSaveAll}
-                      className="text-green-600 hover:text-green-700 flex items-center gap-1"
+                      className="text-blue-600 hover:text-blue-700 flex items-center gap-1"
                     >
                       <Save className="w-4 h-4" />
                       <span className="text-sm">Save</span>
@@ -1109,7 +1109,7 @@ export default function ReviewPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={handleSaveAll}
-                      className="text-green-600 hover:text-green-700 flex items-center gap-1"
+                      className="text-blue-600 hover:text-blue-700 flex items-center gap-1"
                     >
                       <Save className="w-4 h-4" />
                       <span className="text-sm">Save</span>
@@ -1220,7 +1220,7 @@ export default function ReviewPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={handleSaveAll}
-                      className="text-green-600 hover:text-green-700 flex items-center gap-1"
+                      className="text-blue-600 hover:text-blue-700 flex items-center gap-1"
                     >
                       <Save className="w-4 h-4" />
                       <span className="text-sm">Save</span>
@@ -1451,13 +1451,13 @@ export default function ReviewPage() {
                   </span>
                 </div>
                 {priceBreakdown.frequencyDiscount > 0 && (
-                  <div className="flex justify-between text-green-600">
+                  <div className="flex justify-between text-blue-600">
                     <span>Frequency Discount:</span>
                     <span>-{formatPrice(priceBreakdown.frequencyDiscount)}</span>
                   </div>
                 )}
                 {priceBreakdown.discountCodeDiscount > 0 && (
-                  <div className="flex justify-between text-green-600">
+                  <div className="flex justify-between text-blue-600">
                     <span>Discount Code:</span>
                     <span>-{formatPrice(priceBreakdown.discountCodeDiscount)}</span>
                   </div>
@@ -1469,7 +1469,7 @@ export default function ReviewPage() {
                   </span>
                 </div>
                 {priceBreakdown.tip > 0 && (
-                  <div className="flex justify-between text-green-600">
+                  <div className="flex justify-between text-blue-600">
                     <span>Tip:</span>
                     <span className="font-medium">+{formatPrice(priceBreakdown.tip)}</span>
                   </div>
@@ -1557,7 +1557,7 @@ export default function ReviewPage() {
                     )}
                   </div>
                   {tipAmount > 0 && (
-                    <p className="text-sm text-green-600 font-medium">
+                    <p className="text-sm text-blue-600 font-medium">
                       Thank you! Your tip of {formatPrice(tipAmount)} will go directly to your cleaner.
                     </p>
                   )}
@@ -1610,7 +1610,7 @@ export default function ReviewPage() {
                     </p>
                   )}
                   {paymentMethod === "credits" && creditBalance >= priceBreakdown.total && (
-                    <p className="mt-2 text-sm text-green-600">
+                    <p className="mt-2 text-sm text-blue-600">
                       ✓ You have sufficient credits to pay for this booking
                     </p>
                   )}

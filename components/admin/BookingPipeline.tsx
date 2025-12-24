@@ -11,9 +11,9 @@ export default function BookingPipeline({ data }: BookingPipelineProps) {
     const normalized = status.toLowerCase();
     if (normalized.includes("pending")) return "bg-yellow-500";
     if (normalized.includes("confirmed")) return "bg-blue-500";
-    if (normalized.includes("accepted")) return "bg-green-500";
+    if (normalized.includes("accepted")) return "bg-blue-500";
     if (normalized.includes("progress")) return "bg-purple-500";
-    if (normalized.includes("completed")) return "bg-green-600";
+    if (normalized.includes("completed")) return "bg-blue-600";
     return "bg-gray-500";
   };
 

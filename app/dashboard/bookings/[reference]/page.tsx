@@ -352,7 +352,7 @@ export default async function BookingDetailPage({
             {booking.tip && booking.tip > 0 && (
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">Tip for Cleaner</span>
-                <span className="font-medium text-green-600">R{booking.tip.toFixed(2)}</span>
+                <span className="font-medium text-blue-600">R{booking.tip.toFixed(2)}</span>
               </div>
             )}
             <div className="border-t border-gray-200 pt-3 flex justify-between items-center">

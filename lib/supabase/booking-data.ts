@@ -15,6 +15,7 @@ export interface ServiceLocation {
   name: string;
   slug: string;
   city: string;
+  suburb?: string;
   display_order: number;
   is_active: boolean;
 }
@@ -116,6 +117,17 @@ export interface TeamMember {
   cleaner_id: string;
   cleaner_name?: string;
   display_order: number;
+}
+
+export interface LocationContent {
+  id: string;
+  location_slug: string;
+  intro_paragraph?: string;
+  main_content?: string;
+  closing_paragraph?: string;
+  seo_keywords?: string[];
+  created_at: string;
+  updated_at: string;
 }
 
 // ============================================================================
@@ -776,6 +788,52 @@ export async function checkTeamAvailability(teamId: string, date: string): Promi
     console.error(`Error checking team availability for ${teamId} on ${date}:`, error);
     // On error, assume unavailable to be safe
     return false;
+  }
+}
+
+/**
+ * Fetch location-specific content by slug
+ * Returns null if no custom content exists for the location
+ */
+export async function getLocationContent(slug: string): Promise<LocationContent | null> {
+  try {
+    const supabase = await createServerClient();
+    const { data, error } = await supabase
+      .from('location_content')
+      .select('*')
+      .eq('location_slug', slug)
+      .single();
+
+    if (error) {
+      // If no content found (PGRST116), return null (not an error - expected behavior)
+      if (error.code === 'PGRST116') {
+        return null;
+      }
+      
+      // Check if table doesn't exist (common error code: 42P01)
+      if (error.code === '42P01' || error.message?.includes('does not exist')) {
+        // Table doesn't exist yet - migration not run. Return null silently.
+        return null;
+      }
+      
+      // Only log actual errors (not "not found" cases)
+      console.error(`Error fetching location content for ${slug}:`, {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+      });
+      return null;
+    }
+
+    return data;
+  } catch (error: any) {
+    // Only log unexpected errors
+    console.error(`Error fetching location content for ${slug}:`, {
+      message: error?.message || 'Unknown error',
+      stack: error?.stack,
+    });
+    return null;
   }
 }
 

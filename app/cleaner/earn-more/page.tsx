@@ -45,7 +45,7 @@ export default async function EarnMorePage() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-lg">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-emerald-600 text-white shadow-lg">
               <TrendingUp className="w-8 h-8" />
             </div>
             <div>
@@ -102,8 +102,8 @@ export default async function EarnMorePage() {
             className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-all hover:border-blue-300"
           >
             <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <MapPin className="w-5 h-5 text-green-600" />
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <MapPin className="w-5 h-5 text-blue-600" />
               </div>
               <h3 className="font-semibold text-gray-900">Add Areas</h3>
             </div>
@@ -161,15 +161,15 @@ export default async function EarnMorePage() {
                   </p>
                   <ul className="text-sm text-gray-600 space-y-1">
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Arrive on time or early</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Pay attention to details</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Be friendly and professional</span>
                     </li>
                   </ul>
@@ -180,8 +180,8 @@ export default async function EarnMorePage() {
             {/* Tip 2 */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-green-100 rounded-lg flex-shrink-0">
-                  <Calendar className="w-6 h-6 text-green-600" />
+                <div className="p-3 bg-blue-100 rounded-lg flex-shrink-0">
+                  <Calendar className="w-6 h-6 text-blue-600" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900 mb-2">
@@ -194,15 +194,15 @@ export default async function EarnMorePage() {
                   </p>
                   <ul className="text-sm text-gray-600 space-y-1">
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Set multiple work days per week</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Be flexible with time slots</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Update availability in advance</span>
                     </li>
                   </ul>
@@ -226,15 +226,15 @@ export default async function EarnMorePage() {
                   </p>
                   <ul className="text-sm text-gray-600 space-y-1">
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Add nearby suburbs</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Consider high-demand areas</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Update areas based on demand</span>
                     </li>
                   </ul>
@@ -258,15 +258,15 @@ export default async function EarnMorePage() {
                   </p>
                   <ul className="text-sm text-gray-600 space-y-1">
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Share on social media</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Send to friends and family</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Ask satisfied customers to share</span>
                     </li>
                   </ul>
@@ -290,15 +290,15 @@ export default async function EarnMorePage() {
                   </p>
                   <ul className="text-sm text-gray-600 space-y-1">
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Check notifications regularly</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Respond within a few hours</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Confirm bookings promptly</span>
                     </li>
                   </ul>
@@ -322,15 +322,15 @@ export default async function EarnMorePage() {
                   </p>
                   <ul className="text-sm text-gray-600 space-y-1">
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Remember customer preferences</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Go the extra mile</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>Maintain consistent quality</span>
                     </li>
                   </ul>

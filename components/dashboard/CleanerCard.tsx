@@ -49,7 +49,7 @@ export default function CleanerCard({ cleaner, isPreviouslyBooked = false }: Cle
               {/* Availability Badge */}
               <div className="absolute -bottom-1 -right-1">
                 {cleaner.is_available ? (
-                  <div className="bg-green-500 rounded-full p-1 border-2 border-white">
+                  <div className="bg-blue-500 rounded-full p-1 border-2 border-white">
                     <CheckCircle className="w-4 h-4 text-white" />
                   </div>
                 ) : (
@@ -107,13 +107,13 @@ export default function CleanerCard({ cleaner, isPreviouslyBooked = false }: Cle
             <div
               className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
                 cleaner.is_available
-                  ? "bg-green-50 text-green-700"
+                  ? "bg-blue-50 text-blue-700"
                   : "bg-gray-50 text-gray-600"
               }`}
             >
               {cleaner.is_available ? (
                 <>
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                   Available
                 </>
               ) : (

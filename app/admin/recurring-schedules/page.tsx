@@ -549,7 +549,7 @@ export default function RecurringSchedulesPage() {
           </div>
           <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4">
             <div className="text-xs md:text-sm text-gray-600 mb-1">Active</div>
-            <div className="text-xl md:text-2xl font-bold text-green-600">
+            <div className="text-xl md:text-2xl font-bold text-blue-600">
               {recurringSchedules.filter(s => s.isActive).length}
             </div>
           </div>
@@ -705,7 +705,7 @@ export default function RecurringSchedulesPage() {
                           {schedule.addressSuburb}, {schedule.addressCity}
                         </span>
                         {schedule.isActive ? (
-                          <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700">
+                          <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700">
                             <CheckCircle2 className="w-3 h-3 mr-1" />
                             Active
                           </span>
@@ -724,7 +724,7 @@ export default function RecurringSchedulesPage() {
                             e.stopPropagation();
                             openEditModal(schedule);
                           }}
-                          className="px-3 py-1.5 text-xs font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors flex items-center gap-1"
+                          className="px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors flex items-center gap-1"
                           title="Edit recurring schedule"
                         >
                           <Edit className="w-3 h-3" />
@@ -921,12 +921,12 @@ export default function RecurringSchedulesPage() {
             {/* Modal Content */}
             <div className="p-6">
               {submitSuccess ? (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
-                  <CheckCircle2 className="w-12 h-12 text-green-600 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-green-900 mb-2">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+                  <CheckCircle2 className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-blue-900 mb-2">
                     Successfully Rescheduled!
                   </h3>
-                  <p className="text-green-700">
+                  <p className="text-blue-700">
                     The recurring schedule has been successfully updated.
                   </p>
                 </div>
@@ -1062,10 +1062,10 @@ export default function RecurringSchedulesPage() {
 
             <div className="p-6">
               {submitSuccess ? (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
-                  <CheckCircle2 className="w-12 h-12 text-green-600 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-green-900 mb-2">Successfully Created!</h3>
-                  <p className="text-green-700">The recurring schedule has been created.</p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+                  <CheckCircle2 className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-blue-900 mb-2">Successfully Created!</h3>
+                  <p className="text-blue-700">The recurring schedule has been created.</p>
                 </div>
               ) : (
                 <form onSubmit={handleCreateSubmit} className="space-y-6">
@@ -1300,10 +1300,10 @@ export default function RecurringSchedulesPage() {
 
             <div className="p-6">
               {submitSuccess ? (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
-                  <CheckCircle2 className="w-12 h-12 text-green-600 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-green-900 mb-2">Successfully Updated!</h3>
-                  <p className="text-green-700">The recurring schedule has been updated.</p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+                  <CheckCircle2 className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-blue-900 mb-2">Successfully Updated!</h3>
+                  <p className="text-blue-700">The recurring schedule has been updated.</p>
                 </div>
               ) : (
                 <form onSubmit={handleEditSubmit} className="space-y-6">
@@ -1613,10 +1613,10 @@ export default function RecurringSchedulesPage() {
 
             <div className="p-6">
               {submitSuccess ? (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
-                  <CheckCircle2 className="w-12 h-12 text-green-600 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-green-900 mb-2">Cleaner Assigned!</h3>
-                  <p className="text-green-700">The cleaner has been successfully assigned to this schedule.</p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+                  <CheckCircle2 className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-blue-900 mb-2">Cleaner Assigned!</h3>
+                  <p className="text-blue-700">The cleaner has been successfully assigned to this schedule.</p>
                 </div>
               ) : (
                 <>

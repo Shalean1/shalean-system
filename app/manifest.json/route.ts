@@ -9,7 +9,7 @@ export async function GET() {
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
-    theme_color: "#10b981",
+    theme_color: "#3b82f6",
     icons: [],
     categories: ["business", "lifestyle"],
     lang: "en-ZA",
@@ -19,6 +19,7 @@ export async function GET() {
 
   return Response.json(manifest);
 }
+
 
 
 

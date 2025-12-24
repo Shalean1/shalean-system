@@ -138,7 +138,7 @@ export default function RateCleanerModal({ cleaner, isOpen, onClose }: RateClean
             <div
               className={`mb-4 p-3 rounded-lg ${
                 submitStatus.type === "success"
-                  ? "bg-green-50 text-green-800"
+                  ? "bg-blue-50 text-blue-800"
                   : "bg-red-50 text-red-800"
               }`}
             >
@@ -169,6 +169,7 @@ export default function RateCleanerModal({ cleaner, isOpen, onClose }: RateClean
     </div>
   );
 }
+
 
 
 

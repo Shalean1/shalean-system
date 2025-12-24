@@ -52,13 +52,13 @@ export default function SEOAnalyzer({
   }
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
+    if (score >= 80) return "text-blue-600";
     if (score >= 60) return "text-yellow-600";
     return "text-red-600";
   };
 
   const getScoreBgColor = (score: number) => {
-    if (score >= 80) return "bg-green-100";
+    if (score >= 80) return "bg-blue-100";
     if (score >= 60) return "bg-yellow-100";
     return "bg-red-100";
   };
@@ -77,7 +77,7 @@ export default function SEOAnalyzer({
           <div
             className={`h-2 rounded-full ${
               analysis.score >= 80
-                ? "bg-green-600"
+                ? "bg-blue-600"
                 : analysis.score >= 60
                 ? "bg-yellow-600"
                 : "bg-red-600"
@@ -102,7 +102,7 @@ export default function SEOAnalyzer({
           <div className="text-xs text-gray-600 mb-2">
             Length: {analysis.title.length} chars
             {analysis.title.hasKeyword && focusKeyword && (
-              <span className="ml-2 text-green-600">✓ Keyword included</span>
+              <span className="ml-2 text-blue-600">✓ Keyword included</span>
             )}
           </div>
           {analysis.title.recommendations.length > 0 && (
@@ -128,7 +128,7 @@ export default function SEOAnalyzer({
           <div className="text-xs text-gray-600 mb-2">
             Length: {analysis.description.length} chars
             {analysis.description.hasKeyword && focusKeyword && (
-              <span className="ml-2 text-green-600">✓ Keyword included</span>
+              <span className="ml-2 text-blue-600">✓ Keyword included</span>
             )}
           </div>
           {analysis.description.recommendations.length > 0 && (
@@ -158,7 +158,7 @@ export default function SEOAnalyzer({
                 Keyword density: {analysis.content.keywordDensity.toFixed(2)}%
                 {analysis.content.keywordDensity >= 1 &&
                   analysis.content.keywordDensity <= 2 && (
-                    <span className="ml-2 text-green-600">✓ Optimal</span>
+                    <span className="ml-2 text-blue-600">✓ Optimal</span>
                   )}
               </div>
             )}
@@ -166,7 +166,7 @@ export default function SEOAnalyzer({
               Headings: H1({analysis.content.headingCount.h1}) H2({analysis.content.headingCount.h2}) H3({analysis.content.headingCount.h3})
             </div>
             {analysis.content.hasKeywordInFirst100 && focusKeyword && (
-              <div className="text-green-600">✓ Keyword in first 100 words</div>
+              <div className="text-blue-600">✓ Keyword in first 100 words</div>
             )}
           </div>
           {analysis.content.recommendations.length > 0 && (
@@ -192,7 +192,7 @@ export default function SEOAnalyzer({
           <div className="text-xs text-gray-600 mb-2">
             Count: {analysis.images.count}
             {analysis.images.hasAltText && (
-              <span className="ml-2 text-green-600">✓ All have alt text</span>
+              <span className="ml-2 text-blue-600">✓ All have alt text</span>
             )}
           </div>
           {analysis.images.recommendations.length > 0 && (
@@ -239,7 +239,7 @@ export default function SEOAnalyzer({
             </span>
           </div>
           {analysis.schema.hasSchema ? (
-            <div className="text-xs text-green-600">✓ Schema markup enabled</div>
+            <div className="text-xs text-blue-600">✓ Schema markup enabled</div>
           ) : (
             <div className="text-xs text-yellow-600">
               Schema markup will be added automatically when published

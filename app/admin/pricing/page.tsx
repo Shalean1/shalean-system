@@ -314,7 +314,7 @@ export default function AdminPricingPage() {
                           <button
                             onClick={handleSave}
                             disabled={saving}
-                            className="p-1 text-green-600 hover:text-green-700 disabled:opacity-50"
+                            className="p-1 text-blue-600 hover:text-blue-700 disabled:opacity-50"
                             title="Save"
                           >
                             <Save className="w-4 h-4" />
@@ -350,7 +350,7 @@ export default function AdminPricingPage() {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       {service.is_active ? (
-                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700">
+                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700">
                           <CheckCircle2 className="w-3 h-3 mr-1" />
                           Active
                         </span>
@@ -426,7 +426,7 @@ export default function AdminPricingPage() {
                             <button
                               onClick={handleSave}
                               disabled={saving}
-                              className="p-1 text-green-600 hover:text-green-700 disabled:opacity-50"
+                              className="p-1 text-blue-600 hover:text-blue-700 disabled:opacity-50"
                               title="Save"
                             >
                               <Save className="w-4 h-4" />
@@ -459,7 +459,7 @@ export default function AdminPricingPage() {
                         <span className="text-sm text-gray-500 capitalize">{pricing.room_type}</span>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700">
+                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700">
                           <CheckCircle2 className="w-3 h-3 mr-1" />
                           Active
                         </span>
@@ -524,7 +524,7 @@ export default function AdminPricingPage() {
                           <button
                             onClick={handleSave}
                             disabled={saving}
-                            className="p-1 text-green-600 hover:text-green-700 disabled:opacity-50"
+                            className="p-1 text-blue-600 hover:text-blue-700 disabled:opacity-50"
                             title="Save"
                           >
                             <Save className="w-4 h-4" />
@@ -560,7 +560,7 @@ export default function AdminPricingPage() {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       {service.is_active ? (
-                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700">
+                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700">
                           <CheckCircle2 className="w-3 h-3 mr-1" />
                           Active
                         </span>
@@ -635,7 +635,7 @@ export default function AdminPricingPage() {
                           <button
                             onClick={handleSave}
                             disabled={saving}
-                            className="p-1 text-green-600 hover:text-green-700 disabled:opacity-50"
+                            className="p-1 text-blue-600 hover:text-blue-700 disabled:opacity-50"
                             title="Save"
                           >
                             <Save className="w-4 h-4" />
@@ -652,8 +652,8 @@ export default function AdminPricingPage() {
                       ) : (
                         <div className="flex items-center gap-2">
                           <div className="flex items-center gap-1">
-                            <TrendingDown className="w-4 h-4 text-green-600" />
-                            <span className="text-sm font-semibold text-green-600">
+                            <TrendingDown className="w-4 h-4 text-blue-600" />
+                            <span className="text-sm font-semibold text-blue-600">
                               {Number(option.discount_percentage).toFixed(1)}%
                             </span>
                           </div>
@@ -679,7 +679,7 @@ export default function AdminPricingPage() {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       {option.is_active ? (
-                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700">
+                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700">
                           <CheckCircle2 className="w-3 h-3 mr-1" />
                           Active
                         </span>
@@ -748,7 +748,7 @@ export default function AdminPricingPage() {
                         <button
                           onClick={handleSave}
                           disabled={saving}
-                          className="p-1 text-green-600 hover:text-green-700 disabled:opacity-50"
+                          className="p-1 text-blue-600 hover:text-blue-700 disabled:opacity-50"
                           title="Save"
                         >
                           <Save className="w-4 h-4" />

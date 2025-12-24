@@ -185,7 +185,7 @@ export default function EFTPaymentForm({
                 title="Copy account number"
               >
                 {copied ? (
-                  <Check className="w-4 h-4 text-green-600" />
+                  <Check className="w-4 h-4 text-blue-600" />
                 ) : (
                   <Copy className="w-4 h-4 text-gray-500" />
                 )}
@@ -314,6 +314,7 @@ export default function EFTPaymentForm({
     </form>
   );
 }
+
 
 
 

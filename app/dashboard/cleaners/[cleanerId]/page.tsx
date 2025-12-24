@@ -77,7 +77,7 @@ export default async function CleanerProfilePage({ params }: CleanerProfilePageP
               {/* Availability Badge */}
               <div className="absolute -bottom-2 -right-2">
                 {cleaner.is_available ? (
-                  <div className="bg-green-500 rounded-full p-2 border-4 border-white shadow-lg">
+                  <div className="bg-blue-500 rounded-full p-2 border-4 border-white shadow-lg">
                     <CheckCircle className="w-6 h-6 text-white" />
                   </div>
                 ) : (
@@ -122,13 +122,13 @@ export default async function CleanerProfilePage({ params }: CleanerProfilePageP
                 <div
                   className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
                     cleaner.is_available
-                      ? "bg-green-50 text-green-700"
+                      ? "bg-blue-50 text-blue-700"
                       : "bg-gray-50 text-gray-600"
                   }`}
                 >
                   {cleaner.is_available ? (
                     <>
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                       Available
                     </>
                   ) : (
@@ -177,8 +177,8 @@ export default async function CleanerProfilePage({ params }: CleanerProfilePageP
 
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Calendar className="w-5 h-5 text-green-600" />
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Calendar className="w-5 h-5 text-blue-600" />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Total Jobs</p>
@@ -192,16 +192,16 @@ export default async function CleanerProfilePage({ params }: CleanerProfilePageP
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <div className="flex items-center gap-3 mb-2">
               <div className={`p-2 rounded-lg ${
-                cleaner.is_available ? "bg-green-100" : "bg-gray-100"
+                cleaner.is_available ? "bg-blue-100" : "bg-gray-100"
               }`}>
                 <CheckCircle className={`w-5 h-5 ${
-                  cleaner.is_available ? "text-green-600" : "text-gray-600"
+                  cleaner.is_available ? "text-blue-600" : "text-gray-600"
                 }`} />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Status</p>
                 <p className={`text-lg font-semibold ${
-                  cleaner.is_available ? "text-green-600" : "text-gray-600"
+                  cleaner.is_available ? "text-blue-600" : "text-gray-600"
                 }`}>
                   {cleaner.is_available ? "Available" : "Unavailable"}
                 </p>
@@ -227,6 +227,7 @@ export default async function CleanerProfilePage({ params }: CleanerProfilePageP
     </div>
   );
 }
+
 
 
 

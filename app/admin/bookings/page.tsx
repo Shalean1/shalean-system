@@ -181,7 +181,7 @@ export default function AdminBookingsPage() {
     }
     if (response === "accepted") {
       return (
-        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700">
+        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700">
           <CheckCircle2 className="w-3 h-3 mr-1" />
           Accepted
         </span>
@@ -252,7 +252,7 @@ export default function AdminBookingsPage() {
           </div>
           <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4">
             <div className="text-xs md:text-sm text-gray-600 mb-1">Completed</div>
-            <div className="text-xl md:text-2xl font-bold text-green-600">{stats.byStatus.completed || 0}</div>
+            <div className="text-xl md:text-2xl font-bold text-blue-600">{stats.byStatus.completed || 0}</div>
           </div>
           <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4">
             <div className="text-xs md:text-sm text-gray-600 mb-1">Paid</div>

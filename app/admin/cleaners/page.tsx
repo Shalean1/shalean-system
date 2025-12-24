@@ -396,7 +396,7 @@ export default function CleanersPage() {
           </div>
           <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4">
             <div className="text-xs md:text-sm text-gray-600 mb-1">Active</div>
-            <div className="text-xl md:text-2xl font-bold text-green-600">
+            <div className="text-xl md:text-2xl font-bold text-blue-600">
               {cleaners.filter(c => c.isActive).length}
             </div>
           </div>
@@ -511,7 +511,7 @@ export default function CleanersPage() {
                       </div>
                       <div className="flex flex-col gap-1 flex-shrink-0">
                         {cleaner.isActive ? (
-                          <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700">
+                          <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700">
                             <CheckCircle2 className="w-3 h-3 mr-1" />
                             Active
                           </span>
@@ -674,7 +674,7 @@ export default function CleanersPage() {
               )}
 
               {successMessage && (
-                <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg flex items-start gap-2">
+                <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg flex items-start gap-2">
                   <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" />
                   <p className="text-sm">{successMessage}</p>
                 </div>
@@ -932,7 +932,7 @@ export default function CleanersPage() {
               )}
 
               {successMessage && (
-                <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
+                <div className="mb-4 bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg text-sm">
                   {successMessage}
                 </div>
               )}

@@ -64,7 +64,7 @@ export default function StatusUpdateDropdown({ booking, onSuccess }: StatusUpdat
           currentStatus?.color === "yellow" ? "bg-yellow-50 text-yellow-800 border-yellow-300" :
           currentStatus?.color === "blue" ? "bg-blue-50 text-blue-800 border-blue-300" :
           currentStatus?.color === "purple" ? "bg-purple-50 text-purple-800 border-purple-300" :
-          currentStatus?.color === "green" ? "bg-green-50 text-green-800 border-green-300" :
+          currentStatus?.color === "blue" ? "bg-blue-50 text-blue-800 border-blue-300" :
           currentStatus?.color === "red" ? "bg-red-50 text-red-800 border-red-300" :
           "bg-gray-50 text-gray-800"
         }`}
@@ -105,7 +105,7 @@ export default function StatusUpdateDropdown({ booking, onSuccess }: StatusUpdat
                   option.value === "pending" ? "text-yellow-800" :
                   option.value === "confirmed" ? "text-blue-800" :
                   option.value === "in-progress" ? "text-purple-800" :
-                  option.value === "completed" ? "text-green-800" :
+                  option.value === "completed" ? "text-blue-800" :
                   "text-red-800"
                 }`}
               >

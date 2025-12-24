@@ -266,7 +266,7 @@ export default function PriceSummary({
         </div>
 
         {priceBreakdown.frequencyDiscount > 0 && (
-          <div className="flex justify-between text-sm text-green-600">
+          <div className="flex justify-between text-sm text-blue-600">
             <span>
               {getFrequencyName(frequency)} Discount ({Math.round((priceBreakdown.frequencyDiscount / priceBreakdown.subtotal) * 100)}%)
             </span>
@@ -277,7 +277,7 @@ export default function PriceSummary({
         )}
 
         {priceBreakdown.discountCodeDiscount > 0 && (
-          <div className="flex justify-between text-sm text-green-600">
+          <div className="flex justify-between text-sm text-blue-600">
             <span>Discount Code</span>
             <span className="font-medium" suppressHydrationWarning>
               -{isMounted ? formatPrice(priceBreakdown.discountCodeDiscount) : `R ${priceBreakdown.discountCodeDiscount.toFixed(2)}`}
@@ -293,7 +293,7 @@ export default function PriceSummary({
         </div>
 
         {priceBreakdown.tip > 0 && (
-          <div className="flex justify-between text-sm text-green-600">
+          <div className="flex justify-between text-sm text-blue-600">
             <span>Tip</span>
             <span className="font-medium" suppressHydrationWarning>
               {isMounted ? formatPrice(priceBreakdown.tip) : `R ${priceBreakdown.tip.toFixed(2)}`}

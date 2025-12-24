@@ -87,14 +87,14 @@ export default function DiscountCodeInput({
               error
                 ? "border-red-300 focus:ring-red-500"
                 : success
-                ? "border-green-300 focus:ring-green-500"
+                ? "border-blue-300 focus:ring-blue-500"
                 : "border-gray-300"
             } ${appliedCode ? "bg-gray-50" : ""} disabled:opacity-50 disabled:cursor-not-allowed`}
           />
           {success && appliedCode && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
-              <Check className="w-5 h-5 text-green-600" />
-              <span className="text-sm text-green-600 font-medium">{appliedCode}</span>
+              <Check className="w-5 h-5 text-blue-600" />
+              <span className="text-sm text-blue-600 font-medium">{appliedCode}</span>
             </div>
           )}
         </div>
@@ -132,7 +132,7 @@ export default function DiscountCodeInput({
         </p>
       )}
       {success && appliedCode && currentDiscountAmount > 0 && (
-        <p className="text-sm text-green-600 flex items-center gap-1">
+        <p className="text-sm text-blue-600 flex items-center gap-1">
           <Check className="w-4 h-4" />
           Discount applied! You saved R {currentDiscountAmount.toFixed(2)}
         </p>
@@ -140,6 +140,7 @@ export default function DiscountCodeInput({
     </div>
   );
 }
+
 
 
 

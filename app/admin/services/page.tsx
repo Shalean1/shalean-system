@@ -135,7 +135,7 @@ export default function ServicesPage() {
           </div>
           <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4">
             <div className="text-xs md:text-sm text-gray-600 mb-1">Active</div>
-            <div className="text-xl md:text-2xl font-bold text-green-600">
+            <div className="text-xl md:text-2xl font-bold text-blue-600">
               {services.filter(s => s.is_active).length}
             </div>
           </div>
@@ -236,7 +236,7 @@ export default function ServicesPage() {
                   </div>
                   <div className="flex-shrink-0">
                     {service.is_active ? (
-                      <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700">
+                      <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700">
                         <CheckCircle2 className="w-3 h-3 mr-1" />
                         Active
                       </span>

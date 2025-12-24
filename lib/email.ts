@@ -355,7 +355,7 @@ async function formatBookingConfirmationEmail(booking: Booking): Promise<string>
           <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
             <p><strong>Total Amount Paid:</strong> ${formatPrice(booking.totalAmount)}</p>
             ${booking.paymentReference ? `<p><strong>Payment Reference:</strong> ${booking.paymentReference}</p>` : ''}
-            <p style="color: #28a745; font-weight: bold;">✓ Payment Confirmed</p>
+            <p style="color: #3b82f6; font-weight: bold;">✓ Payment Confirmed</p>
             ${priceBreakdown && (priceBreakdown.frequencyDiscount > 0 || priceBreakdown.discountCodeDiscount > 0) ? `
             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
               <p style="margin-bottom: 10px;"><strong>Discounts Applied:</strong></p>
@@ -363,18 +363,18 @@ async function formatBookingConfirmationEmail(booking: Booking): Promise<string>
               <div style="margin-bottom: 8px;">
                 <p style="margin: 0;">
                   <span>${frequencyName} Discount:</span>
-                  <span style="color: #28a745; font-weight: bold; margin-left: 10px;">-${formatPrice(priceBreakdown.frequencyDiscount)}</span>
+                  <span style="color: #3b82f6; font-weight: bold; margin-left: 10px;">-${formatPrice(priceBreakdown.frequencyDiscount)}</span>
                 </p>
-                <p style="color: #28a745; font-size: 12px; margin: 5px 0 0 0;">✓ Frequency Discount Applied</p>
+                <p style="color: #3b82f6; font-size: 12px; margin: 5px 0 0 0;">✓ Frequency Discount Applied</p>
               </div>
               ` : ''}
               ${priceBreakdown.discountCodeDiscount > 0 ? `
               <div>
                 <p style="margin: 0;">
                   <span>Discount Code ${booking.discountCode ? `(${booking.discountCode.toUpperCase()})` : ''}:</span>
-                  <span style="color: #28a745; font-weight: bold; margin-left: 10px;">-${formatPrice(priceBreakdown.discountCodeDiscount)}</span>
+                  <span style="color: #3b82f6; font-weight: bold; margin-left: 10px;">-${formatPrice(priceBreakdown.discountCodeDiscount)}</span>
                 </p>
-                <p style="color: #28a745; font-size: 12px; margin: 5px 0 0 0;">✓ Discount Code Applied</p>
+                <p style="color: #3b82f6; font-size: 12px; margin: 5px 0 0 0;">✓ Discount Code Applied</p>
               </div>
               ` : ''}
             </div>

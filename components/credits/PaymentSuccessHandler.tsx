@@ -89,20 +89,20 @@ export default function PaymentSuccessHandler() {
       )}
 
       {status === "success" && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 relative">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 relative">
           <button
             onClick={handleClose}
-            className="absolute top-3 right-3 text-green-600 hover:text-green-800"
+            className="absolute top-3 right-3 text-blue-600 hover:text-blue-800"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
           <div className="flex items-start gap-3 pr-8">
-            <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
             <div>
-              <p className="text-green-800 font-medium">{message}</p>
+              <p className="text-blue-800 font-medium">{message}</p>
               {amount && (
-                <p className="text-sm text-green-700 mt-1">
+                <p className="text-sm text-blue-700 mt-1">
                   Your new balance will be updated shortly.
                 </p>
               )}
@@ -134,6 +134,7 @@ export default function PaymentSuccessHandler() {
     </div>
   );
 }
+
 
 
 

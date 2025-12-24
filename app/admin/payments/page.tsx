@@ -166,7 +166,7 @@ export default function AdminPaymentsPage() {
           </div>
           <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4">
             <div className="text-xs md:text-sm text-gray-600 mb-1">Completed</div>
-            <div className="text-xl md:text-2xl font-bold text-green-600">{stats.completedCount || 0}</div>
+            <div className="text-xl md:text-2xl font-bold text-blue-600">{stats.completedCount || 0}</div>
           </div>
           <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4">
             <div className="text-xs md:text-sm text-gray-600 mb-1">Pending</div>

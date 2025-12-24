@@ -70,9 +70,9 @@ export default function ShareButtons({ referralUrl, referralCode }: ShareButtons
         )}
         <button
           onClick={shareViaWhatsApp}
-          className="flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 hover:border-green-300 hover:bg-green-50 transition-colors"
+          className="flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
         >
-          <MessageCircle className="w-6 h-6 text-green-600" />
+          <MessageCircle className="w-6 h-6 text-blue-600" />
           <span className="text-sm font-medium text-gray-700">WhatsApp</span>
         </button>
         <button

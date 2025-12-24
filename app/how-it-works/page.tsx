@@ -338,7 +338,7 @@ export default function HowItWorksPage() {
 
       <main className="min-h-screen bg-white">
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-br from-blue-50 to-green-50 pt-12 pb-24 overflow-hidden">
+        <section className="relative bg-gradient-to-br from-blue-50 to-blue-50 pt-12 pb-24 overflow-hidden">
           <div className="absolute inset-0 opacity-10">
             <Image
               src="/hero-background.jpg"
@@ -456,7 +456,7 @@ export default function HowItWorksPage() {
                           {/* Step Number & Icon */}
                           <div className="flex-shrink-0">
                             <div className="relative">
-                              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-green-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
                                 {step.number}
                               </div>
                               <div className="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-white border-4 border-blue-50 flex items-center justify-center">
@@ -476,7 +476,7 @@ export default function HowItWorksPage() {
                         <ul className="space-y-3 mb-6">
                           {step.details.map((detail, detailIndex) => (
                             <li key={detailIndex} className="flex items-start gap-3">
-                              <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                              <CheckCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                               <span className="text-gray-600">{detail}</span>
                             </li>
                           ))}
@@ -524,15 +524,15 @@ export default function HowItWorksPage() {
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">Before Your Clean</h3>
                   <ul className="space-y-3">
                     <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                       <span className="text-gray-600">You'll receive a confirmation with cleaner details</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                       <span className="text-gray-600">Direct communication channel opens with your cleaner</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                       <span className="text-gray-600">You can share specific instructions or preferences</span>
                     </li>
                   </ul>
@@ -551,15 +551,15 @@ export default function HowItWorksPage() {
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">During Your Clean</h3>
                   <ul className="space-y-3">
                     <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                       <span className="text-gray-600">Cleaner arrives on time and ready to work</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                       <span className="text-gray-600">Professional cleaning according to service type</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                       <span className="text-gray-600">You can monitor progress through our platform</span>
                     </li>
                   </ul>
@@ -578,15 +578,15 @@ export default function HowItWorksPage() {
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">After Your Clean</h3>
                   <ul className="space-y-3">
                     <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                       <span className="text-gray-600">Quality check and satisfaction confirmation</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                       <span className="text-gray-600">Easy rebooking for future services</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                       <span className="text-gray-600">Review and rate your experience</span>
                     </li>
                   </ul>
@@ -605,15 +605,15 @@ export default function HowItWorksPage() {
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">Quality Assurance</h3>
                   <ul className="space-y-3">
                     <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                       <span className="text-gray-600">100% satisfaction guarantee</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                       <span className="text-gray-600">Post-cleaning follow-up and support</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                       <span className="text-gray-600">Continuous improvement based on feedback</span>
                     </li>
                   </ul>
@@ -640,7 +640,7 @@ export default function HowItWorksPage() {
                 {benefits.map((benefit, index) => {
                   const Icon = benefit.icon;
                   return (
-                    <div key={index} className="bg-gradient-to-br from-blue-50 to-green-50 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div key={index} className="bg-gradient-to-br from-blue-50 to-blue-50 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
                       <div className="w-16 h-16 rounded-full bg-[#007bff] flex items-center justify-center mb-6">
                         <Icon className="w-8 h-8 text-white" />
                       </div>
@@ -702,7 +702,7 @@ export default function HowItWorksPage() {
         </section>
 
         {/* Final CTA Section */}
-        <section className="relative py-20 bg-gradient-to-br from-blue-600 to-green-600 text-white overflow-hidden">
+        <section className="relative py-20 bg-gradient-to-br from-blue-600 to-blue-600 text-white overflow-hidden">
           <div className="absolute inset-0 opacity-20">
             <Image
               src="/hero-background.jpg"

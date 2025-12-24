@@ -133,7 +133,7 @@ export default function VoucherList({ vouchers }: VoucherListProps) {
         <div
           className={`p-4 rounded-lg ${
             message.type === "success"
-              ? "bg-green-50 border border-green-200 text-green-800"
+              ? "bg-blue-50 border border-blue-200 text-blue-800"
               : "bg-red-50 border border-red-200 text-red-800"
           }`}
         >
@@ -163,7 +163,7 @@ export default function VoucherList({ vouchers }: VoucherListProps) {
                   : expired
                   ? "border-red-200"
                   : redeemable
-                  ? "border-green-200 hover:border-green-300 hover:shadow-md"
+                  ? "border-blue-200 hover:border-blue-300 hover:shadow-md"
                   : "border-gray-200"
               }`}
             >
@@ -175,7 +175,7 @@ export default function VoucherList({ vouchers }: VoucherListProps) {
                         ? "bg-gray-100"
                         : expired
                         ? "bg-red-100"
-                        : "bg-green-100"
+                        : "bg-blue-100"
                     }`}
                   >
                     <Icon
@@ -184,7 +184,7 @@ export default function VoucherList({ vouchers }: VoucherListProps) {
                           ? "text-gray-500"
                           : expired
                           ? "text-red-600"
-                          : "text-green-600"
+                          : "text-blue-600"
                       }`}
                     />
                   </div>
@@ -198,7 +198,7 @@ export default function VoucherList({ vouchers }: VoucherListProps) {
                   </div>
                 </div>
                 {voucher.is_redeemed && (
-                  <div className="flex items-center gap-1 text-green-600">
+                  <div className="flex items-center gap-1 text-blue-600">
                     <CheckCircle className="h-5 w-5" />
                     <span className="text-sm font-medium">Redeemed</span>
                   </div>
@@ -258,7 +258,7 @@ export default function VoucherList({ vouchers }: VoucherListProps) {
                   className={`w-full mt-4 px-4 py-2 rounded-lg font-medium transition-colors ${
                     isPending && redeemingCode === voucher.code
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      : "bg-green-600 text-white hover:bg-green-700"
+                      : "bg-blue-600 text-white hover:bg-green-700"
                   }`}
                 >
                   {isPending && redeemingCode === voucher.code

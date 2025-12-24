@@ -180,17 +180,17 @@ export default function ReschedulePage() {
     return (
       <div className="py-12">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="bg-green-50 border border-green-200 rounded-xl p-6">
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
             <div className="flex items-center gap-3 mb-4">
-              <CheckCircle className="w-6 h-6 text-green-600" />
-              <h2 className="text-xl font-semibold text-green-900">Booking Rescheduled!</h2>
+              <CheckCircle className="w-6 h-6 text-blue-600" />
+              <h2 className="text-xl font-semibold text-blue-900">Booking Rescheduled!</h2>
             </div>
-            <p className="text-green-700 mb-4">
+            <p className="text-blue-700 mb-4">
               Your booking has been successfully rescheduled. Redirecting to booking details...
             </p>
             <Link
               href={`/dashboard/bookings/${bookingReference}`}
-              className="text-green-700 hover:text-green-900 underline"
+              className="text-blue-700 hover:text-blue-900 underline"
             >
               Go to booking details now
             </Link>
@@ -309,7 +309,7 @@ export default function ReschedulePage() {
             <button
               type="submit"
               disabled={isSubmitting || !selectedDate || !selectedTime}
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {isSubmitting ? (
                 <>

@@ -32,9 +32,9 @@ export default function StatusBadge({ status, size = "md" }: StatusBadgeProps) {
       case "completed":
         return {
           label: "Completed",
-          bgColor: "bg-green-100",
-          textColor: "text-green-800",
-          borderColor: "border-green-200",
+          bgColor: "bg-blue-100",
+          textColor: "text-blue-800",
+          borderColor: "border-blue-200",
         };
       case "cancelled":
         return {

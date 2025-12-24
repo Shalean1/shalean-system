@@ -288,7 +288,7 @@ Primary Blue:    #3b82f6 (Buttons, active elements)
 Light Blue:      #e3f2fd (Service tags background)
 Dark Blue:       #1976d2 (Service tags text)
 
-Green:           #10b981 (Active badge)
+Blue:            #3b82f6 (Active badge)
 Red:             #ef4444 (Inactive badge, delete)
 Gray:            #6b7280 (Text, borders)
 White:           #ffffff (Backgrounds)
@@ -371,6 +371,7 @@ Homepage shows original 4 services
 - Confirm delete: Click OK in popup
 
 This visual guide should help you understand exactly how the system works! 🎉
+
 
 
 
