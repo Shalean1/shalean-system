@@ -1,3 +1,5 @@
+import { capeTownAreas, getLocationSlug } from "@/lib/constants/areas";
+
 export function generateStructuredData() {
   const baseUrl = "https://shalean.co.za";
 
@@ -487,7 +489,231 @@ export function generateHowItWorksStructuredData() {
   };
 }
 
+/**
+ * Generate structured data for the Service Areas page
+ */
+export function generateServiceAreasStructuredData() {
+  const baseUrl = "https://shalean.co.za";
 
+  const serviceAreasBreadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": `${baseUrl}/service-areas#breadcrumb`,
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: baseUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Service Areas",
+        item: `${baseUrl}/service-areas`,
+      },
+    ],
+  };
 
+  const serviceAreasWebPage = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${baseUrl}/service-areas#webpage`,
+    url: `${baseUrl}/service-areas`,
+    name: "Professional Cleaning Services Cape Town - All Service Areas",
+    description: "Professional cleaning services throughout Cape Town. We serve Sea Point, Camps Bay, Claremont, Green Point, Constantia, and 30+ more areas.",
+    inLanguage: "en-ZA",
+    isPartOf: {
+      "@id": `${baseUrl}#website`,
+    },
+    about: {
+      "@id": `${baseUrl}#organization`,
+    },
+    breadcrumb: {
+      "@id": `${baseUrl}/service-areas#breadcrumb`,
+    },
+  };
 
+  const serviceAreasItemList = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": `${baseUrl}/service-areas#itemlist`,
+    name: "Cape Town Service Areas",
+    description: "List of all areas where Shalean Cleaning Services provides professional cleaning services",
+    numberOfItems: capeTownAreas.length,
+    itemListElement: capeTownAreas.map((area, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: area,
+      item: `${baseUrl}/areas/${getLocationSlug(area)}`,
+    })),
+  };
+
+  const serviceAreasFAQ = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": `${baseUrl}/service-areas#faq`,
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "What areas do you serve in Cape Town?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `We serve over 35 areas throughout Cape Town including Sea Point, Camps Bay, Claremont, Green Point, Constantia, Newlands, and many more. If you don't see your area listed, please contact us as we may still be able to help!`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Can I book same-day cleaning in my area?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes! We offer same-day booking for cleaning services throughout Cape Town. Availability depends on cleaner schedules, but we work hard to accommodate urgent requests.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Do you provide cleaning supplies?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "For deep cleaning, move-in/out, and carpet cleaning services, all supplies and equipment are included at no extra charge. For standard cleaning services, supplies are available at an additional cost that you can request during booking.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Are your cleaners insured and bonded?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes, all our professional cleaners are fully insured and bonded. We also offer a 100% satisfaction guarantee on all our cleaning services.",
+        },
+      },
+    ],
+  };
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      serviceAreasBreadcrumb,
+      serviceAreasWebPage,
+      serviceAreasItemList,
+      serviceAreasFAQ,
+    ],
+  };
+}
+
+/**
+ * Generate structured data for individual location pages
+ */
+export function generateLocationStructuredData(locationName: string, slug: string) {
+  const baseUrl = "https://shalean.co.za";
+  const locationUrl = `${baseUrl}/areas/${slug}`;
+
+  const locationBreadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": `${locationUrl}#breadcrumb`,
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: baseUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Service Areas",
+        item: `${baseUrl}/service-areas`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: `Cleaning Services in ${locationName}`,
+        item: locationUrl,
+      },
+    ],
+  };
+
+  const locationWebPage = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${locationUrl}#webpage`,
+    url: locationUrl,
+    name: `Cleaning Services in ${locationName}, Cape Town`,
+    description: `Professional cleaning services available in ${locationName}, Cape Town. Residential, commercial, and specialized cleaning services.`,
+    inLanguage: "en-ZA",
+    isPartOf: {
+      "@id": `${baseUrl}#website`,
+    },
+    about: {
+      "@id": `${baseUrl}#organization`,
+    },
+    breadcrumb: {
+      "@id": `${locationUrl}#breadcrumb`,
+    },
+  };
+
+  const locationService = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    serviceType: "Professional Cleaning Services",
+    name: `Cleaning Services in ${locationName}`,
+    description: `Professional cleaning services in ${locationName}, Cape Town including residential cleaning, commercial cleaning, and specialized cleaning services.`,
+    provider: {
+      "@id": `${baseUrl}#organization`,
+    },
+    areaServed: {
+      "@type": "City",
+      name: locationName,
+      containedIn: {
+        "@type": "City",
+        name: "Cape Town",
+      },
+    },
+    availableChannel: {
+      "@type": "ServiceChannel",
+      serviceUrl: locationUrl,
+      servicePhone: "+27871535250",
+    },
+  };
+
+  const locationLocalBusiness = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": `${locationUrl}#localBusiness`,
+    name: `Shalean Cleaning Services - ${locationName}`,
+    image: `${baseUrl}/logo.png`,
+    url: locationUrl,
+    telephone: "+27871535250",
+    email: "support@shalean.com",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: locationName,
+      addressRegion: "Western Cape",
+      addressCountry: "ZA",
+    },
+    areaServed: {
+      "@type": "City",
+      name: locationName,
+    },
+    priceRange: "$$",
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        opens: "00:00",
+        closes: "23:59",
+      },
+    ],
+  };
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      locationBreadcrumb,
+      locationWebPage,
+      locationService,
+      locationLocalBusiness,
+    ],
+  };
+}
 

@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { getBlogPosts } from "@/app/actions/blog";
+import { capeTownAreas, getLocationSlug } from "@/lib/constants/areas";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://shalean.co.za";
@@ -11,6 +12,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 1,
+    },
+    {
+      url: `${baseUrl}/service-areas`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/guides`,
@@ -58,46 +65,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  // Location pages
-  const locations = [
-    "sea-point",
-    "camps-bay",
-    "claremont",
-    "green-point",
-    "va-waterfront",
-    "constantia",
-    "newlands",
-    "rondebosch",
-    "observatory",
-    "woodstock",
-    "city-bowl",
-    "gardens",
-    "tamboerskloof",
-    "oranjezicht",
-    "vredehoek",
-    "devils-peak",
-    "mouille-point",
-    "three-anchor-bay",
-    "bantry-bay",
-    "fresnaye",
-    "bakoven",
-    "llandudno",
-    "hout-bay",
-    "wynberg",
-    "kenilworth",
-    "plumstead",
-    "diep-river",
-    "bergvliet",
-    "tokai",
-    "steenberg",
-    "muizenberg",
-    "kalk-bay",
-    "fish-hoek",
-    "simons-town",
-  ];
-
-  const locationRoutes = locations.map((location) => ({
-    url: `${baseUrl}/areas/${location}`,
+  // Location pages - use shared constants for consistency
+  const locationRoutes = capeTownAreas.map((area) => ({
+    url: `${baseUrl}/areas/${getLocationSlug(area)}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.8,

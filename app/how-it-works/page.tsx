@@ -629,7 +629,7 @@ export default function HowItWorksPage() {
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-16">
                 <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-                  Why Choose Shalean Cleaning Services?
+                  Benefits of Booking with Shalean
                 </h2>
                 <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                   We're committed to providing the best cleaning service experience in Cape Town.
@@ -664,7 +664,7 @@ export default function HowItWorksPage() {
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-16">
                 <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-                  Frequently Asked Questions
+                  Common Questions About Our Booking Process
                 </h2>
                 <p className="text-xl text-gray-600">
                   Everything you need to know about booking cleaning services in Cape Town

@@ -1,42 +1,6 @@
 import Link from "next/link";
 import { Globe } from "lucide-react";
-
-const capeTownAreas = [
-  "Sea Point",
-  "Camps Bay",
-  "Claremont",
-  "Green Point",
-  "V&A Waterfront",
-  "Constantia",
-  "Newlands",
-  "Rondebosch",
-  "Observatory",
-  "Woodstock",
-  "City Bowl",
-  "Gardens",
-  "Tamboerskloof",
-  "Oranjezicht",
-  "Vredehoek",
-  "Devil's Peak",
-  "Mouille Point",
-  "Three Anchor Bay",
-  "Bantry Bay",
-  "Fresnaye",
-  "Bakoven",
-  "Llandudno",
-  "Hout Bay",
-  "Wynberg",
-  "Kenilworth",
-  "Plumstead",
-  "Diep River",
-  "Bergvliet",
-  "Tokai",
-  "Steenberg",
-  "Muizenberg",
-  "Kalk Bay",
-  "Fish Hoek",
-  "Simon's Town",
-];
+import { capeTownAreas, getLocationSlug } from "@/lib/constants/areas";
 
 export default function ServiceAreas() {
   return (
@@ -64,7 +28,7 @@ export default function ServiceAreas() {
             {capeTownAreas.map((area) => (
               <Link
                 key={area}
-                href={`/areas/${area.toLowerCase().replace(/\s+/g, "-")}`}
+                href={`/areas/${getLocationSlug(area)}`}
                 className="text-gray-700 hover:text-[#007bff] hover:underline transition-colors text-sm md:text-base"
               >
                 {area}
@@ -77,6 +41,12 @@ export default function ServiceAreas() {
             <p className="text-gray-600 mb-4">
               Don't see your area? We may still be able to help!
             </p>
+            <Link
+              href="/service-areas"
+              className="text-[#007bff] hover:underline font-medium"
+            >
+              View All Service Areas →
+            </Link>
           </div>
         </div>
       </div>
