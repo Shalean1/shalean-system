@@ -77,7 +77,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/#services"
+                  href="/services"
                   className="hover:text-white transition-colors text-sm"
                 >
                   All Services

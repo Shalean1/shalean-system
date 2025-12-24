@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { Booking } from "./types/booking";
-import { getServiceName, getFrequencyName, formatPrice, calculatePrice, fetchPricingConfig } from "./pricing";
+import { getServiceName, getFrequencyName, formatPrice, calculatePrice } from "./pricing";
+import { fetchPricingConfig } from "./pricing-server";
 import { validateDiscountCode } from "../app/actions/discount";
 
 export interface QuoteEmailData {

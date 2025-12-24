@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, Mail, Phone, ArrowRight, ArrowLeft, Home, LayoutDashboard } from "lucide-react";
 import { Booking, PriceBreakdown, BookingFormData, ServiceType, FrequencyType, CleanerPreference, normalizeCleanerPreference } from "@/lib/types/booking";
-import { getServiceName, formatPrice, getFrequencyName, calculatePrice, fetchPricingConfig } from "@/lib/pricing";
+import { getServiceName, formatPrice, getFrequencyName, calculatePrice } from "@/lib/pricing";
+import { getPricingConfig } from "@/app/actions/pricing";
 import { useAuth } from "@/lib/hooks/useSupabase";
 import { submitBooking } from "@/app/actions/submit-booking";
 import { validateDiscountCode } from "@/app/actions/discount";
@@ -25,14 +26,14 @@ export default function ConfirmationPage() {
   
   useEffect(() => {
     // Pre-load pricing config in parallel
-    fetchPricingConfig().then(setPricingConfig).catch(console.error);
+    getPricingConfig().then(setPricingConfig).catch(console.error);
   }, []);
 
   // Helper function to calculate price breakdown
   const calculatePriceBreakdown = async (bookingData: Booking | BookingFormData) => {
     if (!pricingConfig) {
       // Fallback: fetch if not pre-loaded
-      const config = await fetchPricingConfig();
+      const config = await getPricingConfig();
       setPricingConfig(config);
       return calculatePriceBreakdownWithConfig(bookingData, config);
     }
@@ -304,9 +305,10 @@ export default function ConfirmationPage() {
                         
                         // Calculate price breakdown
                         try {
-                          const { calculatePrice, fetchPricingConfig } = await import("@/lib/pricing");
+                          const { calculatePrice } = await import("@/lib/pricing");
                           const { validateDiscountCode } = await import("@/app/actions/discount");
-                          const pricingConfig = await fetchPricingConfig();
+                          const { getPricingConfig } = await import("@/app/actions/pricing");
+                          const pricingConfig = await getPricingConfig();
                           
                           const initialPriceBreakdown = calculatePrice(newBooking, pricingConfig, 0);
                           

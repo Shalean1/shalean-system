@@ -24,13 +24,10 @@ import PriceSummary from "@/components/booking/PriceSummary";
 import ProgressIndicator from "@/components/booking/ProgressIndicator";
 import DatePicker from "@/components/booking/DatePicker";
 import { BookingFormData, ServiceType, FrequencyType, CleanerPreference } from "@/lib/types/booking";
-import { calculatePrice, formatPrice, fetchPricingConfig, PricingConfig } from "@/lib/pricing";
-import {
-  getAdditionalServices,
-  getTimeSlots,
-  FALLBACK_EXTRAS,
-  FALLBACK_TIME_SLOTS,
-} from "@/lib/supabase/booking-data";
+import { calculatePrice, formatPrice, PricingConfig } from "@/lib/pricing";
+import { getPricingConfig } from "@/app/actions/pricing";
+import { getAdditionalServices, getTimeSlots } from "@/app/actions/booking-data";
+import { FALLBACK_EXTRAS, FALLBACK_TIME_SLOTS } from "@/lib/supabase/booking-data-fallbacks";
 
 // Icon mapping for additional services
 const iconMap: Record<string, any> = {
@@ -132,7 +129,7 @@ export default function ServiceDetailsPage() {
         const [additionalServicesData, timeSlotsData, pricing] = await Promise.all([
           getAdditionalServices(),
           getTimeSlots(),
-          fetchPricingConfig(),
+          getPricingConfig(),
         ]);
         
         // Set additional services/extras

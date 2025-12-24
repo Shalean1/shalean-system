@@ -1,7 +1,8 @@
 "use server";
 
 import { BookingFormData } from "@/lib/types/booking";
-import { calculatePrice, fetchPricingConfig } from "@/lib/pricing";
+import { calculatePrice } from "@/lib/pricing";
+import { fetchPricingConfig } from "@/lib/pricing-server";
 import { validateDiscountCode } from "@/app/actions/discount";
 
 export interface PaymentInitResult {

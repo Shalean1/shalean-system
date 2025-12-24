@@ -64,7 +64,7 @@ export default function Hero() {
     e.preventDefault();
     // Handle search logic
     if (searchQuery.trim()) {
-      window.location.href = `#services?q=${encodeURIComponent(searchQuery)}`;
+      window.location.href = `/services?q=${encodeURIComponent(searchQuery)}`;
     }
   };
 

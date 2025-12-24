@@ -1,7 +1,8 @@
 "use server";
 
 import { BookingFormData, Booking, normalizeCleanerPreference } from "@/lib/types/booking";
-import { calculatePrice, fetchPricingConfig, calculateCleanerEarnings } from "@/lib/pricing";
+import { calculatePrice, calculateCleanerEarnings } from "@/lib/pricing";
+import { fetchPricingConfig } from "@/lib/pricing-server";
 import { saveBooking, generateBookingId, generateBookingReference, getBookingByPaymentReference } from "@/lib/storage/bookings-supabase";
 import { sendBookingConfirmationEmail, sendBookingNotificationEmail } from "@/lib/email";
 import { verifyPayment } from "@/lib/paystack";

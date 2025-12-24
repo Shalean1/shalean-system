@@ -241,7 +241,7 @@ export function generateStructuredData() {
         "@type": "ListItem",
         position: 2,
         name: "Services",
-        item: `${baseUrl}#services`,
+        item: `${baseUrl}/services`,
       },
       {
         "@type": "ListItem",
@@ -713,6 +713,227 @@ export function generateLocationStructuredData(locationName: string, slug: strin
       locationWebPage,
       locationService,
       locationLocalBusiness,
+    ],
+  };
+}
+
+/**
+ * Generate structured data for the Services page
+ */
+export function generateServicesPageStructuredData() {
+  const baseUrl = "https://shalean.co.za";
+  const servicesUrl = `${baseUrl}/services`;
+
+  const servicesBreadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": `${servicesUrl}#breadcrumb`,
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: baseUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Services",
+        item: servicesUrl,
+      },
+    ],
+  };
+
+  const servicesWebPage = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${servicesUrl}#webpage`,
+    url: servicesUrl,
+    name: "Professional Cleaning Services in Cape Town | Shalean Cleaning Services",
+    description:
+      "Comprehensive cleaning services in Cape Town: residential cleaning, commercial cleaning, deep cleaning, move-in/out cleaning, Airbnb cleaning, and specialized services. Trusted by thousands of Cape Town residents.",
+    inLanguage: "en-ZA",
+    isPartOf: {
+      "@id": `${baseUrl}#website`,
+    },
+    about: {
+      "@id": `${baseUrl}#organization`,
+    },
+    breadcrumb: {
+      "@id": `${servicesUrl}#breadcrumb`,
+    },
+    mainEntity: {
+      "@type": "ItemList",
+      name: "Cleaning Services Offered",
+      description: "List of professional cleaning services available in Cape Town",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "General Residential Cleaning Services",
+          item: `${baseUrl}/services/residential-cleaning`,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "General Commercial Cleaning Services",
+          item: `${baseUrl}/services/commercial-cleaning`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: "Specialized Cleaning Services",
+          item: `${baseUrl}/services/specialized-cleaning`,
+        },
+      ],
+    },
+  };
+
+  const servicesFAQ = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": `${servicesUrl}#faq`,
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "What cleaning services do you offer in Cape Town?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "We offer comprehensive cleaning services including residential cleaning (regular maintenance for homes), commercial cleaning (offices and businesses), and specialized cleaning (deep cleaning, move-in/out, post-construction, carpet cleaning, window cleaning, and more). We also provide Airbnb cleaning and holiday cleaning services.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How much do cleaning services cost in Cape Town?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Our pricing varies based on service type, property size, and frequency. On average, residential cleaning starts around R500, commercial cleaning around R800, and specialized cleaning around R900. We provide transparent pricing with no hidden fees. Get an instant quote on our booking page.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Do you provide cleaning supplies and equipment?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "For deep cleaning, move-in/out, and carpet cleaning services, all supplies and equipment are included at no extra charge. For standard cleaning, Airbnb, office, and holiday cleaning services, supplies and equipment are available at an additional cost that you can request during booking. All our cleaners use high-quality, eco-friendly cleaning products.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "What areas in Cape Town do you serve?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "We serve Cape Town and surrounding areas including Sea Point, Camps Bay, Claremont, Green Point, Constantia, Newlands, V&A Waterfront, Century City, and 30+ more areas. If you don't see your area listed, contact us as we may still be able to help!",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Can I book same-day cleaning services?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes! We offer same-day booking for cleaning services throughout Cape Town. Availability depends on cleaner schedules, but we work hard to accommodate urgent requests. Book online or call us at +27871535250.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Are your cleaners insured and vetted?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes, all our professional cleaners are fully insured, bonded, and thoroughly vetted. We conduct background checks and verify credentials. We also offer a 100% satisfaction guarantee on all our cleaning services.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How do I book a cleaning service?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Booking is simple! Visit our booking page, choose your service type, select a cleaner based on reviews and availability, pick your preferred date and time, and complete secure payment. You'll receive instant confirmation via email and SMS.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "What if I'm not satisfied with the cleaning?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "We offer a 100% satisfaction guarantee on all our cleaning services. If you're not completely satisfied, contact us within 24 hours and we'll send a cleaner back to address any issues at no additional cost.",
+        },
+      },
+    ],
+  };
+
+  const serviceOfferings = [
+    {
+      "@type": "Service",
+      "@id": `${baseUrl}/services/residential-cleaning#service`,
+      name: "General Residential Cleaning Services",
+      serviceType: "Residential Cleaning",
+      description:
+        "Regular maintenance cleaning for homes and private properties. Professional cleaners ensure your living space stays fresh, organized, and hygienic.",
+      provider: {
+        "@id": `${baseUrl}#organization`,
+      },
+      areaServed: {
+        "@type": "City",
+        name: "Cape Town",
+      },
+      offers: {
+        "@type": "Offer",
+        price: "500",
+        priceCurrency: "ZAR",
+        description: "Starting from R500",
+      },
+    },
+    {
+      "@type": "Service",
+      "@id": `${baseUrl}/services/commercial-cleaning#service`,
+      name: "General Commercial Cleaning Services",
+      serviceType: "Commercial Cleaning",
+      description:
+        "Professional cleaning services for businesses, offices, and retail spaces. Maintain a clean, professional workspace.",
+      provider: {
+        "@id": `${baseUrl}#organization`,
+      },
+      areaServed: {
+        "@type": "City",
+        name: "Cape Town",
+      },
+      offers: {
+        "@type": "Offer",
+        price: "800",
+        priceCurrency: "ZAR",
+        description: "Starting from R800",
+      },
+    },
+    {
+      "@type": "Service",
+      "@id": `${baseUrl}/services/specialized-cleaning#service`,
+      name: "Specialized Cleaning Services",
+      serviceType: "Specialized Cleaning",
+      description:
+        "Deep cleaning and specialized services for both residential and commercial properties. Perfect for move-in/out, post-construction, and specialized cleaning needs.",
+      provider: {
+        "@id": `${baseUrl}#organization`,
+      },
+      areaServed: {
+        "@type": "City",
+        name: "Cape Town",
+      },
+      offers: {
+        "@type": "Offer",
+        price: "900",
+        priceCurrency: "ZAR",
+        description: "Starting from R900",
+      },
+    },
+  ];
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      servicesBreadcrumb,
+      servicesWebPage,
+      servicesFAQ,
+      ...serviceOfferings,
     ],
   };
 }

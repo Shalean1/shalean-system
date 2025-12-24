@@ -9,7 +9,7 @@ import { rebookBooking } from "@/app/actions/rebook";
 import { initializePaymentWithAmount } from "@/app/actions/payment";
 import { initializePaystack } from "@/lib/paystack";
 import { formatPrice, getServiceName, getFrequencyName } from "@/lib/pricing";
-import { getAdditionalServices } from "@/lib/supabase/booking-data";
+import { getAdditionalServices } from "@/app/actions/booking-data";
 
 export default function RebookPaymentPage() {
   const router = useRouter();

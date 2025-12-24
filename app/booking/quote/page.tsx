@@ -5,14 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, User, Mail, Phone, MapPin, Home, Star, Package, Calendar, ChefHat, Boxes, Grid, Paintbrush, Shirt, CheckCircle2, AlertCircle, Refrigerator, ChevronDown, FileText, Layers, Car, Sofa, Square, Sparkles, ShoppingBasket, Building2, AppWindow } from "lucide-react";
 import { submitQuote, type QuoteFormData } from "@/app/actions/submit-quote";
-import { 
-  getServiceLocations, 
-  getAdditionalServices,
-  FALLBACK_LOCATIONS,
-  FALLBACK_EXTRAS,
-  type ServiceLocation,
-  type AdditionalService
-} from "@/lib/supabase/booking-data";
+import { getServiceLocations, getAdditionalServices } from "@/app/actions/booking-data";
+import { FALLBACK_LOCATIONS, FALLBACK_EXTRAS } from "@/lib/supabase/booking-data-fallbacks";
+import { type ServiceLocation, type AdditionalService } from "@/lib/supabase/booking-data-types";
 
 // Icon mapping for additional services (by icon_name from database)
 const iconMap: Record<string, any> = {

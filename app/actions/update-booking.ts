@@ -3,7 +3,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { getBookingByReference, getUserBookings } from "@/lib/storage/bookings-supabase";
 import { BookingFormData, normalizeCleanerPreference } from "@/lib/types/booking";
-import { calculatePrice, fetchPricingConfig } from "@/lib/pricing";
+import { calculatePrice } from "@/lib/pricing";
+import { fetchPricingConfig } from "@/lib/pricing-server";
 
 export interface UpdateBookingResult {
   success: boolean;

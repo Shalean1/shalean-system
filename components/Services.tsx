@@ -1,15 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getServiceCategoryPricingClient, FALLBACK_SERVICE_CATEGORY_PRICING } from "@/lib/supabase/booking-data-client";
+import { formatPrice } from "@/lib/pricing";
 
-const popularServices = [
+const baseServices = [
   {
     id: "residential-cleaning",
     name: "General Residential Cleaning Services",
     category: "Residential",
     description: "Regular maintenance cleaning for homes and private properties",
-    avgPrice: "R500",
     image: "/services/residential-cleaning.jpg",
   },
   {
@@ -17,7 +18,6 @@ const popularServices = [
     name: "General Commercial Cleaning Services",
     category: "Commercial",
     description: "Regular maintenance cleaning for businesses, offices, and retail spaces",
-    avgPrice: "R800",
     image: "/services/commercial-cleaning.jpg",
   },
   {
@@ -25,7 +25,6 @@ const popularServices = [
     name: "Specialized Cleaning Services",
     category: "Specialized",
     description: "Deep cleaning and specialized services for both residential and commercial properties",
-    avgPrice: "R900",
     image: "/services/specialized-cleaning.jpg",
   },
 ];
@@ -50,6 +49,34 @@ function ServiceImage({ src, alt }: { src: string; alt: string }) {
 }
 
 export default function Services() {
+  const [services, setServices] = useState(baseServices.map((service) => ({
+    ...service,
+    avgPrice: formatPrice(FALLBACK_SERVICE_CATEGORY_PRICING[service.id] || 500),
+  })));
+
+  useEffect(() => {
+    async function fetchPricing() {
+      try {
+        const categoryPricing = await getServiceCategoryPricingClient();
+        const pricingMap = new Map(
+          categoryPricing.map((pricing) => [pricing.category_id, pricing.display_price])
+        );
+
+        const updatedServices = baseServices.map((service) => ({
+          ...service,
+          avgPrice: formatPrice(pricingMap.get(service.id) || FALLBACK_SERVICE_CATEGORY_PRICING[service.id] || 500),
+        }));
+
+        setServices(updatedServices);
+      } catch (error) {
+        console.error("Error fetching service category pricing:", error);
+        // Keep fallback prices if fetch fails
+      }
+    }
+
+    fetchPricing();
+  }, []);
+
   return (
     <section id="services" className="py-20 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -65,7 +92,7 @@ export default function Services() {
 
         {/* Service Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto">
-          {popularServices.map((service, index) => {
+          {services.map((service, index) => {
             const colors = [
               { badge: "bg-[#007bff]", price: "text-[#007bff]", hover: "group-hover:text-[#007bff]" },
               { badge: "bg-[#28a745]", price: "text-[#28a745]", hover: "group-hover:text-[#28a745]" },

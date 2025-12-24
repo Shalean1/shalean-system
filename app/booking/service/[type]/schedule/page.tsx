@@ -10,23 +10,20 @@ import FrequencyCard from "@/components/booking/FrequencyCard";
 import PriceSummary from "@/components/booking/PriceSummary";
 import ProgressIndicator from "@/components/booking/ProgressIndicator";
 import { BookingFormData, CleanerPreference, FrequencyType } from "@/lib/types/booking";
-import { calculatePrice, fetchPricingConfig, PricingConfig } from "@/lib/pricing";
-import {
-  getCleaners,
-  getTeams,
-  getTeamMembers,
-  checkTeamAvailability,
-  getFrequencyOptions,
-  getSystemSetting,
-  getServiceLocations,
-  getAdditionalServices,
-  ServiceLocation,
-  Team,
-  FALLBACK_CLEANERS,
-  FALLBACK_TEAMS,
-  FALLBACK_FREQUENCIES,
-  FALLBACK_EXTRAS,
-} from "@/lib/supabase/booking-data";
+import { calculatePrice, PricingConfig } from "@/lib/pricing";
+import { getPricingConfig } from "@/app/actions/pricing";
+import { 
+  getCleaners, 
+  getTeams, 
+  getTeamMembers, 
+  checkTeamAvailability, 
+  getFrequencyOptions, 
+  getSystemSetting, 
+  getServiceLocations, 
+  getAdditionalServices 
+} from "@/app/actions/booking-data";
+import { ServiceLocation, Team } from "@/lib/supabase/booking-data-types";
+import { FALLBACK_CLEANERS, FALLBACK_TEAMS, FALLBACK_FREQUENCIES, FALLBACK_EXTRAS } from "@/lib/supabase/booking-data-fallbacks";
 
 const STORAGE_KEY = "shalean_booking_data";
 
@@ -115,7 +112,7 @@ export default function SchedulePage() {
             getFrequencyOptions(),
             getSystemSetting("default_city"),
             getServiceLocations(),
-            fetchPricingConfig(),
+            getPricingConfig(),
           ]);
           
           // Fetch team members for each team
@@ -138,7 +135,7 @@ export default function SchedulePage() {
             getFrequencyOptions(),
             getSystemSetting("default_city"),
             getServiceLocations(),
-            fetchPricingConfig(),
+            getPricingConfig(),
           ]);
           
           // Extras already fetched above
@@ -213,7 +210,7 @@ export default function SchedulePage() {
         }
         
         // Set pricing config
-        const pricing = await fetchPricingConfig();
+        const pricing = await getPricingConfig();
         setPricingConfig(pricing);
         
         // Set frequency options

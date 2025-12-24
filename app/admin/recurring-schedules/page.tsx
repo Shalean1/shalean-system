@@ -14,7 +14,8 @@ import {
   Cleaner as CleanerType,
 } from "@/app/actions/admin-bookings";
 import DatePicker from "@/components/booking/DatePicker";
-import { getTimeSlots, FALLBACK_TIME_SLOTS } from "@/lib/supabase/booking-data";
+import { getTimeSlots } from "@/app/actions/booking-data";
+import { FALLBACK_TIME_SLOTS } from "@/lib/supabase/booking-data-fallbacks";
 import {
   RotateCcw,
   Calendar,

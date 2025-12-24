@@ -6,7 +6,8 @@ import Link from "next/link";
 import { ArrowLeft, Calendar, Clock, Loader2, AlertCircle, CheckCircle } from "lucide-react";
 import DatePicker from "@/components/booking/DatePicker";
 import { rescheduleBooking } from "@/app/actions/reschedule-booking";
-import { getTimeSlots, FALLBACK_TIME_SLOTS } from "@/lib/supabase/booking-data";
+import { getTimeSlots } from "@/app/actions/booking-data";
+import { FALLBACK_TIME_SLOTS } from "@/lib/supabase/booking-data-fallbacks";
 import { Booking } from "@/lib/types/booking";
 
 export default function ReschedulePage() {

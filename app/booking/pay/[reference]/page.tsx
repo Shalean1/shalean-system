@@ -8,7 +8,7 @@ import { Booking } from "@/lib/types/booking";
 import { initializePaymentWithAmount } from "@/app/actions/payment";
 import { initializePaystack } from "@/lib/paystack";
 import { formatPrice, getServiceName, getFrequencyName } from "@/lib/pricing";
-import { getAdditionalServices } from "@/lib/supabase/booking-data";
+import { getAdditionalServices } from "@/app/actions/booking-data";
 import { updateRebookedBookingPayment } from "@/app/actions/rebook-payment";
 
 export default function PayForFailedBookingPage() {

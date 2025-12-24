@@ -3,7 +3,8 @@
  * Fetches dynamic booking configuration from Supabase
  */
 
-import { createClient } from '@/lib/supabase/client';
+import { createClient as createBrowserClient } from '@/lib/supabase/client';
+import { createClient as createServerClient } from '@/lib/supabase/server';
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -91,6 +92,16 @@ export interface RoomPricing {
   is_active: boolean;
 }
 
+export interface ServiceCategoryPricing {
+  id: string;
+  category_id: string;
+  category_name: string;
+  display_price: number;
+  description?: string;
+  display_order: number;
+  is_active: boolean;
+}
+
 export interface Team {
   id: string;
   team_id: string;
@@ -116,7 +127,7 @@ export interface TeamMember {
  */
 export async function getServiceLocations(): Promise<ServiceLocation[]> {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
       .from('service_locations')
       .select('*')
@@ -140,7 +151,7 @@ export async function getServiceLocations(): Promise<ServiceLocation[]> {
  */
 export async function getAdditionalServices(): Promise<AdditionalService[]> {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
       .from('additional_services')
       .select('*')
@@ -164,7 +175,7 @@ export async function getAdditionalServices(): Promise<AdditionalService[]> {
  */
 export async function getTimeSlots(): Promise<TimeSlot[]> {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
       .from('time_slots')
       .select('*')
@@ -192,7 +203,7 @@ export async function getTimeSlots(): Promise<TimeSlot[]> {
  */
 export async function getCleaners(selectedDate?: string, selectedSuburb?: string, serviceType?: string): Promise<Cleaner[]> {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const query = supabase
       .from('cleaners')
       .select('*')
@@ -404,7 +415,7 @@ export async function getCleaners(selectedDate?: string, selectedSuburb?: string
  */
 export async function getFrequencyOptions(): Promise<FrequencyOption[]> {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
       .from('frequency_options')
       .select('*')
@@ -428,7 +439,7 @@ export async function getFrequencyOptions(): Promise<FrequencyOption[]> {
  */
 export async function getServiceTypePricing(): Promise<ServiceTypePricing[]> {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
       .from('service_type_pricing')
       .select('*')
@@ -452,7 +463,7 @@ export async function getServiceTypePricing(): Promise<ServiceTypePricing[]> {
  */
 export async function getServiceTypePricingByType(serviceType: string): Promise<ServiceTypePricing | null> {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
       .from('service_type_pricing')
       .select('*')
@@ -477,7 +488,7 @@ export async function getServiceTypePricingByType(serviceType: string): Promise<
  */
 export async function getSystemSetting(key: string): Promise<string | null> {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
       .from('system_settings')
       .select('setting_value')
@@ -502,7 +513,7 @@ export async function getSystemSetting(key: string): Promise<string | null> {
  */
 export async function getSystemSettings(keys: string[]): Promise<Record<string, string>> {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
       .from('system_settings')
       .select('setting_key, setting_value')
@@ -531,7 +542,7 @@ export async function getSystemSettings(keys: string[]): Promise<Record<string, 
  */
 export async function getAllSystemSettings(): Promise<SystemSetting[]> {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
       .from('system_settings')
       .select('*')
@@ -554,7 +565,7 @@ export async function getAllSystemSettings(): Promise<SystemSetting[]> {
  */
 export async function getRoomPricing(): Promise<RoomPricing[]> {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
       .from('room_pricing')
       .select('*')
@@ -577,7 +588,7 @@ export async function getRoomPricing(): Promise<RoomPricing[]> {
  */
 export async function getRoomPricingByServiceType(serviceType: string): Promise<{ bedroom: number; bathroom: number }> {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
       .from('room_pricing')
       .select('*')
@@ -606,11 +617,83 @@ export async function getRoomPricingByServiceType(serviceType: string): Promise<
 }
 
 /**
+ * Fetch all active service category pricing (Server-side)
+ * Use this in Server Components, Server Actions, and Route Handlers
+ */
+export async function getServiceCategoryPricing(): Promise<ServiceCategoryPricing[]> {
+  try {
+    const supabase = await createServerClient();
+    const { data, error } = await supabase
+      .from('service_category_pricing')
+      .select('*')
+      .eq('is_active', true)
+      .order('display_order', { ascending: true });
+
+    if (error) {
+      // Check if table doesn't exist (common error code: 42P01)
+      if (error.code === '42P01' || error.message?.includes('does not exist')) {
+        console.warn(
+          'service_category_pricing table does not exist. Please run migration 057_service_category_pricing.sql'
+        );
+      } else {
+        console.error('Error fetching service category pricing:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        });
+      }
+      return [];
+    }
+
+    return data || [];
+  } catch (error: any) {
+    console.error('Error fetching service category pricing:', {
+      message: error?.message || 'Unknown error',
+      stack: error?.stack,
+      error: error,
+    });
+    return [];
+  }
+}
+
+
+/**
+ * Fetch a specific service category pricing by category ID (Server-side)
+ */
+export async function getServiceCategoryPricingByCategoryId(categoryId: string): Promise<ServiceCategoryPricing | null> {
+  try {
+    const supabase = await createServerClient();
+    const { data, error } = await supabase
+      .from('service_category_pricing')
+      .select('*')
+      .eq('category_id', categoryId)
+      .eq('is_active', true)
+      .single();
+
+    if (error) {
+      console.error(`Error fetching service category pricing for ${categoryId}:`, {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+      });
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error(`Error fetching service category pricing for ${categoryId}:`, error);
+    return null;
+  }
+}
+
+/**
  * Fetch all active teams
  */
 export async function getTeams(): Promise<Team[]> {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
       .from('teams')
       .select('*')
@@ -634,7 +717,7 @@ export async function getTeams(): Promise<Team[]> {
  */
 export async function getTeamMembers(teamId: string): Promise<TeamMember[]> {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
       .from('team_members')
       .select(`
@@ -673,7 +756,7 @@ export async function getTeamMembers(teamId: string): Promise<TeamMember[]> {
  */
 export async function checkTeamAvailability(teamId: string, date: string): Promise<boolean> {
   try {
-    const supabase = createClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
       .from('bookings')
       .select('id')
@@ -761,4 +844,10 @@ export const FALLBACK_ROOM_PRICING: Record<string, { bedroom: number; bathroom: 
   airbnb: { bedroom: 18, bathroom: 26 },
   office: { bedroom: 30, bathroom: 40 },
   holiday: { bedroom: 30, bathroom: 40 },
+};
+
+export const FALLBACK_SERVICE_CATEGORY_PRICING: Record<string, number> = {
+  "residential-cleaning": 500,
+  "commercial-cleaning": 800,
+  "specialized-cleaning": 900,
 };

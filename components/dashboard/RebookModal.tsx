@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { X, Calendar, Clock, Loader2, AlertCircle, CheckCircle2, Shield, ChevronDown } from "lucide-react";
 import { Booking } from "@/lib/types/booking";
-import { getTimeSlots, FALLBACK_TIME_SLOTS } from "@/lib/supabase/booking-data";
+import { getTimeSlots } from "@/app/actions/booking-data";
+import { FALLBACK_TIME_SLOTS } from "@/lib/supabase/booking-data-fallbacks";
 import { rebookBookingWithSchedule } from "@/app/actions/rebook-schedule";
 import { initializePaymentWithAmount } from "@/app/actions/payment";
 import { initializePaystack } from "@/lib/paystack";

@@ -5,7 +5,7 @@ import { X, Loader2, Save, AlertCircle } from "lucide-react";
 import { Booking, BookingFormData, ServiceType, FrequencyType, CleanerPreference } from "@/lib/types/booking";
 import { updateBooking } from "@/app/actions/update-booking";
 import { useRouter } from "next/navigation";
-import { getServiceLocations, getAdditionalServices, getTimeSlots, getCleaners, getFrequencyOptions } from "@/lib/supabase/booking-data";
+import { getServiceLocations, getAdditionalServices, getTimeSlots, getCleaners, getFrequencyOptions } from "@/app/actions/booking-data";
 
 interface EditBookingModalProps {
   booking: Booking;

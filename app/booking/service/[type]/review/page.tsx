@@ -36,21 +36,14 @@ import PriceSummary from "@/components/booking/PriceSummary";
 import ProgressIndicator from "@/components/booking/ProgressIndicator";
 import DiscountCodeInput from "@/components/booking/DiscountCodeInput";
 import { BookingFormData, ServiceType, FrequencyType, CleanerPreference } from "@/lib/types/booking";
-import { calculatePrice, getServiceName, formatPrice, getFrequencyName, fetchPricingConfig, PricingConfig } from "@/lib/pricing";
+import { calculatePrice, getServiceName, formatPrice, getFrequencyName, PricingConfig } from "@/lib/pricing";
+import { getPricingConfig } from "@/app/actions/pricing";
 import { initializePayment } from "@/app/actions/payment";
 import { submitBooking } from "@/app/actions/submit-booking";
 import { getUserCreditBalanceAction } from "@/app/actions/credits";
 import { initializePaystack } from "@/lib/paystack";
-import {
-  getAdditionalServices,
-  getTimeSlots,
-  getCleaners,
-  getTeams,
-  FALLBACK_EXTRAS,
-  FALLBACK_TIME_SLOTS,
-  FALLBACK_CLEANERS,
-  FALLBACK_TEAMS,
-} from "@/lib/supabase/booking-data";
+import { getAdditionalServices, getTimeSlots, getCleaners, getTeams } from "@/app/actions/booking-data";
+import { FALLBACK_EXTRAS, FALLBACK_TIME_SLOTS, FALLBACK_CLEANERS, FALLBACK_TEAMS } from "@/lib/supabase/booking-data-fallbacks";
 import { useUser } from "@/lib/hooks/useSupabase";
 import { getUserProfileClient } from "@/lib/storage/profile-supabase-client";
 
@@ -308,7 +301,7 @@ export default function ReviewPage() {
       try {
         if (isTeamService) {
           const [pricing, additionalServicesData, timeSlotsData, teamsData] = await Promise.all([
-            fetchPricingConfig(),
+            getPricingConfig(),
             getAdditionalServices(),
             getTimeSlots(),
             getTeams(),
@@ -342,7 +335,7 @@ export default function ReviewPage() {
           }
         } else {
           const [pricing, additionalServicesData, timeSlotsData, cleanersData] = await Promise.all([
-            fetchPricingConfig(),
+            getPricingConfig(),
             getAdditionalServices(),
             getTimeSlots(),
             getCleaners(),

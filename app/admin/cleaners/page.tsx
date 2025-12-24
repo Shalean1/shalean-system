@@ -29,7 +29,8 @@ import {
   MapPin,
 } from "lucide-react";
 import CleanerAreasModal from "@/components/admin/CleanerAreasModal";
-import { getServiceLocations, ServiceLocation } from "@/lib/supabase/booking-data";
+import { getServiceLocations } from "@/app/actions/booking-data";
+import { ServiceLocation } from "@/lib/supabase/booking-data";
 
 interface CleanerFormData {
   cleaner_id: string;

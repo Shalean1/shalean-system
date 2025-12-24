@@ -35,7 +35,7 @@ export default async function ServicePage({
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="max-w-4xl mx-auto">
             <Link
-              href="/#services"
+              href="/services"
               className="text-blue-600 hover:text-blue-700 mb-6 inline-block"
             >
               ← Back to Services
@@ -48,7 +48,7 @@ export default async function ServicePage({
             </h1>
             <p className="text-lg text-gray-600">
               Learn more about our {slug.replace(/-/g, " ")} services. Visit our{" "}
-              <Link href="/#services" className="text-blue-600 hover:underline">
+              <Link href="/services" className="text-blue-600 hover:underline">
                 services page
               </Link>{" "}
               to see all available cleaning services.
@@ -60,5 +60,5 @@ export default async function ServicePage({
   }
 
   // For any other service ID, redirect to services section
-  redirect("/#services");
+  redirect("/services");
 }

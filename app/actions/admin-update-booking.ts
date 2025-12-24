@@ -3,7 +3,8 @@
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { getBookingByReference } from "@/app/actions/admin-bookings";
 import { BookingFormData, normalizeCleanerPreference } from "@/lib/types/booking";
-import { calculatePrice, fetchPricingConfig } from "@/lib/pricing";
+import { calculatePrice } from "@/lib/pricing";
+import { fetchPricingConfig } from "@/lib/pricing-server";
 
 export interface AdminUpdateBookingResult {
   success: boolean;

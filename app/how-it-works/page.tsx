@@ -90,7 +90,7 @@ const bookingSteps = [
       "Move-in/out cleaning for property transitions",
       "Specialized services like Airbnb cleaning and window cleaning",
     ],
-    link: "/#services",
+    link: "/services",
     linkText: "View All Services",
   },
   {
