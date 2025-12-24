@@ -5,11 +5,31 @@ import { MapPin, Phone, Mail, ArrowUp } from "lucide-react";
 import { notFound } from "next/navigation";
 import { capeTownAreas, formatLocationName, getLocationSlug } from "@/lib/constants/areas";
 import { generateLocationStructuredData } from "@/lib/structured-data";
-import { getLocationContent } from "@/lib/supabase/booking-data";
+import { getLocationContent, getServiceLocations } from "@/lib/supabase/booking-data";
 
-const validLocations = capeTownAreas.map((area) =>
-  getLocationSlug(area)
-);
+// Helper function to get valid locations from database
+async function getValidLocations(): Promise<string[]> {
+  try {
+    const locations = await getServiceLocations();
+    return locations.map(loc => loc.slug);
+  } catch (error) {
+    // Fallback to hardcoded locations if database fetch fails
+    console.error('Error fetching locations from database, using fallback:', error);
+    return capeTownAreas.map((area) => getLocationSlug(area));
+  }
+}
+
+// Helper function to get location name from database by slug
+async function getLocationNameFromSlug(slug: string): Promise<string | null> {
+  try {
+    const locations = await getServiceLocations();
+    const location = locations.find(loc => loc.slug === slug);
+    return location?.name || null;
+  } catch (error) {
+    console.error('Error fetching location name from database:', error);
+    return null;
+  }
+}
 
 export async function generateMetadata({
   params,
@@ -18,11 +38,15 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { location } = await params;
   
+  // Check if location exists in database
+  const validLocations = await getValidLocations();
   if (!validLocations.includes(location)) {
     return {};
   }
 
-  const locationName = formatLocationName(location);
+  // Get location name from database, fallback to formatting slug
+  const dbLocationName = await getLocationNameFromSlug(location);
+  const locationName = dbLocationName || formatLocationName(location);
   
   // Fetch location-specific content for metadata
   const locationContent = await getLocationContent(location);
@@ -107,11 +131,15 @@ export default async function LocationPage({
 }) {
   const { location } = await params;
 
+  // Check if location exists in database
+  const validLocations = await getValidLocations();
   if (!validLocations.includes(location)) {
     notFound();
   }
 
-  const locationName = formatLocationName(location);
+  // Get location name from database, fallback to formatting slug
+  const dbLocationName = await getLocationNameFromSlug(location);
+  const locationName = dbLocationName || formatLocationName(location);
   const structuredData = generateLocationStructuredData(locationName, location);
 
   // Fetch location-specific content

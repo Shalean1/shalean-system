@@ -13,6 +13,7 @@ import {
   Mountain,
   Home,
   Navigation,
+  ArrowUp,
 } from "lucide-react";
 import { ServiceLocation } from "@/lib/supabase/booking-data";
 
@@ -159,7 +160,7 @@ export default function ServiceAreasClient({
   }, [searchQuery, allLocations]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div id="top" className="min-h-screen bg-white">
       {/* Breadcrumbs */}
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8 pt-6" aria-label="Breadcrumb">
         <ol className="flex items-center space-x-2 text-sm text-gray-600">
@@ -387,6 +388,74 @@ export default function ServiceAreasClient({
           </div>
         </div>
       </section>
+
+      {/* Newsletter Signup */}
+      <section className="bg-gray-800 py-12">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="text-white">
+              <p className="text-lg font-semibold">Keep it tidy. Subscribe to get our latest news</p>
+            </div>
+            <form className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+              <input
+                type="email"
+                placeholder="your@email.com"
+                className="px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2563eb] w-full md:w-64"
+              />
+              <button
+                type="submit"
+                className="px-6 py-3 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-semibold rounded-lg transition-colors"
+              >
+                Subscribe
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer Bottom */}
+      <footer className="bg-gray-900 text-gray-300 py-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex flex-col md:flex-row gap-6 text-sm">
+              <Link href="/cleaner/apply" className="hover:text-white transition-colors">
+                APPLY TO BE A CLEANER
+              </Link>
+              <Link href="/how-it-works" className="hover:text-white transition-colors">
+                ABOUT
+              </Link>
+              <Link href="/guides" className="hover:text-white transition-colors">
+                BLOG
+              </Link>
+              <Link href="/#contact" className="hover:text-white transition-colors">
+                CAREERS
+              </Link>
+            </div>
+            <div className="flex flex-col md:flex-row items-center gap-4 text-sm">
+              <div className="flex gap-4">
+                <Link href="/#contact" className="hover:text-white transition-colors">
+                  Help
+                </Link>
+                <span>|</span>
+                <Link href="/privacy" className="hover:text-white transition-colors">
+                  Privacy
+                </Link>
+                <span>|</span>
+                <Link href="/terms" className="hover:text-white transition-colors">
+                  Terms
+                </Link>
+              </div>
+              <div className="flex items-center gap-2">
+                <span>© {new Date().getFullYear()} Shalean Cleaning Services, all rights reserved</span>
+                <Link href="#top" className="hover:text-white transition-colors flex items-center gap-1">
+                  <span>To top</span>
+                  <ArrowUp className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
