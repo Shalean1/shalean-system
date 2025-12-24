@@ -221,6 +221,7 @@ export default async function LocationPage({
           </div>
         </div>
       </div>
+      </div>
     </>
   );
 }
