@@ -113,9 +113,9 @@ export default function Home() {
       <main className="min-h-screen">
         <Hero />
         <Services />
-        <ServiceAreas />
         <HowItWorks />
         <FeaturedCleaners />
+        <ServiceAreas />
         <CleaningTeam />
         <CleaningGuides />
         <Testimonials />

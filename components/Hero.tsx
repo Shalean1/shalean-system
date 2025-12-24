@@ -3,11 +3,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
-import { Search, Star, Globe, ChevronDown } from "lucide-react";
-import { getPopularServices, type PopularService } from "@/app/actions/popular-services";
+import { ChevronDown } from "lucide-react";
+import { getPopularServices, getTopBookedPopularServices, type PopularService } from "@/app/actions/popular-services";
 
 export default function Hero() {
   const [popularCategories, setPopularCategories] = useState<PopularService[]>([]);
+  const [topBookedCategories, setTopBookedCategories] = useState<PopularService[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -15,7 +16,7 @@ export default function Hero() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch popular services on mount
+  // Fetch popular services on mount (for search dropdown)
   useEffect(() => {
     async function fetchPopularServices() {
       const services = await getPopularServices();
@@ -23,6 +24,15 @@ export default function Hero() {
       setFilteredServices(services);
     }
     fetchPopularServices();
+  }, []);
+
+  // Fetch top 5 most booked services for category tags
+  useEffect(() => {
+    async function fetchTopBookedServices() {
+      const topServices = await getTopBookedPopularServices(5);
+      setTopBookedCategories(topServices);
+    }
+    fetchTopBookedServices();
   }, []);
 
   // Close dropdown when clicking outside
@@ -90,34 +100,33 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative min-h-[500px] lg:min-h-[600px] flex items-center justify-center overflow-visible">
+    <section className="relative min-h-[500px] lg:min-h-[600px] flex items-start justify-center pt-12 lg:pt-16 overflow-visible">
       {/* Hero Background Image */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <Image
-          src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1920&q=80"
+          src="/hero-background.jpg"
           alt="Clean, bright indoor home"
           fill
           className="object-cover"
           priority
           quality={90}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-white/80 to-transparent"></div>
       </div>
 
       {/* Content Overlay */}
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
-        <div className="max-w-4xl mx-auto">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-center">
+        <div className="max-w-4xl mx-auto w-full">
           {/* White Content Box */}
           <div className="bg-white rounded-2xl shadow-2xl p-5 lg:p-6 border border-gray-200">
             {/* H1 Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-3 text-center">
-              Professional cleaning services,<br />
-              ready when you need them
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4 text-center">
+              Professional Cleaning services,<br />
+              on demand
             </h1>
 
             {/* Sub-headline */}
-            <p className="text-base sm:text-lg text-gray-600 mb-5 text-center">
-              Get professional cleaning for your home from trusted professional cleaners. From regular cleaning and deep cleaning to move-in cleaning, office cleaning, and more.
+            <p className="text-base sm:text-lg text-gray-600 mb-6 text-center">
+              Professional cleaning services for your home from trusted cleaners. Regular cleaning, deep cleaning, move-in cleaning, office cleaning, and more.
             </p>
 
             {/* Search Bar */}
@@ -132,7 +141,7 @@ export default function Hero() {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onFocus={handleInputFocus}
-                      className="w-full px-6 py-4 pr-12 border-2 border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-transparent text-base"
+                      className="w-full px-6 py-4 pr-12 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-transparent text-base"
                       aria-label="Search for cleaning services"
                       autoComplete="off"
                     />
@@ -148,7 +157,7 @@ export default function Hero() {
 
                   {/* Dropdown Menu */}
                   {isDropdownOpen && filteredServices.length > 0 && (
-                    <div className="absolute z-[9999] w-full mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-2xl max-h-80 overflow-y-auto">
+                    <div className="absolute z-[9999] w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-2xl max-h-80 overflow-y-auto">
                       {filteredServices.map((service) => (
                         <button
                           key={service.id}
@@ -171,53 +180,31 @@ export default function Hero() {
 
                   {/* No results message */}
                   {isDropdownOpen && searchQuery && filteredServices.length === 0 && (
-                    <div className="absolute z-[9999] w-full mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-2xl px-6 py-4">
+                    <div className="absolute z-[9999] w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-2xl px-6 py-4">
                       <p className="text-gray-500 text-sm">No services found matching "{searchQuery}"</p>
                     </div>
                   )}
                 </div>
                 <Link
                   href="/booking/service/standard/details"
-                  className="px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg flex items-center justify-center gap-2 text-base"
+                  className="px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg flex items-center justify-center text-base"
                 >
-                  <Search className="w-5 h-5" />
-                  Book cleaning today
+                  Book a service
                 </Link>
               </div>
             </form>
 
-            {/* Category Tags */}
+            {/* Category Tags - Top 5 Most Booked */}
             <div className="flex flex-wrap items-center gap-2 mb-4">
-              <span className="text-gray-600 font-medium text-sm">Popular:</span>
-              {popularCategories.map((category) => (
+              {topBookedCategories.map((category) => (
                 <Link
                   key={category.id}
                   href={`/booking/service/${mapServiceSlugToType(category.slug)}/details`}
-                  className="px-3 py-1.5 bg-[#e6f0ff] hover:bg-[#cce0ff] text-[#007bff] rounded-full text-xs sm:text-sm font-medium transition-colors"
+                  className="px-4 py-2 bg-white border border-[#007bff] hover:bg-[#e6f0ff] text-[#007bff] rounded-lg text-sm font-medium transition-colors"
                 >
                   {category.name}
                 </Link>
               ))}
-            </div>
-
-            {/* Social Proof */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-gray-200">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">1.5+ Million Reviews</p>
-                  <p className="text-xs text-gray-600">Trusted by thousands in Cape Town</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Globe className="w-4 h-4" />
-                <span>Powered by</span>
-                <span className="text-xl font-bold text-gray-900">Shalean</span>
-              </div>
             </div>
           </div>
         </div>

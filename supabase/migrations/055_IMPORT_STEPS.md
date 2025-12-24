@@ -76,3 +76,5 @@ Run `056_add_admin_bookings_policy.sql` to ensure admins can view all bookings.
 2. Run the admin policy migration (`056_add_admin_bookings_policy.sql`)
 3. Restart your development server
 
+
+

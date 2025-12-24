@@ -77,12 +77,6 @@ export default function ServiceAreas() {
             <p className="text-gray-600 mb-4">
               Don't see your area? We may still be able to help!
             </p>
-            <Link
-              href="/booking/service/standard/details"
-              className="inline-block px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg"
-            >
-              Book Now
-            </Link>
           </div>
         </div>
       </div>

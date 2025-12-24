@@ -11,3 +11,5 @@ ADD COLUMN IF NOT EXISTS office_size TEXT CHECK (office_size IN ('small', 'mediu
 -- Add comment for documentation
 COMMENT ON COLUMN bookings.office_size IS 'Office size for office cleaning service: small (1-3 rooms), medium (4-10 rooms), or large (10+ rooms)';
 
+
+

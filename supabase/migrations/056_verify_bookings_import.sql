@@ -66,3 +66,5 @@ SELECT
   COUNT(*) as total_count
 FROM bookings;
 
+
+

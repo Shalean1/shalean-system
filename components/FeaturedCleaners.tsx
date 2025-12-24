@@ -86,16 +86,6 @@ export default function FeaturedCleaners() {
             </div>
           ))}
         </div>
-
-        {/* CTA */}
-        <div className="text-center mt-12">
-          <a
-            href="#contact"
-            className="inline-block px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg"
-          >
-            View All Cleaners
-          </a>
-        </div>
       </div>
     </section>
   );

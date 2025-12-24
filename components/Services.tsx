@@ -111,16 +111,6 @@ export default function Services() {
             );
           })}
         </div>
-
-        {/* CTA */}
-        <div className="text-center mt-12">
-          <Link
-            href="/booking/service/standard/details"
-            className="inline-block px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg"
-          >
-            Book a Service
-          </Link>
-        </div>
       </div>
     </section>
   );

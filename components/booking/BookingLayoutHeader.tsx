@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import ProgressIndicator from "./ProgressIndicator";
@@ -26,7 +27,15 @@ export default function BookingLayoutHeader() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center gap-2">
+            <Image 
+              src="/shalean-logo.png" 
+              alt="Shalean" 
+              width={40}
+              height={40}
+              className="h-8 md:h-10 w-auto"
+              priority
+            />
             <span className="text-2xl font-bold text-gray-900" style={{ fontFamily: 'cursive, system-ui' }}>
               Shalean
             </span>

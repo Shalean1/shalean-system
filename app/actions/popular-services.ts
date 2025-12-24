@@ -14,6 +14,52 @@ export interface PopularService {
   updated_at: string;
 }
 
+// Get top 5 most booked service types from bookings table
+async function getTopBookedServiceTypes(limit: number = 5): Promise<string[]> {
+  const supabase = await createClient();
+  
+  // Count bookings by service_type and get top N
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("service_type")
+    .not("service_type", "is", null);
+
+  if (error) {
+    console.error("Error fetching booking counts:", error);
+    return [];
+  }
+
+  // Count occurrences of each service_type
+  const counts: Record<string, number> = {};
+  data?.forEach((booking) => {
+    const serviceType = booking.service_type;
+    if (serviceType) {
+      counts[serviceType] = (counts[serviceType] || 0) + 1;
+    }
+  });
+
+  // Sort by count (descending) and get top N
+  const topServiceTypes = Object.entries(counts)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, limit)
+    .map(([serviceType]) => serviceType);
+
+  return topServiceTypes;
+}
+
+// Map booking service_type to popular_services slug
+function mapServiceTypeToSlug(serviceType: string): string {
+  const mapping: Record<string, string> = {
+    "deep": "deep-cleaning",
+    "move-in-out": "move-in-cleaning", // or "move-out-cleaning"
+    "office": "office-cleaning",
+    "holiday": "holiday-cleaning",
+    "airbnb": "airbnb-cleaning",
+    "standard": "standard-cleaning",
+  };
+  return mapping[serviceType] || serviceType;
+}
+
 // Get all active popular services (public)
 export async function getPopularServices(): Promise<PopularService[]> {
   const supabase = await createClient();
@@ -30,6 +76,75 @@ export async function getPopularServices(): Promise<PopularService[]> {
   }
 
   return data || [];
+}
+
+// Get top 5 most booked popular services
+export async function getTopBookedPopularServices(limit: number = 5): Promise<PopularService[]> {
+  const supabase = await createClient();
+  
+  // Get top booked service types
+  const topServiceTypes = await getTopBookedServiceTypes(limit * 2); // Get more to account for missing mappings
+  
+  // Get all active popular services
+  const { data: allServices, error } = await supabase
+    .from("popular_services")
+    .select("*")
+    .eq("is_active", true)
+    .order("display_order", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching popular services:", error);
+    return [];
+  }
+
+  if (!allServices || allServices.length === 0) {
+    return [];
+  }
+
+  // Create a map of slug to service for quick lookup
+  const serviceMap = new Map(allServices.map((s) => [s.slug, s]));
+  
+  // Also create a reverse map: service_type -> possible slugs
+  const serviceTypeToSlugs: Record<string, string[]> = {
+    "deep": ["deep-cleaning"],
+    "move-in-out": ["move-in-cleaning", "move-out-cleaning"],
+    "office": ["office-cleaning"],
+    "holiday": ["holiday-cleaning"],
+    "airbnb": ["airbnb-cleaning"],
+    "standard": ["standard-cleaning"],
+    "carpet-cleaning": ["carpet-cleaning"],
+  };
+
+  // Filter to only services that match top booked types, maintaining order by booking count
+  const topBookedServices: PopularService[] = [];
+  const usedIds = new Set<string>();
+
+  // Add services in order of booking popularity
+  for (const serviceType of topServiceTypes) {
+    if (topBookedServices.length >= limit) break;
+    
+    const possibleSlugs = serviceTypeToSlugs[serviceType] || [mapServiceTypeToSlug(serviceType)];
+    
+    for (const slug of possibleSlugs) {
+      const service = serviceMap.get(slug);
+      if (service && !usedIds.has(service.id)) {
+        topBookedServices.push(service);
+        usedIds.add(service.id);
+        break; // Found a match, move to next service type
+      }
+    }
+  }
+
+  // If we have fewer than limit, fill with remaining services ordered by display_order
+  if (topBookedServices.length < limit) {
+    const remaining = allServices
+      .filter((s) => !usedIds.has(s.id))
+      .slice(0, limit - topBookedServices.length);
+    topBookedServices.push(...remaining);
+  }
+
+  // Return only the top N
+  return topBookedServices.slice(0, limit);
 }
 
 // Get all popular services including inactive (admin)

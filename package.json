@@ -8,7 +8,8 @@
     "dev:clean": "node scripts/cleanup-dev.js && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate:og": "node scripts/generate-og-image.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",
@@ -29,6 +30,7 @@
     "eslint": "^9.39.2",
     "eslint-config-next": "^16.0.10",
     "postcss": "^8.4.0",
+    "sharp": "^0.33.5",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.3.0"
   }

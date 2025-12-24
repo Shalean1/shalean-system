@@ -19,7 +19,7 @@ const benefits = [
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-20 bg-white">
+    <section id="how-it-works" className="py-20 bg-[#e6f7e6]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -47,13 +47,19 @@ export default function HowItWorks() {
                 })}
               </ul>
 
-              {/* CTA Button */}
-              <div className="pt-4">
+              {/* CTA Buttons */}
+              <div className="pt-4 flex flex-col sm:flex-row gap-4">
                 <Link
                   href="/booking/service/standard/details"
-                  className="inline-block px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg"
+                  className="inline-block px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg text-center"
                 >
                   Book Your Clean Today
+                </Link>
+                <Link
+                  href="/how-it-works"
+                  className="inline-block px-8 py-4 bg-white hover:bg-gray-50 text-gray-900 font-semibold rounded-xl transition-colors shadow-lg border border-gray-300 text-center"
+                >
+                  Learn More
                 </Link>
               </div>
             </div>

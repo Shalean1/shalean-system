@@ -95,7 +95,7 @@ export function generateStructuredData() {
     ],
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: "5",
+      ratingValue: "4.8",
       reviewCount: "150",
       bestRating: "5",
       worstRating: "1",
@@ -220,7 +220,7 @@ export function generateStructuredData() {
 
   const aggregateRating = {
     "@type": "AggregateRating",
-    ratingValue: "5",
+    ratingValue: "4.8",
     reviewCount: "150",
     bestRating: "5",
     worstRating: "1",
@@ -313,7 +313,7 @@ export function generateStructuredData() {
         name: "Do you provide eco-friendly cleaning supplies?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes, our professional cleaners arrive with all necessary eco-friendly supplies to ensure a safe and clean environment.",
+          text: "Yes, our professional cleaners use eco-friendly cleaning supplies. For deep cleaning, move-in/out, and carpet cleaning services, all supplies and equipment are included at no extra charge. For standard cleaning, Airbnb, office, and holiday cleaning services, supplies and equipment are available at an additional cost that you can request during booking.",
         },
       },
       {
@@ -339,6 +339,150 @@ export function generateStructuredData() {
       aggregateRating,
       faqPage,
       breadcrumbList,
+    ],
+  };
+}
+
+/**
+ * Generate structured data for the How It Works page
+ */
+export function generateHowItWorksStructuredData() {
+  const baseUrl = "https://shalean.co.za";
+
+  const howTo = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "@id": `${baseUrl}/how-it-works#howto`,
+    name: "How to Book Professional Cleaning Services in Cape Town",
+    description: "Step-by-step guide on how to book professional cleaning services with Shalean Cleaning Services in Cape Town",
+    step: [
+      {
+        "@type": "HowToStep",
+        position: 1,
+        name: "Choose Your Service",
+        text: "Select from our range of professional cleaning services including residential cleaning, commercial cleaning, deep cleaning, move-in/out cleaning, and specialized services.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 2,
+        name: "Select Your Cleaner",
+        text: "Browse our network of vetted, professional cleaners. View their profiles, read customer reviews, check their skills and specialties, and compare prices.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 3,
+        name: "Schedule Your Clean",
+        text: "Pick a date and time that works for you. We offer flexible scheduling with same-day booking available.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 4,
+        name: "Payment & Confirmation",
+        text: "Securely pay online through our encrypted payment system. You'll receive instant confirmation via email and SMS.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 5,
+        name: "Enjoy Your Clean Space",
+        text: "Your professional cleaner arrives on time, ready to complete the cleaning according to your specifications. After completion, you can review and rate your experience.",
+      },
+    ],
+  };
+
+  const howItWorksFAQ = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": `${baseUrl}/how-it-works#faq`,
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "How do I book a cleaning service in Cape Town?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Booking a cleaning service with Shalean is simple. Visit our booking page, choose your service type, select a cleaner based on reviews and availability, pick your preferred date and time, and complete secure payment. You'll receive instant confirmation. Same-day booking is available for urgent cleaning needs.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Can I book same-day cleaning?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes! Shalean Cleaning Services offers same-day booking for cleaning services in Cape Town. Simply select your service, choose an available cleaner, and schedule your clean for today. Availability depends on cleaner schedules, but we work hard to accommodate urgent requests.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How do I choose a cleaner?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "You can browse our network of professional cleaners, read verified customer reviews and ratings, view their skills and specialties, and compare prices. Each cleaner profile shows their experience, areas of expertise, and customer feedback.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "What if I'm not satisfied with the cleaning?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "We offer a 100% satisfaction guarantee on all our cleaning services. If you're not completely satisfied, contact us within 24 hours and we'll send a cleaner back to address any issues at no additional cost.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Do cleaners bring their own supplies?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "For deep cleaning, move-in/out, and carpet cleaning services, all supplies and equipment are included at no extra charge. For standard cleaning, Airbnb, office, and holiday cleaning services, supplies and equipment are available at an additional cost that you can request during booking. All our cleaners use high-quality, eco-friendly cleaning products that are effective yet gentle on your home and the environment.",
+        },
+      },
+    ],
+  };
+
+  const howItWorksBreadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": `${baseUrl}/how-it-works#breadcrumb`,
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: baseUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "How It Works",
+        item: `${baseUrl}/how-it-works`,
+      },
+    ],
+  };
+
+  const howItWorksWebPage = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${baseUrl}/how-it-works#webpage`,
+    url: `${baseUrl}/how-it-works`,
+    name: "How It Works: Book Professional Cleaning Services in Cape Town",
+    description: "Learn how to book professional cleaning services in Cape Town with Shalean. Simple 5-step process with same-day booking available.",
+    inLanguage: "en-ZA",
+    isPartOf: {
+      "@id": `${baseUrl}#website`,
+    },
+    about: {
+      "@id": `${baseUrl}#organization`,
+    },
+    breadcrumb: {
+      "@id": `${baseUrl}/how-it-works#breadcrumb`,
+    },
+  };
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      howTo,
+      howItWorksFAQ,
+      howItWorksBreadcrumb,
+      howItWorksWebPage,
     ],
   };
 }

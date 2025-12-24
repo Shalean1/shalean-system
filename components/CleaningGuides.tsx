@@ -69,16 +69,6 @@ export default function CleaningGuides() {
             );
           })}
         </div>
-
-        {/* CTA */}
-        <div className="text-center mt-12">
-          <Link
-            href="/guides"
-            className="inline-block px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors shadow-lg"
-          >
-            View All Guides
-          </Link>
-        </div>
       </div>
     </section>
   );
