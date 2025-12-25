@@ -352,9 +352,17 @@ export default function ConfirmationPage() {
                   console.error("Submitted booking data:", bookingData);
                   
                   // Show detailed error to user
-                  const errorDetails = result.errors 
+                  let errorDetails = result.errors 
                     ? Object.entries(result.errors).map(([field, message]) => `${field}: ${message}`).join("\n")
                     : result.message || "Unknown error";
+                  
+                  // Provide more user-friendly error messages for common network issues
+                  if (errorDetails.includes("fetch failed") || errorDetails.includes("network")) {
+                    errorDetails = "Unable to connect to our servers. Please check your internet connection and try again.";
+                  } else if (errorDetails.includes("Failed to fetch booking by payment reference")) {
+                    errorDetails = "There was a temporary issue checking for existing bookings. Please try again in a moment.";
+                  }
+                  
                   alert(`Failed to create booking:\n\n${errorDetails}\n\nPlease contact support if this issue persists.`);
                 }
               } catch (error) {

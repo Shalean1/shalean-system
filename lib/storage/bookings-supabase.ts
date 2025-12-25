@@ -189,23 +189,47 @@ export async function getUserBookingByReferenceOrId(referenceOrId: string): Prom
  * Used to check if a booking already exists for a payment
  */
 export async function getBookingByPaymentReference(paymentReference: string): Promise<Booking | null> {
-  const supabase = await createClient();
-  
-  const { data, error } = await supabase
-    .from("bookings")
-    .select("*")
-    .eq("payment_reference", paymentReference)
-    .single();
+  try {
+    const supabase = await createClient();
+    
+    const { data, error } = await supabase
+      .from("bookings")
+      .select("*")
+      .eq("payment_reference", paymentReference)
+      .single();
 
-  if (error) {
-    if (error.code === "PGRST116") {
-      // No rows returned
-      return null;
+    if (error) {
+      if (error.code === "PGRST116") {
+        // No rows returned
+        return null;
+      }
+      throw new Error(`Failed to fetch booking by payment reference: ${error.message}`);
     }
-    throw new Error(`Failed to fetch booking by payment reference: ${error.message}`);
-  }
 
-  return data ? mapDatabaseToBooking(data) : null;
+    return data ? mapDatabaseToBooking(data) : null;
+  } catch (error) {
+    // Handle network errors and other unexpected errors
+    if (error instanceof Error) {
+      // Check if it's a network/fetch error
+      const isNetworkError = 
+        error.name === "TypeError" ||
+        error.message.includes("fetch failed") ||
+        error.message.includes("network") ||
+        error.message.includes("ECONNREFUSED") ||
+        error.message.includes("ETIMEDOUT");
+      
+      if (isNetworkError) {
+        console.error("Network error while fetching booking by payment reference:", error);
+        // Return null instead of throwing to allow booking creation to proceed
+        // This handles cases where the database is temporarily unavailable
+        return null;
+      }
+      // Re-throw other errors (database errors, validation errors, etc.)
+      throw error;
+    }
+    // Re-throw unknown errors
+    throw error;
+  }
 }
 
 /**
@@ -328,7 +352,7 @@ export async function updatePaymentStatus(
 export function generateBookingReference(): string {
   const timestamp = Date.now().toString(36).toUpperCase();
   const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-  return `SHL-${timestamp}-${random}`;
+  return `BOK-${timestamp}-${random}`;
 }
 
 /**

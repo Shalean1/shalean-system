@@ -334,6 +334,63 @@ export async function signup(
       }
     }
 
+    // Send confirmation emails via Resend (to user and admin)
+    if (authData.user && !authData.session) {
+      try {
+        // Generate confirmation link using Supabase admin API
+        const { createServiceRoleClient } = await import("@/lib/supabase/server");
+        const supabaseAdmin = createServiceRoleClient();
+        
+        const confirmationLinkResult = await supabaseAdmin.auth.admin.generateLink({
+          type: 'signup',
+          email: data.email,
+          options: {
+            redirectTo: `${siteUrl}/auth/callback`,
+          },
+        });
+
+        if (confirmationLinkResult.error) {
+          console.error("Error generating confirmation link:", confirmationLinkResult.error);
+          // Continue without sending email - user can still use resend feature
+        } else if (confirmationLinkResult.data?.properties?.action_link) {
+          const confirmationLink = confirmationLinkResult.data.properties.action_link;
+          
+          // Send confirmation email to user
+          try {
+            const { sendSignupConfirmationEmail, sendSignupNotificationEmail } = await import("@/lib/email");
+            await sendSignupConfirmationEmail({
+              firstName: data.firstName,
+              lastName: data.lastName,
+              email: data.email,
+              confirmationLink: confirmationLink,
+            });
+            console.log("Signup confirmation email sent to user via Resend");
+          } catch (emailError) {
+            console.error("Failed to send signup confirmation email (non-critical):", emailError);
+            // Don't fail signup if email fails
+          }
+
+          // Send notification email to admin
+          try {
+            const { sendSignupNotificationEmail } = await import("@/lib/email");
+            await sendSignupNotificationEmail({
+              firstName: data.firstName,
+              lastName: data.lastName,
+              email: data.email,
+              confirmationLink: confirmationLink,
+            });
+            console.log("Signup notification email sent to admin via Resend");
+          } catch (adminEmailError) {
+            console.error("Failed to send signup notification email to admin (non-critical):", adminEmailError);
+            // Don't fail signup if admin email fails
+          }
+        }
+      } catch (emailError) {
+        console.error("Error sending confirmation emails via Resend (non-critical):", emailError);
+        // Don't fail signup if email sending fails
+      }
+    }
+
     // Check if email confirmation is required
     if (authData.user && !authData.session) {
       return {
@@ -435,7 +492,7 @@ export async function logout(): Promise<AuthResult> {
 }
 
 /**
- * Resend email confirmation
+ * Resend email confirmation using Resend
  */
 export async function resendConfirmationEmail(email: string): Promise<AuthResult> {
   // Server-side validation
@@ -448,23 +505,67 @@ export async function resendConfirmationEmail(email: string): Promise<AuthResult
   }
 
   try {
-    const supabase = await createClient();
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    
+    // Get user info to personalize the email
+    const { createServiceRoleClient } = await import("@/lib/supabase/server");
+    const supabaseAdmin = createServiceRoleClient();
+    
+    // Get user by email from profiles table (more reliable than auth.users)
+    let firstName = "User";
+    let lastName = "";
+    
+    try {
+      const { data: profile } = await supabaseAdmin
+        .from("profiles")
+        .select("first_name, last_name")
+        .eq("email", email)
+        .single();
+      
+      if (profile) {
+        firstName = profile.first_name || firstName;
+        lastName = profile.last_name || lastName;
+      }
+    } catch (profileError) {
+      console.warn("Could not fetch user profile for email personalization:", profileError);
+      // Continue with default values
+    }
 
-    const { error } = await supabase.auth.resend({
+    // Generate new confirmation link
+    const confirmationLinkResult = await supabaseAdmin.auth.admin.generateLink({
       type: 'signup',
       email: email,
       options: {
-        emailRedirectTo: `${siteUrl}/auth/callback`,
+        redirectTo: `${siteUrl}/auth/callback`,
       },
     });
 
-    if (error) {
+    if (confirmationLinkResult.error) {
+      console.error("Error generating confirmation link:", confirmationLinkResult.error);
       return {
         success: false,
-        message: error.message,
+        message: `Failed to generate confirmation link: ${confirmationLinkResult.error.message}`,
       };
     }
+
+    const confirmationLink = confirmationLinkResult.data?.properties?.action_link;
+    
+    if (!confirmationLink) {
+      return {
+        success: false,
+        message: "Failed to generate confirmation link",
+      };
+    }
+
+    // Send confirmation email via Resend
+    const { sendSignupConfirmationEmail } = await import("@/lib/email");
+
+    await sendSignupConfirmationEmail({
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      confirmationLink: confirmationLink,
+    });
 
     return {
       success: true,

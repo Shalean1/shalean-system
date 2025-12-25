@@ -1033,7 +1033,9 @@ export default function ReviewPage() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <p><strong>Service Type:</strong> {getServiceName(formData.service || "standard")}</p>
+                  <p suppressHydrationWarning>
+                    <strong>Service Type:</strong> {isMounted ? getServiceName(formData.service || serviceType || "standard") : getServiceName((serviceType as ServiceType) || "standard")}
+                  </p>
                   {/* Office Details - Show for office service */}
                   {isMounted && formData.service === 'office' && (
                     <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">

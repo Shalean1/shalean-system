@@ -4,6 +4,29 @@
 
 If you're not receiving confirmation emails after signing up, here are the most common causes and solutions:
 
+**Note**: If your domain is already verified in Resend (for sending booking/quote confirmation emails), you should configure Supabase to use Resend SMTP so all emails go through your verified domain. See "Set Up Custom SMTP" section below.
+
+## ⚠️ Quick Fix: Domain Verified but Emails Not Sending
+
+**If your domain is already verified in Resend but Supabase confirmation emails are failing:**
+
+This happens because Supabase uses its own email service by default, separate from your Resend configuration. Even though your domain is verified in Resend, Supabase authentication emails won't use it until you configure SMTP.
+
+**Solution**: Configure Supabase to use Resend SMTP (takes 2 minutes):
+
+1. Go to **Supabase Dashboard** → **Authentication** → **SMTP Settings**
+2. Enable **"Custom SMTP"**
+3. Enter these settings:
+   - **Host**: `smtp.resend.com`
+   - **Port**: `587`
+   - **Username**: `resend`
+   - **Password**: Your Resend API key (from Resend dashboard)
+   - **Sender email**: `bookings@bokkiecleaning.co.za` (or another email from your verified domain)
+   - **Sender name**: `Bokkie Cleaning Services`
+4. Click **"Save"** and test the connection
+
+After this, all Supabase authentication emails (signup confirmations, password resets) will be sent through your verified Resend domain! ✅
+
 ## Quick Fixes
 
 ### 1. Check Supabase Email Settings
@@ -42,24 +65,44 @@ If you're not receiving confirmation emails after signing up, here are the most 
 
 ## Set Up Custom SMTP (Recommended for Production)
 
-Supabase's default email service has limitations. For reliable email delivery, set up a custom SMTP provider:
+Supabase's default email service has limitations. For reliable email delivery, set up a custom SMTP provider.
+
+**Why configure SMTP?**
+- Your domain is already verified in Resend (for application emails)
+- Using Resend SMTP ensures all emails (including authentication emails) come from your verified domain
+- Better deliverability and branding consistency
+- Avoids emails going to spam folders
 
 ### Option 1: Using Resend (Recommended)
 
-1. **Sign up for Resend** at [resend.com](https://resend.com)
-2. **Verify your domain** (or use their test domain for development)
-3. **Get your API key** from Resend dashboard
-4. **Configure in Supabase**:
-   - Go to **Authentication** → **SMTP Settings**
-   - Enable "Custom SMTP"
-   - Fill in:
+**Important**: If your domain is already verified in Resend (like `bokkiecleaning.co.za`), you can use it for Supabase authentication emails too!
+
+1. **Get your Resend API key** from [Resend Dashboard](https://resend.com/api-keys)
+   - Go to **API Keys** section
+   - Copy your API key (starts with `re_`)
+
+2. **Configure in Supabase**:
+   - Go to your Supabase Dashboard → **Authentication** → **SMTP Settings**
+   - Enable "Custom SMTP" toggle
+   - Fill in the following settings:
      - **Host**: `smtp.resend.com`
-     - **Port**: `465` (SSL) or `587` (TLS)
+     - **Port**: `587` (TLS - recommended) or `465` (SSL)
      - **Username**: `resend`
-     - **Password**: Your Resend API key
-     - **Sender email**: Your verified email (e.g., `noreply@yourdomain.com`)
-     - **Sender name**: `Shalean Cleaning Services`
+     - **Password**: Your Resend API key (paste the full API key here)
+     - **Sender email**: Use your verified domain email (e.g., `bookings@bokkiecleaning.co.za` or `noreply@bokkiecleaning.co.za`)
+       - ⚠️ **Important**: The sender email MUST be from your verified domain in Resend
+       - To verify which emails you can use, check your Resend dashboard → **Domains** → Click on your domain → See verified email addresses
+       - Common options: `bookings@`, `noreply@`, `hello@`, `info@` (all from your verified domain)
+     - **Sender name**: `Bokkie Cleaning Services` (or your preferred name)
    - Click "Save"
+
+3. **Verify the configuration**:
+   - After saving, Supabase will test the SMTP connection
+   - If successful, you'll see a green checkmark
+   - If it fails, double-check:
+     - Your Resend API key is correct
+     - The sender email uses your verified domain
+     - Port 587 is not blocked by firewall
 
 ### Option 2: Using SendGrid
 

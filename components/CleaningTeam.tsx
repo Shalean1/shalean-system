@@ -39,7 +39,7 @@ export default function CleaningTeam() {
                   </div>
                 ) : (
                   <img
-                    src="/services/everyday-life-made-easier.jpg"
+                    src="/services/team-at-your-fingertips.jpg"
                     alt="A go-to team at your fingertips - Trusted cleaning professionals"
                     className="absolute inset-0 w-full h-full object-cover"
                     onError={() => setImageError(true)}

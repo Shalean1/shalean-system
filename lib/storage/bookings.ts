@@ -49,7 +49,7 @@ export async function saveBooking(booking: Booking): Promise<void> {
 export function generateBookingReference(): string {
   const timestamp = Date.now().toString(36).toUpperCase();
   const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-  return `SHL-${timestamp}-${random}`;
+  return `BOK-${timestamp}-${random}`;
 }
 
 /**
