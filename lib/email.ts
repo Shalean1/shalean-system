@@ -511,7 +511,7 @@ async function formatBookingConfirmationEmail(booking: Booking): Promise<string>
             <p style="color: #666; font-size: 14px;">
               If you have any questions or need to make changes to your booking, please contact us at:<br>
               <strong>Email:</strong> info@bokkiecleaning.co.za<br>
-              <strong>Phone:</strong> +27 12 345 6789
+              <strong>Phone:</strong> +27 72 416 2547
             </p>
             <p style="color: #666; font-size: 14px; margin-top: 20px;">
               Best regards,<br>
@@ -764,7 +764,7 @@ function formatContactConfirmationEmail(data: ContactEmailData): string {
             <p style="white-space: pre-wrap; margin-top: 15px;">${data.message}</p>
           </div>
           
-          <p>Our team typically responds within 24 hours. If your inquiry is urgent, please call us at <strong>+27 87 153 5250</strong>.</p>
+          <p>Our team typically responds within 24 hours. If your inquiry is urgent, please call us at <strong>+27 72 416 2547</strong>.</p>
           
           <div style="margin-top: 30px; padding: 15px; background-color: #e7f3ff; border-radius: 5px; border-left: 4px solid #0C53ED;">
             <p style="margin: 0;"><strong>Need Immediate Assistance?</strong></p>
@@ -941,7 +941,7 @@ async function formatPaymentLinkEmail(booking: Booking): Promise<string> {
             <p style="color: #666; font-size: 14px;">
               If you have any questions or need assistance, please contact us at:<br>
               <strong>Email:</strong> info@bokkiecleaning.co.za<br>
-              <strong>Phone:</strong> +27 12 345 6789
+              <strong>Phone:</strong> +27 72 416 2547
             </p>
             <p style="color: #666; font-size: 14px; margin-top: 20px;">
               Best regards,<br>
@@ -1038,7 +1038,7 @@ function formatSignupConfirmationEmail(data: SignupConfirmationEmailData): strin
             <p style="color: #666; font-size: 14px;">
               If you have any questions, please contact us at:<br>
               <strong>Email:</strong> info@bokkiecleaning.co.za<br>
-              <strong>Phone:</strong> +27 87 153 5250
+              <strong>Phone:</strong> +27 72 416 2547
             </p>
             <p style="color: #666; font-size: 14px; margin-top: 20px;">
               Best regards,<br>

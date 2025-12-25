@@ -31,7 +31,7 @@ export async function initializePaymentWithAmount(
 
   try {
     // Generate payment reference
-    const reference = `shalean-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    const reference = `bokkie-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
     // Convert amount to cents (Paystack uses smallest currency unit)
     // ZAR amounts are multiplied by 100 to convert to cents
@@ -93,7 +93,7 @@ export async function initializePayment(
     const priceBreakdown = calculatePrice(bookingData, pricingConfig, discountCodeAmount);
     
     // Generate payment reference
-    const reference = `shalean-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    const reference = `bokkie-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
     // Convert amount to cents (Paystack uses smallest currency unit)
     // ZAR amounts are multiplied by 100 to convert to cents
