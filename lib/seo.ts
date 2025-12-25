@@ -1,16 +1,16 @@
 /**
- * SEO utility functions for Shalean Cleaning Services
+ * SEO utility functions for Bokkie Cleaning Services
  */
 
 export const siteConfig = {
-  name: "Shalean Cleaning Services",
-  url: "https://shalean.co.za",
+  name: "Bokkie Cleaning Services",
+  url: "https://www.bokkiecleaning.co.za",
   description: "Professional cleaning services in Cape Town. Expert cleaners offering residential, commercial, and specialized cleaning services.",
   ogImage: "/og-image.jpg",
   links: {
-    twitter: "https://twitter.com/shaleancleaning",
+    twitter: "https://x.com/shaloclean",
     facebook: "https://facebook.com/shaleancleaning",
-    instagram: "https://instagram.com/shaleancleaning",
+    instagram: "https://www.instagram.com/shalean_cleaning_services",
   },
 };
 
@@ -19,7 +19,7 @@ export const siteConfig = {
  */
 export function generateMetaTitle(title: string): string {
   const maxLength = 60;
-  const suffix = " | Shalean Cleaning Services";
+  const suffix = " | Bokkie Cleaning Services";
   const availableLength = maxLength - suffix.length;
   
   if (title.length <= availableLength) {
@@ -58,7 +58,7 @@ export function generateCanonicalUrl(path: string = ""): string {
  * Generate image alt text with keywords
  */
 export function generateImageAlt(imageType: string, location?: string): string {
-  const base = `Shalean Cleaning Services - ${imageType}`;
+  const base = `Bokkie Cleaning Services - ${imageType}`;
   if (location) {
     return `${base} in ${location}, Cape Town`;
   }

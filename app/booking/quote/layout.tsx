@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Get Your Free Cleaning Quote | Shalean Cleaning Services",
+  title: "Get Your Free Cleaning Quote | Bokkie Cleaning Services",
   description: "Request a free personalized quote for professional cleaning services in Cape Town. Select your service, home details, and additional services.",
   keywords: [
     "cleaning quote Cape Town",
@@ -18,6 +18,9 @@ export default function QuoteLayout({
 }) {
   return <>{children}</>;
 }
+
+
+
 
 
 

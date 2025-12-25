@@ -83,7 +83,7 @@ function formatQuoteEmail(data: QuoteEmailData): string {
           
           <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
             <p style="color: #666; font-size: 14px;">
-              This quote request was submitted from the Shalean Cleaning Services website.
+              This quote request was submitted from the Bokkie Cleaning Services website.
             </p>
           </div>
         </div>
@@ -119,7 +119,7 @@ function formatCustomerConfirmationEmail(data: QuoteEmailData): string {
         <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; border: 1px solid #e0e0e0;">
           <p>Dear ${data.firstName},</p>
           
-          <p>Thank you for requesting a quote from Shalean Cleaning Services. We have received your request and will get back to you shortly.</p>
+          <p>Thank you for requesting a quote from Bokkie Cleaning Services. We have received your request and will get back to you shortly.</p>
           
           <h2 style="color: #0C53ED; margin-top: 30px;">Your Quote Request Details</h2>
           <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
@@ -138,7 +138,7 @@ function formatCustomerConfirmationEmail(data: QuoteEmailData): string {
           <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
             <p style="color: #666; font-size: 14px;">
               Best regards,<br>
-              <strong>The Shalean Cleaning Services Team</strong>
+              <strong>The Bokkie Cleaning Services Team</strong>
             </p>
           </div>
         </div>
@@ -158,11 +158,11 @@ export async function sendQuoteEmail(data: QuoteEmailData): Promise<void> {
   const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
   
   // When using Resend testing domain, only send to verified email address
-  // Otherwise, use the configured email or default to hello@shalean.com
+  // Otherwise, use the configured email or default to info@bokkiecleaning.co.za
   const isTestingDomain = fromEmail.includes("@resend.dev");
   const toEmail = isTestingDomain 
-    ? "hello@shalean.com" 
-    : (process.env.RESEND_TO_EMAIL || "hello@shalean.com");
+    ? "info@bokkiecleaning.co.za" 
+    : (process.env.RESEND_TO_EMAIL || "info@bokkiecleaning.co.za");
 
   console.log("Sending notification email to business:", {
     from: fromEmail,
@@ -210,7 +210,7 @@ export async function sendCustomerConfirmationEmail(data: QuoteEmailData): Promi
   // When using Resend testing domain, only send to verified email address
   // Otherwise, send to the customer's email
   const isTestingDomain = fromEmail.includes("@resend.dev");
-  const toEmail = isTestingDomain ? "hello@shalean.com" : data.email;
+  const toEmail = isTestingDomain ? "info@bokkiecleaning.co.za" : data.email;
 
   console.log("Sending confirmation email to customer:", {
     from: fromEmail,
@@ -226,7 +226,7 @@ export async function sendCustomerConfirmationEmail(data: QuoteEmailData): Promi
     const result = await resend.emails.send({
       from: fromEmail,
       to: toEmail,
-      subject: `Quote Request Confirmation - Shalean Cleaning Services`,
+      subject: `Quote Request Confirmation - Bokkie Cleaning Services`,
       html: formatCustomerConfirmationEmail(data),
     });
 
@@ -318,7 +318,7 @@ async function formatBookingConfirmationEmail(booking: Booking): Promise<string>
         <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; border: 1px solid #e0e0e0;">
           <p>Dear ${booking.firstName},</p>
           
-          <p>Thank you for booking with Shalean Cleaning Services! Your booking has been confirmed and payment has been received.</p>
+          <p>Thank you for booking with Bokkie Cleaning Services! Your booking has been confirmed and payment has been received.</p>
           
           <div style="background-color: white; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #0C53ED;">
             <h2 style="color: #0C53ED; margin-top: 0;">Booking Reference: ${booking.bookingReference}</h2>
@@ -389,12 +389,12 @@ async function formatBookingConfirmationEmail(booking: Booking): Promise<string>
           <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
             <p style="color: #666; font-size: 14px;">
               If you have any questions or need to make changes to your booking, please contact us at:<br>
-              <strong>Email:</strong> hello@shalean.com<br>
+              <strong>Email:</strong> info@bokkiecleaning.co.za<br>
               <strong>Phone:</strong> +27 12 345 6789
             </p>
             <p style="color: #666; font-size: 14px; margin-top: 20px;">
               Best regards,<br>
-              <strong>The Shalean Cleaning Services Team</strong>
+              <strong>The Bokkie Cleaning Services Team</strong>
             </p>
           </div>
         </div>
@@ -505,13 +505,13 @@ export async function sendBookingConfirmationEmail(booking: Booking): Promise<vo
   const resend = new Resend(process.env.RESEND_API_KEY);
   const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
   const isTestingDomain = fromEmail.includes("@resend.dev");
-  const toEmail = isTestingDomain ? "hello@shalean.com" : booking.email;
+  const toEmail = isTestingDomain ? "info@bokkiecleaning.co.za" : booking.email;
 
   try {
     const result = await resend.emails.send({
       from: fromEmail,
       to: toEmail,
-      subject: `Booking Confirmation - ${booking.bookingReference} | Shalean Cleaning Services`,
+      subject: `Booking Confirmation - ${booking.bookingReference} | Bokkie Cleaning Services`,
       html: await formatBookingConfirmationEmail(booking),
     });
 
@@ -539,8 +539,8 @@ export async function sendBookingNotificationEmail(booking: Booking): Promise<vo
   const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
   const isTestingDomain = fromEmail.includes("@resend.dev");
   const toEmail = isTestingDomain 
-    ? "hello@shalean.com" 
-    : (process.env.RESEND_TO_EMAIL || "hello@shalean.com");
+    ? "info@bokkiecleaning.co.za" 
+    : (process.env.RESEND_TO_EMAIL || "info@bokkiecleaning.co.za");
 
   try {
     const result = await resend.emails.send({
@@ -602,7 +602,7 @@ function formatContactEmail(data: ContactEmailData): string {
           
           <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
             <p style="color: #666; font-size: 14px;">
-              This contact form submission was received from the Shalean Cleaning Services dashboard.
+              This contact form submission was received from the Bokkie Cleaning Services dashboard.
             </p>
           </div>
         </div>
@@ -627,7 +627,7 @@ function formatContactConfirmationEmail(data: ContactEmailData): string {
         <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; border: 1px solid #e0e0e0;">
           <p>Dear ${data.name},</p>
           
-          <p>Thank you for reaching out to Shalean Cleaning Services. We have received your message and will get back to you as soon as possible.</p>
+          <p>Thank you for reaching out to Bokkie Cleaning Services. We have received your message and will get back to you as soon as possible.</p>
           
           <h2 style="color: #0C53ED; margin-top: 30px;">Your Message</h2>
           <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
@@ -639,13 +639,13 @@ function formatContactConfirmationEmail(data: ContactEmailData): string {
           
           <div style="margin-top: 30px; padding: 15px; background-color: #e7f3ff; border-radius: 5px; border-left: 4px solid #0C53ED;">
             <p style="margin: 0;"><strong>Need Immediate Assistance?</strong></p>
-            <p style="margin: 5px 0 0 0;">Call us at <strong>+27 87 153 5250</strong> or email us at <strong>support@shalean.com</strong></p>
+            <p style="margin: 5px 0 0 0;">Call us at <strong>+27 72 416 2547</strong> or email us at <strong>info@bokkiecleaning.co.za</strong></p>
           </div>
           
           <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
             <p style="color: #666; font-size: 14px;">
               Best regards,<br>
-              <strong>The Shalean Cleaning Services Team</strong>
+              <strong>The Bokkie Cleaning Services Team</strong>
             </p>
           </div>
         </div>
@@ -665,11 +665,11 @@ export async function sendContactEmail(data: ContactEmailData): Promise<void> {
   const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
   
   // When using Resend testing domain, only send to verified email address
-  // Otherwise, use the configured email or default to hello@shalean.com
+  // Otherwise, use the configured email or default to info@bokkiecleaning.co.za
   const isTestingDomain = fromEmail.includes("@resend.dev");
   const toEmail = isTestingDomain 
-    ? "hello@shalean.com" 
-    : (process.env.RESEND_TO_EMAIL || "hello@shalean.com");
+    ? "info@bokkiecleaning.co.za" 
+    : (process.env.RESEND_TO_EMAIL || "info@bokkiecleaning.co.za");
 
   console.log("Sending contact form notification email to business:", {
     from: fromEmail,
@@ -717,7 +717,7 @@ export async function sendContactConfirmationEmail(data: ContactEmailData): Prom
   // When using Resend testing domain, only send to verified email address
   // Otherwise, send to the customer's email
   const isTestingDomain = fromEmail.includes("@resend.dev");
-  const toEmail = isTestingDomain ? "hello@shalean.com" : data.email;
+  const toEmail = isTestingDomain ? "info@bokkiecleaning.co.za" : data.email;
 
   console.log("Sending contact confirmation email to customer:", {
     from: fromEmail,
@@ -733,7 +733,7 @@ export async function sendContactConfirmationEmail(data: ContactEmailData): Prom
     const result = await resend.emails.send({
       from: fromEmail,
       to: toEmail,
-      subject: `We've Received Your Message - Shalean Cleaning Services`,
+      subject: `We've Received Your Message - Bokkie Cleaning Services`,
       html: formatContactConfirmationEmail(data),
     });
 
@@ -817,12 +817,12 @@ async function formatPaymentLinkEmail(booking: Booking): Promise<string> {
           <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
             <p style="color: #666; font-size: 14px;">
               If you have any questions or need assistance, please contact us at:<br>
-              <strong>Email:</strong> hello@shalean.com<br>
+              <strong>Email:</strong> info@bokkiecleaning.co.za<br>
               <strong>Phone:</strong> +27 12 345 6789
             </p>
             <p style="color: #666; font-size: 14px; margin-top: 20px;">
               Best regards,<br>
-              <strong>The Shalean Cleaning Services Team</strong>
+              <strong>The Bokkie Cleaning Services Team</strong>
             </p>
           </div>
         </div>
@@ -842,13 +842,13 @@ export async function sendPaymentLinkEmail(booking: Booking): Promise<void> {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
   const isTestingDomain = fromEmail.includes("@resend.dev");
-  const toEmail = isTestingDomain ? "hello@shalean.com" : booking.email;
+  const toEmail = isTestingDomain ? "info@bokkiecleaning.co.za" : booking.email;
 
   try {
     const result = await resend.emails.send({
       from: fromEmail,
       to: toEmail,
-      subject: `Complete Your Payment - ${booking.bookingReference} | Shalean Cleaning Services`,
+      subject: `Complete Your Payment - ${booking.bookingReference} | Bokkie Cleaning Services`,
       html: await formatPaymentLinkEmail(booking),
     });
 

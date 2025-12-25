@@ -105,7 +105,7 @@ export async function authenticateCleanerWithPassword(
     }
 
     // Construct email from phone if cleaner doesn't have email stored
-    // Cleaners are created with email constructed from phone (e.g., 27792022648@shalean.co.za)
+    // Cleaners are created with email constructed from phone (e.g., 27792022648@bokkiecleaning.co.za)
     let emailToUse: string;
     if (cleaner.email && cleaner.email.includes("@")) {
       emailToUse = cleaner.email;

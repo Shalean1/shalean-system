@@ -11,12 +11,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://shalean.co.za"),
+  metadataBase: new URL("https://www.bokkiecleaning.co.za"),
   title: {
-    default: "Shalean Cleaning Services | Professional Cleaning Services Cape Town",
-    template: "%s | Shalean Cleaning Services",
+    default: "Bokkie Cleaning Services | Professional Cleaning Services Cape Town",
+    template: "%s | Bokkie Cleaning Services",
   },
-  description: "Professional cleaning services in Cape Town. Expert cleaners offering residential, commercial, and specialized cleaning services. Book your clean today with Shalean Cleaning Services.",
+  description: "Professional cleaning services in Cape Town. Expert cleaners offering residential, commercial, and specialized cleaning services. Book your clean today with Bokkie Cleaning Services.",
   keywords: [
     "cleaning services Cape Town",
     "professional cleaners Cape Town",
@@ -37,9 +37,9 @@ export const metadata: Metadata = {
     "cleaning services Sea Point",
     "cleaning services Camps Bay",
   ],
-  authors: [{ name: "Shalean Cleaning Services" }],
-  creator: "Shalean Cleaning Services",
-  publisher: "Shalean Cleaning Services",
+  authors: [{ name: "Bokkie Cleaning Services" }],
+  creator: "Bokkie Cleaning Services",
+  publisher: "Bokkie Cleaning Services",
   category: "Cleaning Services",
   classification: "Home Services",
   formatDetection: {
@@ -50,27 +50,27 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_ZA",
-    url: "https://shalean.co.za",
-    siteName: "Shalean Cleaning Services",
-    title: "Shalean Cleaning Services | Professional Cleaning Services Cape Town",
+    url: "https://www.bokkiecleaning.co.za",
+    siteName: "Bokkie Cleaning Services",
+    title: "Bokkie Cleaning Services | Professional Cleaning Services Cape Town",
     description: "Professional cleaning services in Cape Town. Expert cleaners offering residential, commercial, and specialized cleaning services. Book your clean today!",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Shalean Cleaning Services - Professional Cleaning Services in Cape Town",
+        alt: "Bokkie Cleaning Services - Professional Cleaning Services in Cape Town",
         type: "image/jpeg",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shalean Cleaning Services | Professional Cleaning Services Cape Town",
+    title: "Bokkie Cleaning Services | Professional Cleaning Services Cape Town",
     description: "Professional cleaning services in Cape Town. Expert cleaners offering residential, commercial, and specialized cleaning services.",
     images: ["/og-image.jpg"],
-    creator: "@shaleancleaning",
-    site: "@shaleancleaning",
+    creator: "@shaloclean",
+    site: "@shaloclean",
   },
   robots: {
     index: true,
@@ -84,9 +84,9 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://shalean.co.za",
+    canonical: "https://www.bokkiecleaning.co.za",
     languages: {
-      "en-ZA": "https://shalean.co.za",
+      "en-ZA": "https://www.bokkiecleaning.co.za",
     },
   },
   verification: {

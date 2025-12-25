@@ -59,8 +59,8 @@ export const metadata: Metadata = {
     description:
       "Comprehensive cleaning services in Cape Town: residential, commercial, deep cleaning, move-in/out, Airbnb cleaning, and specialized services.",
     images: ["https://shalean.co.za/og-image.jpg"],
-    creator: "@shaleancleaning",
-    site: "@shaleancleaning",
+    creator: "@shaloclean",
+    site: "@shaloclean",
   },
   robots: {
     index: true,

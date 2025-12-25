@@ -20,7 +20,7 @@ export default function TermsPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Service Agreement</h2>
             <p className="text-gray-700 mb-4">
               By booking our cleaning services, you agree to these terms and conditions. 
-              Shalean Cleaning Services ("we", "us", "our") provides professional cleaning 
+              Bokkie Cleaning Services ("we", "us", "our") provides professional cleaning 
               services to residential and commercial clients.
             </p>
           </section>
@@ -84,8 +84,8 @@ export default function TermsPage() {
               For questions about these terms, please contact us at:
             </p>
             <ul className="text-gray-700">
-              <li>Phone: <a href="tel:+27871535250" className="text-blue-600 hover:underline">+27 87 153 5250</a></li>
-              <li>Email: <a href="mailto:support@shalean.com" className="text-blue-600 hover:underline">support@shalean.com</a></li>
+              <li>Phone: <a href="tel:+27724162547" className="text-blue-600 hover:underline">+27 72 416 2547</a></li>
+              <li>Email: <a href="mailto:info@bokkiecleaning.co.za" className="text-blue-600 hover:underline">info@bokkiecleaning.co.za</a></li>
             </ul>
           </section>
 

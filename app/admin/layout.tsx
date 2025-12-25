@@ -38,8 +38,8 @@ export default async function AdminLayout({
         <div className="flex items-center h-16 px-4 border-b border-gray-200 flex-shrink-0">
           <Link href="/" className="flex items-center">
             <img 
-              src="/shalean-logo.png" 
-              alt="Shalean" 
+              src="/bokkie-logo.png" 
+              alt="Bokkie" 
               className="h-8 md:h-10 w-auto"
             />
           </Link>
@@ -60,8 +60,8 @@ export default async function AdminLayout({
               <div className="md:hidden flex items-center gap-4">
                 <Link href="/" className="flex items-center">
                   <img 
-                    src="/shalean-logo.png" 
-                    alt="Shalean" 
+                    src="/bokkie-logo.png" 
+                    alt="Bokkie" 
                     className="h-8 w-auto"
                   />
                 </Link>

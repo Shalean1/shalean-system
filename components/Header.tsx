@@ -37,17 +37,17 @@ export default function Header() {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2" aria-label="Shalean Cleaning Services Home">
+            <Link href="/" className="flex items-center gap-2" aria-label="Bokkie Cleaning Services Home">
               <Image 
-                src="/shalean-logo.png" 
-                alt="Shalean" 
+                src="/bokkie-logo.png" 
+                alt="Bokkie" 
                 width={40}
                 height={40}
                 className="h-8 md:h-10 w-auto"
                 priority
               />
               <span className="text-2xl md:text-3xl font-bold text-gray-900" style={{ fontFamily: 'cursive, system-ui' }}>
-                Shalean
+                Bokkie
               </span>
             </Link>
           </div>

@@ -23,10 +23,10 @@ export default function Contact() {
               Phone
             </h3>
             <a
-              href="tel:+27871535250"
+              href="tel:+27724162547"
               className="text-[#0C53ED] hover:text-[#0A3FC7] font-semibold text-lg"
             >
-              +27 87 153 5250
+              +27 72 416 2547
             </a>
           </div>
 
@@ -36,10 +36,10 @@ export default function Contact() {
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Email</h3>
             <a
-              href="mailto:support@shalean.com"
+              href="mailto:info@bokkiecleaning.co.za"
               className="text-[#0C53ED] hover:text-[#0A3FC7] font-semibold text-lg break-all"
             >
-              support@shalean.com
+              info@bokkiecleaning.co.za
             </a>
           </div>
 
@@ -51,9 +51,9 @@ export default function Contact() {
               Address
             </h3>
             <p className="text-gray-700">
-              39 Harvey Road
+              348 Imam Haron Road Lansdowne
               <br />
-              Claremont, Cape Town 7708
+              Cape Town 7780
               <br />
               Western Cape, South Africa
             </p>

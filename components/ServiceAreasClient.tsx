@@ -427,13 +427,13 @@ export default function ServiceAreasClient({
               <Link href="/guides" className="hover:text-white transition-colors">
                 BLOG
               </Link>
-              <Link href="/#contact" className="hover:text-white transition-colors">
+              <Link href="/contact" className="hover:text-white transition-colors">
                 CAREERS
               </Link>
             </div>
             <div className="flex flex-col md:flex-row items-center gap-4 text-sm">
               <div className="flex gap-4">
-                <Link href="/#contact" className="hover:text-white transition-colors">
+                <Link href="/contact" className="hover:text-white transition-colors">
                   Help
                 </Link>
                 <span>|</span>

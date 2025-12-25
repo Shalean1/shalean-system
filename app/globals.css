@@ -26,8 +26,8 @@ body {
   }
 }
 
-/* Shalean Logo Styling */
-.shalean-logo {
+/* Bokkie Logo Styling */
+.bokkie-logo {
   font-family: 'Comic Sans MS', 'Marker Felt', 'Chalkboard', 'Bradley Hand', cursive, system-ui;
   font-weight: 900;
   letter-spacing: -0.02em;
@@ -39,7 +39,7 @@ body {
   line-height: 1;
 }
 
-.shalean-logo-text {
+.bokkie-logo-text {
   background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

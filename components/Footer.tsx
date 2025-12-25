@@ -41,7 +41,7 @@ export default function Footer() {
               <Facebook className="w-5 h-5" />
             </a>
             <a
-              href="https://twitter.com/shaleancleaning"
+              href="https://x.com/shaloclean"
               target="_blank"
               rel="noopener noreferrer"
               className="w-10 h-10 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-colors"
@@ -50,7 +50,7 @@ export default function Footer() {
               <Twitter className="w-5 h-5" />
             </a>
             <a
-              href="https://instagram.com/shaleancleaning"
+              href="https://www.instagram.com/shalean_cleaning_services"
               target="_blank"
               rel="noopener noreferrer"
               className="w-10 h-10 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-colors"
@@ -69,7 +69,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="#contact"
+                  href="/contact"
                   className="hover:text-white transition-colors text-sm"
                 >
                   Become a Cleaner
@@ -85,10 +85,18 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="#contact"
+                  href="/contact"
                   className="hover:text-white transition-colors text-sm"
                 >
                   Help
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/blog"
+                  className="hover:text-white transition-colors text-sm"
+                >
+                  Blog
                 </Link>
               </li>
             </ul>
@@ -98,6 +106,14 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4">Company</h4>
             <ul className="space-y-2">
+              <li>
+                <Link
+                  href="/contact"
+                  className="hover:text-white transition-colors text-sm"
+                >
+                  Contact Us
+                </Link>
+              </li>
               <li>
                 <Link
                   href="/terms"
@@ -132,27 +148,27 @@ export default function Footer() {
             <div className="flex items-start gap-2">
               <Phone className="w-4 h-4 mt-1 flex-shrink-0" />
               <a
-                href="tel:+27871535250"
+                href="tel:+27724162547"
                 className="hover:text-white transition-colors"
               >
-                +27 87 153 5250
+                +27 72 416 2547
               </a>
             </div>
             <div className="flex items-start gap-2">
               <Mail className="w-4 h-4 mt-1 flex-shrink-0" />
               <a
-                href="mailto:support@shalean.com"
+                href="mailto:info@bokkiecleaning.co.za"
                 className="hover:text-white transition-colors break-all"
               >
-                support@shalean.com
+                info@bokkiecleaning.co.za
               </a>
             </div>
             <div className="flex items-start gap-2">
               <MapPin className="w-4 h-4 mt-1 flex-shrink-0" />
               <span>
-                39 Harvey Road, Claremont
+                348 Imam Haron Road Lansdowne
                 <br />
-                Cape Town 7708, Western Cape
+                Cape Town 7780, Western Cape
               </span>
             </div>
           </div>
@@ -162,7 +178,7 @@ export default function Footer() {
         <div className="border-t border-gray-800 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-center md:text-left">
-              © {currentYear} Shalean Cleaning Services. All rights reserved.
+              © {currentYear} Bokkie Cleaning Services. All rights reserved.
             </p>
             <p className="text-xs text-gray-500 text-center md:text-right">
               Professional cleaning services in Cape Town, South Africa

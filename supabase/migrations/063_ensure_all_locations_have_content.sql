@@ -149,3 +149,5 @@ END $$;
 -- Clean up the temporary function
 DROP FUNCTION IF EXISTS generate_location_content(TEXT, TEXT);
 
+
+

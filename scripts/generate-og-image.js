@@ -8,7 +8,7 @@ const path = require('path');
 const WIDTH = 1200;
 const HEIGHT = 630;
 const OUTPUT_PATH = path.join(__dirname, '..', 'public', 'og-image.jpg');
-const LOGO_PATH = path.join(__dirname, '..', 'public', 'shalean-logo.png');
+const LOGO_PATH = path.join(__dirname, '..', 'public', 'bokkie-logo.png');
 
 // Brand colors
 const THEME_COLOR = '#10b981'; // Emerald green
@@ -72,7 +72,7 @@ async function generateOGImage() {
           Cape Town
         </text>
         
-        <!-- Subtitle: "Shalean Cleaning Services" -->
+        <!-- Subtitle: "Bokkie Cleaning Services" -->
         <text 
           x="${WIDTH / 2}" 
           y="${HEIGHT - 80}" 
@@ -83,7 +83,7 @@ async function generateOGImage() {
           text-anchor="middle"
           letter-spacing="-0.02em"
           opacity="0.8">
-          Shalean Cleaning Services
+          Bokkie Cleaning Services
         </text>
       </svg>
     `;

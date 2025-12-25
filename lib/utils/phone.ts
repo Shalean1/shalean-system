@@ -13,13 +13,13 @@ export function normalizePhoneNumber(phone: string): string {
 
 /**
  * Construct a cleaner email address from a phone number
- * Format: {normalized-phone}@shalean.co.za
+ * Format: {normalized-phone}@bokkiecleaning.co.za
  * @param phone - Phone number in any format
  * @returns Email address for cleaner authentication
  */
 export function constructCleanerEmail(phone: string): string {
   const normalized = normalizePhoneNumber(phone);
-  return `${normalized}@shalean.co.za`;
+  return `${normalized}@bokkiecleaning.co.za`;
 }
 
 /**
@@ -33,7 +33,7 @@ export function isPhoneNumber(input: string): boolean {
 
 /**
  * Extract phone number from input that might contain email domain
- * Handles cases where user accidentally enters email format (e.g., "27792022648@shalean.co.za")
+ * Handles cases where user accidentally enters email format (e.g., "27792022648@bokkiecleaning.co.za")
  * @param input - Input string that might be phone number or email format
  * @returns Phone number without email domain
  */

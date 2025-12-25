@@ -19,7 +19,7 @@ export default function PrivacyPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Introduction</h2>
             <p className="text-gray-700 mb-4">
-              Shalean Cleaning Services ("we", "us", "our") is committed to protecting your 
+              Bokkie Cleaning Services ("we", "us", "our") is committed to protecting your 
               privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard 
               your information when you use our services or visit our website.
             </p>
@@ -131,9 +131,9 @@ export default function PrivacyPage() {
               please contact us:
             </p>
             <ul className="text-gray-700">
-              <li>Phone: <a href="tel:+27871535250" className="text-blue-600 hover:underline">+27 87 153 5250</a></li>
-              <li>Email: <a href="mailto:support@shalean.com" className="text-blue-600 hover:underline">support@shalean.com</a></li>
-              <li>Address: 39 Harvey Road, Claremont, Cape Town 7708, Western Cape</li>
+              <li>Phone: <a href="tel:+27724162547" className="text-blue-600 hover:underline">+27 72 416 2547</a></li>
+              <li>Email: <a href="mailto:info@bokkiecleaning.co.za" className="text-blue-600 hover:underline">info@bokkiecleaning.co.za</a></li>
+              <li>Address: 348 Imam Haron Road Lansdowne, Cape Town 7780, Western Cape</li>
             </ul>
           </section>
 

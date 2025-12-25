@@ -58,7 +58,7 @@ export function generateBlogPostSchema(
   content?: string,
   readingTime?: number
 ): BlogPostSchema {
-  const baseUrl = 'https://shalean.co.za';
+  const baseUrl = 'https://www.bokkiecleaning.co.za';
   
   const schema: BlogPostSchema = {
     '@context': 'https://schema.org',
@@ -73,10 +73,10 @@ export function generateBlogPostSchema(
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Shalean Cleaning Services',
+      name: 'Bokkie Cleaning Services',
       logo: {
         '@type': 'ImageObject',
-        url: `${baseUrl}/shalean-logo.png`,
+        url: `${baseUrl}/bokkie-logo.png`,
       },
     },
     mainEntityOfPage: {
@@ -135,7 +135,7 @@ export function generateArticleSchema(
   publishedDate: string,
   modifiedDate: string
 ): BlogPostSchema {
-  const baseUrl = 'https://shalean.co.za';
+  const baseUrl = 'https://www.bokkiecleaning.co.za';
   
   return {
     '@context': 'https://schema.org',
@@ -151,10 +151,10 @@ export function generateArticleSchema(
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Shalean Cleaning Services',
+      name: 'Bokkie Cleaning Services',
       logo: {
         '@type': 'ImageObject',
-        url: `${baseUrl}/shalean-logo.png`,
+        url: `${baseUrl}/bokkie-logo.png`,
       },
     },
     mainEntityOfPage: {

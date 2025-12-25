@@ -101,7 +101,7 @@ export default function ConfirmationPage() {
           let dataSource = "localStorage";
           
           // First, try to get data from localStorage
-          const saved = localStorage.getItem("shalean_booking_data");
+          const saved = localStorage.getItem("bokkie_booking_data");
           if (saved) {
             try {
               parsed = JSON.parse(saved);
@@ -334,7 +334,7 @@ export default function ConfirmationPage() {
                         }
                         
                         // Clear localStorage after successful booking
-                        localStorage.removeItem("shalean_booking_data");
+                        localStorage.removeItem("bokkie_booking_data");
                         setLoading(false);
                         setSubmittingBooking(false);
                         return;
@@ -366,7 +366,7 @@ export default function ConfirmationPage() {
 
       // Fallback: Try to load booking from localStorage (for display purposes)
       if (typeof window !== "undefined") {
-        const saved = localStorage.getItem("shalean_booking_data");
+        const saved = localStorage.getItem("bokkie_booking_data");
         if (saved) {
           try {
             const parsed = JSON.parse(saved);
@@ -461,7 +461,7 @@ export default function ConfirmationPage() {
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center">
               <span className="text-2xl font-bold text-gray-900" style={{ fontFamily: 'cursive, system-ui' }}>
-                Shalean
+                Bokkie
               </span>
             </Link>
             <Link
@@ -487,7 +487,7 @@ export default function ConfirmationPage() {
               Booking Confirmed!
             </h1>
             <p className="text-lg text-gray-600 max-w-xl mx-auto">
-              Thank you for booking with Shalean Cleaning Services. Your booking has been confirmed and payment has been received.
+              Thank you for booking with Bokkie Cleaning Services. Your booking has been confirmed and payment has been received.
             </p>
             {booking.bookingReference && (
               <div className="mt-4 inline-block px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
@@ -654,8 +654,8 @@ export default function ConfirmationPage() {
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                <a href="mailto:hello@shalean.com" className="text-blue-600 hover:text-blue-700 font-medium">
-                  hello@shalean.com
+                <a href="mailto:info@bokkiecleaning.co.za" className="text-blue-600 hover:text-blue-700 font-medium">
+                  info@bokkiecleaning.co.za
                 </a>
               </div>
               <div className="flex items-center gap-3">

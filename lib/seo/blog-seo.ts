@@ -96,8 +96,8 @@ export function generateBlogSEOMetadata(
       title: finalTitle,
       description: finalDescription,
       images: [ogImageUrl],
-      creator: '@shaleancleaning',
-      site: '@shaleancleaning',
+      creator: '@shaloclean',
+      site: '@shaloclean',
     },
     other: {
       'article:published_time': publishedTime || '',
@@ -113,27 +113,27 @@ export function generateBlogSEOMetadata(
 
 export function generateBlogListingSEOMetadata(): Metadata {
   return {
-    title: 'Blog | Shalean Cleaning Services',
+    title: 'Blog | Bokkie Cleaning Services',
     description: 'Read our latest blog posts about cleaning tips, home maintenance, and professional cleaning services in Cape Town.',
     openGraph: {
       type: 'website',
       locale: 'en_ZA',
       url: `${siteConfig.url}/blog`,
       siteName: siteConfig.name,
-      title: 'Blog | Shalean Cleaning Services',
+      title: 'Blog | Bokkie Cleaning Services',
       description: 'Read our latest blog posts about cleaning tips, home maintenance, and professional cleaning services in Cape Town.',
       images: [
         {
           url: `${siteConfig.url}/og-image.jpg`,
           width: 1200,
           height: 630,
-          alt: 'Shalean Cleaning Services Blog',
+          alt: 'Bokkie Cleaning Services Blog',
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'Blog | Shalean Cleaning Services',
+      title: 'Blog | Bokkie Cleaning Services',
       description: 'Read our latest blog posts about cleaning tips, home maintenance, and professional cleaning services in Cape Town.',
       images: [`${siteConfig.url}/og-image.jpg`],
     },
@@ -141,7 +141,7 @@ export function generateBlogListingSEOMetadata(): Metadata {
 }
 
 export function optimizeImageAlt(imageType: string, focusKeyword?: string, location?: string): string {
-  let alt = `Shalean Cleaning Services - ${imageType}`;
+  let alt = `Bokkie Cleaning Services - ${imageType}`;
   
   if (focusKeyword) {
     alt += ` - ${focusKeyword}`;
@@ -163,7 +163,7 @@ export function generateSitemapEntry(
   changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never' = 'weekly'
 ) {
   return {
-    url: `https://shalean.co.za/blog/${slug}`,
+    url: `https://www.bokkiecleaning.co.za/blog/${slug}`,
     lastModified,
     changeFrequency,
     priority,

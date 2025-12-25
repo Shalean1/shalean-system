@@ -34,7 +34,7 @@ export default function QuickActions() {
     {
       label: "Contact Support",
       description: "Get help or ask questions",
-      href: "/#contact",
+      href: "/contact",
       icon: MessageCircle,
       primary: false,
     },

@@ -311,10 +311,10 @@ function CleanerLoginForm() {
               <p className="text-sm text-gray-600">
                 Need help? Contact support at{" "}
                 <a
-                  href="mailto:support@shalean.com"
+                  href="mailto:info@bokkiecleaning.co.za"
                   className="text-blue-600 hover:text-blue-700 font-medium"
                 >
-                  support@shalean.com
+                  info@bokkiecleaning.co.za
                 </a>
               </p>
             </div>

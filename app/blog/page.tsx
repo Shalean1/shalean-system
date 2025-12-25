@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { getBlogPosts, getBlogCategories } from "@/app/actions/blog";
 import BlogPostCard from "@/components/blog/BlogPostCard";
+import Footer from "@/components/Footer";
 import { generateBlogListingSEOMetadata } from "@/lib/seo/blog-seo";
 import { Search } from "lucide-react";
 import Link from "next/link";
@@ -105,6 +106,9 @@ export default async function BlogPage({
           </div>
         )}
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

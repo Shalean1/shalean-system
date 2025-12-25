@@ -50,7 +50,7 @@ export default function ReadyToStart() {
                 while keeping Cape Town homes spotless.
               </p>
               <Link
-                href="#contact"
+                href="/contact"
                 className="inline-block px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg"
               >
                 Become a Cleaner

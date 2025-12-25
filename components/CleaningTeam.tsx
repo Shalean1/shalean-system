@@ -62,7 +62,7 @@ export default function CleaningTeam() {
               {/* CTA Button */}
               <div className="pt-4">
                 <a
-                  href="#contact"
+                  href="/contact"
                   className="inline-block px-8 py-4 bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold rounded-xl transition-colors shadow-lg"
                 >
                   Find Your Cleaner

@@ -2,8 +2,8 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Shalean Cleaning Services",
-    short_name: "Shalean",
+    name: "Bokkie Cleaning Services",
+    short_name: "Bokkie",
     description: "Professional cleaning services in Cape Town. Expert cleaners offering residential, commercial, and specialized cleaning services.",
     start_url: "/",
     display: "standalone",

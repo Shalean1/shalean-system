@@ -49,10 +49,10 @@ export default async function ContactPage() {
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Phone</h3>
             <a
-              href="tel:+27871535250"
+              href="tel:+27724162547"
               className="text-blue-600 hover:text-blue-700 font-medium text-lg"
             >
-              +27 87 153 5250
+              +27 72 416 2547
             </a>
             <p className="text-sm text-gray-600 mt-2">Call us anytime</p>
           </div>
@@ -63,10 +63,10 @@ export default async function ContactPage() {
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Email</h3>
             <a
-              href="mailto:support@shalean.com"
+              href="mailto:info@bokkiecleaning.co.za"
               className="text-blue-600 hover:text-blue-700 font-medium text-lg break-all"
             >
-              support@shalean.com
+              info@bokkiecleaning.co.za
             </a>
             <p className="text-sm text-gray-600 mt-2">We respond within 24 hours</p>
           </div>

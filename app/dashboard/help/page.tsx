@@ -289,7 +289,7 @@ export default async function HelpPage() {
               Contact Support
             </Link>
             <a
-              href="mailto:hello@shalean.com"
+              href="mailto:info@bokkiecleaning.co.za"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium"
             >
               <Mail className="w-5 h-5" />
@@ -302,7 +302,7 @@ export default async function HelpPage() {
                 <Mail className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="font-semibold text-gray-900">Email Support</p>
-                  <p>hello@shalean.com</p>
+                  <p>info@bokkiecleaning.co.za</p>
                   <p className="text-xs text-gray-600 mt-1">We typically respond within 24 hours</p>
                 </div>
               </div>

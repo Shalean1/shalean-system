@@ -54,8 +54,8 @@ export const metadata: Metadata = {
     title: "Professional Cleaning Services Cape Town | Shalean Cleaning Services",
     description: "Book trusted professional cleaners in Cape Town. Same-day booking available. Rated 5 stars with 150+ reviews.",
     images: ["https://shalean.co.za/og-image.jpg"],
-    creator: "@shaleancleaning",
-    site: "@shaleancleaning",
+    creator: "@shaloclean",
+    site: "@shaloclean",
   },
   alternates: {
     canonical: "https://shalean.co.za",

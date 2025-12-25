@@ -1,25 +1,25 @@
 import { capeTownAreas, getLocationSlug } from "@/lib/constants/areas";
 
 export function generateStructuredData() {
-  const baseUrl = "https://shalean.co.za";
+  const baseUrl = "https://www.bokkiecleaning.co.za";
 
   const organization = {
     "@context": "https://schema.org",
     "@type": "Organization",
     "@id": `${baseUrl}#organization`,
-    name: "Shalean Cleaning Services",
-    legalName: "Shalean Cleaning Services",
+    name: "Bokkie Cleaning Services",
+    legalName: "Bokkie Cleaning Services",
     url: baseUrl,
     logo: `${baseUrl}/logo.png`,
     image: `${baseUrl}/og-image.jpg`,
-    telephone: "+27871535250",
-    email: "support@shalean.com",
+    telephone: "+27724162547",
+    email: "info@bokkiecleaning.co.za",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "39 Harvey Road",
-      addressLocality: "Claremont",
+      streetAddress: "348 Imam Haron Road Lansdowne",
+      addressLocality: "Cape Town",
       addressRegion: "Western Cape",
-      postalCode: "7708",
+      postalCode: "7780",
       addressCountry: "ZA",
     },
     sameAs: [
@@ -27,7 +27,7 @@ export function generateStructuredData() {
     ],
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+27871535250",
+      telephone: "+27724162547",
       contactType: "Customer Service",
       areaServed: "ZA",
       availableLanguage: ["en", "af"],
@@ -38,17 +38,17 @@ export function generateStructuredData() {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": `${baseUrl}#localBusiness`,
-    name: "Shalean Cleaning Services",
+    name: "Bokkie Cleaning Services",
     image: `${baseUrl}/logo.png`,
     url: baseUrl,
-    telephone: "+27871535250",
-    email: "support@shalean.com",
+    telephone: "+27724162547",
+    email: "info@bokkiecleaning.co.za",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "39 Harvey Road",
-      addressLocality: "Claremont",
+      streetAddress: "348 Imam Haron Road Lansdowne",
+      addressLocality: "Cape Town",
       addressRegion: "Western Cape",
-      postalCode: "7708",
+      postalCode: "7780",
       addressCountry: "ZA",
     },
     geo: {
@@ -182,7 +182,7 @@ export function generateStructuredData() {
         "@type": "Person",
         name: "Sumaya",
       },
-      reviewBody: "The professionalism of the Company is exceptional, and they ensure a suitable lady is available for your clean day/s. The ladies allocated to me thus far have good cleaning skills... I highly recommend Shalean Cleaning Services.",
+      reviewBody: "The professionalism of the Company is exceptional, and they ensure a suitable lady is available for your clean day/s. The ladies allocated to me thus far have good cleaning skills... I highly recommend Bokkie Cleaning Services.",
       reviewRating: {
         "@type": "Rating",
         ratingValue: "5",
@@ -256,7 +256,7 @@ export function generateStructuredData() {
     "@type": "WebSite",
     "@id": `${baseUrl}#website`,
     url: baseUrl,
-    name: "Shalean Cleaning Services",
+    name: "Bokkie Cleaning Services",
     description: "Professional cleaning services in Cape Town",
     publisher: {
       "@id": `${baseUrl}#organization`,
@@ -275,7 +275,7 @@ export function generateStructuredData() {
     "@type": "Blog",
     "@id": `${baseUrl}#blog`,
     url: `${baseUrl}/blog`,
-    name: "Shalean Cleaning Services Blog",
+    name: "Bokkie Cleaning Services Blog",
     description: "Tips, guides, and insights about cleaning services in Cape Town",
     publisher: {
       "@id": `${baseUrl}#organization`,
@@ -288,10 +288,10 @@ export function generateStructuredData() {
     mainEntity: [
       {
         "@type": "Question",
-        name: "What areas does Shalean Cleaning Services cover?",
+        name: "What areas does Bokkie Cleaning Services cover?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Shalean Cleaning Services covers Cape Town and surrounding areas including Sea Point, Camps Bay, Claremont, and more.",
+          text: "Bokkie Cleaning Services covers Cape Town and surrounding areas including Sea Point, Camps Bay, Claremont, and more.",
         },
       },
       {
@@ -349,14 +349,14 @@ export function generateStructuredData() {
  * Generate structured data for the How It Works page
  */
 export function generateHowItWorksStructuredData() {
-  const baseUrl = "https://shalean.co.za";
+  const baseUrl = "https://www.bokkiecleaning.co.za";
 
   const howTo = {
     "@context": "https://schema.org",
     "@type": "HowTo",
     "@id": `${baseUrl}/how-it-works#howto`,
     name: "How to Book Professional Cleaning Services in Cape Town",
-    description: "Step-by-step guide on how to book professional cleaning services with Shalean Cleaning Services in Cape Town",
+    description: "Step-by-step guide on how to book professional cleaning services with Bokkie Cleaning Services in Cape Town",
     step: [
       {
         "@type": "HowToStep",
@@ -401,7 +401,7 @@ export function generateHowItWorksStructuredData() {
         name: "How do I book a cleaning service in Cape Town?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Booking a cleaning service with Shalean is simple. Visit our booking page, choose your service type, select a cleaner based on reviews and availability, pick your preferred date and time, and complete secure payment. You'll receive instant confirmation. Same-day booking is available for urgent cleaning needs.",
+          text: "Booking a cleaning service with Bokkie is simple. Visit our booking page, choose your service type, select a cleaner based on reviews and availability, pick your preferred date and time, and complete secure payment. You'll receive instant confirmation. Same-day booking is available for urgent cleaning needs.",
         },
       },
       {
@@ -409,7 +409,7 @@ export function generateHowItWorksStructuredData() {
         name: "Can I book same-day cleaning?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes! Shalean Cleaning Services offers same-day booking for cleaning services in Cape Town. Simply select your service, choose an available cleaner, and schedule your clean for today. Availability depends on cleaner schedules, but we work hard to accommodate urgent requests.",
+          text: "Yes! Bokkie Cleaning Services offers same-day booking for cleaning services in Cape Town. Simply select your service, choose an available cleaner, and schedule your clean for today. Availability depends on cleaner schedules, but we work hard to accommodate urgent requests.",
         },
       },
       {
@@ -465,7 +465,7 @@ export function generateHowItWorksStructuredData() {
     "@id": `${baseUrl}/how-it-works#webpage`,
     url: `${baseUrl}/how-it-works`,
     name: "How It Works: Book Professional Cleaning Services in Cape Town",
-    description: "Learn how to book professional cleaning services in Cape Town with Shalean. Simple 5-step process with same-day booking available.",
+    description: "Learn how to book professional cleaning services in Cape Town with Bokkie. Simple 5-step process with same-day booking available.",
     inLanguage: "en-ZA",
     isPartOf: {
       "@id": `${baseUrl}#website`,
@@ -493,7 +493,7 @@ export function generateHowItWorksStructuredData() {
  * Generate structured data for the Service Areas page
  */
 export function generateServiceAreasStructuredData() {
-  const baseUrl = "https://shalean.co.za";
+  const baseUrl = "https://www.bokkiecleaning.co.za";
 
   const serviceAreasBreadcrumb = {
     "@context": "https://schema.org",
@@ -539,7 +539,7 @@ export function generateServiceAreasStructuredData() {
     "@type": "ItemList",
     "@id": `${baseUrl}/service-areas#itemlist`,
     name: "Cape Town Service Areas",
-    description: "List of all areas where Shalean Cleaning Services provides professional cleaning services",
+    description: "List of all areas where Bokkie Cleaning Services provides professional cleaning services",
     numberOfItems: capeTownAreas.length,
     itemListElement: capeTownAreas.map((area, index) => ({
       "@type": "ListItem",
@@ -604,7 +604,7 @@ export function generateServiceAreasStructuredData() {
  * Generate structured data for individual location pages
  */
 export function generateLocationStructuredData(locationName: string, slug: string) {
-  const baseUrl = "https://shalean.co.za";
+  const baseUrl = "https://www.bokkiecleaning.co.za";
   const locationUrl = `${baseUrl}/areas/${slug}`;
 
   const locationBreadcrumb = {
@@ -672,7 +672,7 @@ export function generateLocationStructuredData(locationName: string, slug: strin
     availableChannel: {
       "@type": "ServiceChannel",
       serviceUrl: locationUrl,
-      servicePhone: "+27871535250",
+      servicePhone: "+27724162547",
     },
   };
 
@@ -680,11 +680,11 @@ export function generateLocationStructuredData(locationName: string, slug: strin
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": `${locationUrl}#localBusiness`,
-    name: `Shalean Cleaning Services - ${locationName}`,
+    name: `Bokkie Cleaning Services - ${locationName}`,
     image: `${baseUrl}/logo.png`,
     url: locationUrl,
-    telephone: "+27871535250",
-    email: "support@shalean.com",
+    telephone: "+27724162547",
+    email: "info@bokkiecleaning.co.za",
     address: {
       "@type": "PostalAddress",
       addressLocality: locationName,
@@ -721,7 +721,7 @@ export function generateLocationStructuredData(locationName: string, slug: strin
  * Generate structured data for the Services page
  */
 export function generateServicesPageStructuredData() {
-  const baseUrl = "https://shalean.co.za";
+  const baseUrl = "https://www.bokkiecleaning.co.za";
   const servicesUrl = `${baseUrl}/services`;
 
   const servicesBreadcrumb = {
@@ -749,7 +749,7 @@ export function generateServicesPageStructuredData() {
     "@type": "WebPage",
     "@id": `${servicesUrl}#webpage`,
     url: servicesUrl,
-    name: "Professional Cleaning Services in Cape Town | Shalean Cleaning Services",
+    name: "Professional Cleaning Services in Cape Town | Bokkie Cleaning Services",
     description:
       "Comprehensive cleaning services in Cape Town: residential cleaning, commercial cleaning, deep cleaning, move-in/out cleaning, Airbnb cleaning, and specialized services. Trusted by thousands of Cape Town residents.",
     inLanguage: "en-ZA",
@@ -831,7 +831,7 @@ export function generateServicesPageStructuredData() {
         name: "Can I book same-day cleaning services?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes! We offer same-day booking for cleaning services throughout Cape Town. Availability depends on cleaner schedules, but we work hard to accommodate urgent requests. Book online or call us at +27871535250.",
+          text: "Yes! We offer same-day booking for cleaning services throughout Cape Town. Availability depends on cleaner schedules, but we work hard to accommodate urgent requests. Book online or call us at +27 72 416 2547.",
         },
       },
       {

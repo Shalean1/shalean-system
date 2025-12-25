@@ -13,7 +13,7 @@ export default function QuoteConfirmationPage() {
             {/* Logo */}
             <Link href="/" className="flex items-center">
               <span className="text-2xl font-bold text-gray-900" style={{ fontFamily: 'cursive, system-ui' }}>
-                Shalean
+                Bokkie
               </span>
             </Link>
 
@@ -41,7 +41,7 @@ export default function QuoteConfirmationPage() {
               Quote Request Received!
             </h1>
             <p className="text-lg text-gray-600 max-w-xl mx-auto">
-              Thank you for requesting a quote from Shalean Cleaning Services. We've received your request and will get back to you shortly.
+              Thank you for requesting a quote from Bokkie Cleaning Services. We've received your request and will get back to you shortly.
             </p>
           </div>
 
@@ -94,14 +94,14 @@ export default function QuoteConfirmationPage() {
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                <a href="mailto:hello@shalean.com" className="text-blue-600 hover:text-blue-700 font-medium">
-                  hello@shalean.com
+                <a href="mailto:info@bokkiecleaning.co.za" className="text-blue-600 hover:text-blue-700 font-medium">
+                  info@bokkiecleaning.co.za
                 </a>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                <a href="tel:+27123456789" className="text-blue-600 hover:text-blue-700 font-medium">
-                  +27 12 345 6789
+                <a href="tel:+27724162547" className="text-blue-600 hover:text-blue-700 font-medium">
+                  +27 72 416 2547
                 </a>
               </div>
             </div>

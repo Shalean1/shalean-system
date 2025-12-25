@@ -6,6 +6,8 @@ import { getBlogPostBySlug, getRelatedPosts, incrementBlogViews } from "@/app/ac
 import BlogPostContent from "@/components/blog/BlogPostContent";
 import RelatedPosts from "@/components/blog/RelatedPosts";
 import SocialShare from "@/components/blog/SocialShare";
+import TableOfContents from "@/components/blog/TableOfContents";
+import Footer from "@/components/Footer";
 import { generateBlogSEOMetadata } from "@/lib/seo/blog-seo";
 import { generateBlogPostSchema, generateBreadcrumbSchema } from "@/lib/seo/schema-generator";
 import { formatReadingTime } from "@/lib/utils/reading-time";
@@ -106,7 +108,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </Link>
             {post.category && (
               <span className="inline-block px-4 py-2 mb-4 text-sm font-semibold text-blue-600 bg-white rounded-full">
-                {post.category}
+                {post.category.toLowerCase().replace(/\s+/g, "-")}
               </span>
             )}
             <h1 className="text-4xl md:text-5xl font-bold mb-4">{post.title}</h1>
@@ -153,45 +155,58 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {/* Content */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="max-w-4xl mx-auto">
-            {/* Social Share */}
-            <div className="mb-8 pb-8 border-b border-gray-200">
-              <SocialShare
-                url={`/blog/${post.slug}`}
-                title={post.title}
-                description={post.excerpt || undefined}
-              />
-            </div>
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col lg:flex-row gap-8">
+              {/* Table of Contents Sidebar - Left on desktop */}
+              <aside className="lg:w-64 flex-shrink-0 order-2 lg:order-1">
+                <TableOfContents content={post.content} />
+              </aside>
 
-            {/* Blog Content */}
-            <BlogPostContent content={post.content} />
+              {/* Main Content */}
+              <div className="flex-1 max-w-4xl order-1 lg:order-2">
+                {/* Social Share */}
+                <div className="mb-8 pb-8 border-b border-gray-200">
+                  <SocialShare
+                    url={`/blog/${post.slug}`}
+                    title={post.title}
+                    description={post.excerpt || undefined}
+                  />
+                </div>
 
-            {/* Tags */}
-            {post.tags && post.tags.length > 0 && (
-              <div className="mt-8 pt-8 border-t border-gray-200">
-                <div className="flex items-center gap-2 mb-4">
-                  <Tag className="w-5 h-5 text-gray-500" />
-                  <span className="text-sm font-medium text-gray-700">Tags:</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {post.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+                {/* Blog Content */}
+                <BlogPostContent content={post.content} />
+
+                {/* Tags */}
+                {post.tags && post.tags.length > 0 && (
+                  <div className="mt-8 pt-8 border-t border-gray-200">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Tag className="w-5 h-5 text-gray-500" />
+                      <span className="text-sm font-medium text-gray-700">Tags:</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {post.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Related Posts */}
+                {relatedPosts.length > 0 && (
+                  <RelatedPosts posts={relatedPosts} />
+                )}
               </div>
-            )}
-
-            {/* Related Posts */}
-            {relatedPosts.length > 0 && (
-              <RelatedPosts posts={relatedPosts} />
-            )}
+            </div>
           </div>
         </div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </>
   );

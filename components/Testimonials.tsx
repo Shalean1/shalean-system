@@ -6,7 +6,7 @@ const testimonials = [
     name: "Sumaya",
     image: "/testimonials/sumaya.jpg",
     rating: 5,
-    text: "The professionalism of the Company is exceptional, and they ensure a suitable lady is available for your clean day/s. The ladies allocated to me thus far have good cleaning skills... I highly recommend Shalean Cleaning Services.",
+    text: "The professionalism of the Company is exceptional, and they ensure a suitable lady is available for your clean day/s. The ladies allocated to me thus far have good cleaning skills... I highly recommend Bokkie Cleaning Services.",
     date: "January 15, 2024",
   },
   {
@@ -35,7 +35,7 @@ export default function Testimonials() {
             Don't just take our word for it
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            See what our satisfied customers have to say about Shalean Cleaning Services
+            See what our satisfied customers have to say about Bokkie Cleaning Services
           </p>
         </div>
 
