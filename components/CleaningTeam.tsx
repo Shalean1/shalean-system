@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import { CheckCircle } from "lucide-react";
+import { useState } from "react";
 
 const teamBenefits = [
   {
@@ -17,6 +20,8 @@ const teamBenefits = [
 ];
 
 export default function CleaningTeam() {
+  const [imageError, setImageError] = useState(false);
+
   return (
     <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,13 +30,21 @@ export default function CleaningTeam() {
             {/* Left Image */}
             <div className="relative order-2 lg:order-1">
               <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
-                <Image
-                  src="/services/team-at-your-fingertips.jpg"
-                  alt="A go-to team at your fingertips - Trusted cleaning professionals"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                />
+                {imageError ? (
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#e6f0ff] to-[#cce0ff] flex items-center justify-center">
+                    <div className="text-center p-8">
+                      <CheckCircle className="w-16 h-16 text-[#007bff] mx-auto mb-4" />
+                      <p className="text-gray-600 font-semibold">Trusted Cleaning Professionals</p>
+                    </div>
+                  </div>
+                ) : (
+                  <img
+                    src="/services/everyday-life-made-easier.jpg"
+                    alt="A go-to team at your fingertips - Trusted cleaning professionals"
+                    className="absolute inset-0 w-full h-full object-cover"
+                    onError={() => setImageError(true)}
+                  />
+                )}
               </div>
             </div>
 

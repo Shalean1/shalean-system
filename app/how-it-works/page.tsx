@@ -98,7 +98,7 @@ const bookingSteps = [
     title: "Select Your Cleaner",
     description: "Browse our network of vetted, professional cleaners. View their profiles, read customer reviews, check their skills and specialties, and compare prices. Choose the cleaner that best matches your needs and preferences.",
     icon: Users,
-    image: "/services/team-at-your-fingertips.jpg",
+    image: "/services/everyday-life-made-easier.jpg",
     details: [
       "Read verified customer reviews and ratings",
       "View cleaner profiles with skills and experience",
