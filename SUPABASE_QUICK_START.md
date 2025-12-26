@@ -16,7 +16,7 @@
 1. Go to [supabase.com](https://supabase.com) and sign in
 2. Click **"New Project"**
 3. Fill in:
-   - Name: `Shalean Cleaning Services`
+   - Name: `Bokkie Cleaning Services`
    - Database Password: (save this!)
    - Region: Choose closest to your users
 4. Wait ~2 minutes for setup

@@ -19,13 +19,13 @@ import { generateCanonicalUrl, generateMetaDescription } from "@/lib/seo";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "How It Works: Book Professional Cleaning Services in Cape Town | Shalean Cleaning Services",
-  description: generateMetaDescription("Learn how to book professional cleaning services in Cape Town with Shalean. Simple 5-step process: choose service, select cleaner, schedule, pay securely, and enjoy your clean space. Same-day booking available. Rated 4.8 stars with 150+ reviews."),
+  title: "How It Works: Book Professional Cleaning Services in Cape Town | Bokkie Cleaning Services",
+  description: generateMetaDescription("Learn how to book professional cleaning services in Cape Town with Bokkie. Simple 5-step process: choose service, select cleaner, schedule, pay securely, and enjoy your clean space. Same-day booking available. Rated 4.8 stars with 150+ reviews."),
   keywords: [
     "how it works cleaning service Cape Town",
     "how to book cleaning service Cape Town",
     "cleaning service booking process Cape Town",
-    "how does Shalean cleaning work",
+    "how does Bokkie cleaning work",
     "step by step booking cleaning service Cape Town",
     "how to schedule cleaning service Cape Town",
     "book cleaning service online Cape Town",
@@ -33,15 +33,15 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "How It Works: Book Professional Cleaning Services in Cape Town",
-    description: "Learn how to book professional cleaning services in Cape Town with Shalean. Simple 5-step process with same-day booking available.",
-    url: "https://shalean.co.za/how-it-works",
-    siteName: "Shalean Cleaning Services",
+    description: "Learn how to book professional cleaning services in Cape Town with Bokkie. Simple 5-step process with same-day booking available.",
+    url: "https://bokkie.co.za/how-it-works",
+    siteName: "Bokkie Cleaning Services",
     images: [
       {
-        url: "https://shalean.co.za/og-image.jpg",
+        url: "https://bokkie.co.za/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "How It Works - Shalean Cleaning Services Cape Town",
+        alt: "How It Works - Bokkie Cleaning Services Cape Town",
       },
     ],
     locale: "en_ZA",
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "How It Works: Book Professional Cleaning Services in Cape Town",
     description: "Learn how to book professional cleaning services in Cape Town. Simple 5-step process with same-day booking.",
-    images: ["https://shalean.co.za/og-image.jpg"],
+    images: ["https://bokkie.co.za/og-image.jpg"],
   },
   alternates: {
     canonical: generateCanonicalUrl("/how-it-works"),
@@ -163,11 +163,11 @@ const bookingSteps = [
 const faqs = [
   {
     question: "How do I book a cleaning service in Cape Town?",
-    answer: "Booking a cleaning service with Shalean is simple. Visit our booking page, choose your service type, select a cleaner based on reviews and availability, pick your preferred date and time, and complete secure payment. You'll receive instant confirmation. Same-day booking is available for urgent cleaning needs.",
+    answer: "Booking a cleaning service with Bokkie is simple. Visit our booking page, choose your service type, select a cleaner based on reviews and availability, pick your preferred date and time, and complete secure payment. You'll receive instant confirmation. Same-day booking is available for urgent cleaning needs.",
   },
   {
     question: "Can I book same-day cleaning?",
-    answer: "Yes! Shalean Cleaning Services offers same-day booking for cleaning services in Cape Town. Simply select your service, choose an available cleaner, and schedule your clean for today. Availability depends on cleaner schedules, but we work hard to accommodate urgent requests.",
+    answer: "Yes! Bokkie Cleaning Services offers same-day booking for cleaning services in Cape Town. Simply select your service, choose an available cleaner, and schedule your clean for today. Availability depends on cleaner schedules, but we work hard to accommodate urgent requests.",
   },
   {
     question: "How do I choose a cleaner?",
@@ -187,7 +187,7 @@ const faqs = [
   },
   {
     question: "What areas in Cape Town do you serve?",
-    answer: "Shalean Cleaning Services covers Cape Town and surrounding areas including Sea Point, Camps Bay, Claremont, Green Point, V&A Waterfront, Constantia, Newlands, Rondebosch, and many more neighborhoods. Check our service areas page for a complete list of locations we serve.",
+    answer: "Bokkie Cleaning Services covers Cape Town and surrounding areas including Sea Point, Camps Bay, Claremont, Green Point, V&A Waterfront, Constantia, Newlands, Rondebosch, and many more neighborhoods. Check our service areas page for a complete list of locations we serve.",
   },
   {
     question: "Can I schedule recurring cleaning services?",
@@ -251,7 +251,7 @@ export default function HowItWorksPage() {
     "@context": "https://schema.org",
     "@type": "HowTo",
     name: "How to Book Professional Cleaning Services in Cape Town",
-    description: "Step-by-step guide on how to book professional cleaning services with Shalean Cleaning Services in Cape Town",
+    description: "Step-by-step guide on how to book professional cleaning services with Bokkie Cleaning Services in Cape Town",
     step: bookingSteps.map((step) => ({
       "@type": "HowToStep",
       position: step.number,
@@ -286,13 +286,13 @@ export default function HowItWorksPage() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://shalean.co.za",
+        item: "https://bokkie.co.za",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "How It Works",
-        item: "https://shalean.co.za/how-it-works",
+        item: "https://bokkie.co.za/how-it-works",
       },
     ],
   };
@@ -300,19 +300,19 @@ export default function HowItWorksPage() {
   const webpageStructuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "@id": "https://shalean.co.za/how-it-works#webpage",
-    url: "https://shalean.co.za/how-it-works",
+    "@id": "https://bokkie.co.za/how-it-works#webpage",
+    url: "https://bokkie.co.za/how-it-works",
     name: "How It Works: Book Professional Cleaning Services in Cape Town",
-    description: "Learn how to book professional cleaning services in Cape Town with Shalean. Simple 5-step process with same-day booking available.",
+    description: "Learn how to book professional cleaning services in Cape Town with Bokkie. Simple 5-step process with same-day booking available.",
     inLanguage: "en-ZA",
     isPartOf: {
-      "@id": "https://shalean.co.za#website",
+      "@id": "https://bokkie.co.za#website",
     },
     about: {
-      "@id": "https://shalean.co.za#organization",
+      "@id": "https://bokkie.co.za#organization",
     },
     breadcrumb: {
-      "@id": "https://shalean.co.za/how-it-works#breadcrumb",
+      "@id": "https://bokkie.co.za/how-it-works#breadcrumb",
     },
   };
 
@@ -629,7 +629,7 @@ export default function HowItWorksPage() {
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-16">
                 <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-                  Benefits of Booking with Shalean
+                  Benefits of Booking with Bokkie
                 </h2>
                 <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                   We're committed to providing the best cleaning service experience in Cape Town.

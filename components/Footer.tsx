@@ -32,7 +32,7 @@ export default function Footer() {
           <p className="text-lg font-semibold text-white mb-4">Follow us! We're friendly</p>
           <div className="flex items-center justify-center gap-6">
             <a
-              href="https://facebook.com/shaleancleaning"
+              href="https://facebook.com/bokkiecleaning"
               target="_blank"
               rel="noopener noreferrer"
               className="w-10 h-10 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-colors"
@@ -50,7 +50,7 @@ export default function Footer() {
               <Twitter className="w-5 h-5" />
             </a>
             <a
-              href="https://www.instagram.com/shalean_cleaning_services"
+              href="https://www.instagram.com/bokkie_cleaning_services"
               target="_blank"
               rel="noopener noreferrer"
               className="w-10 h-10 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-colors"

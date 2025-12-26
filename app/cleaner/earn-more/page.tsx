@@ -53,7 +53,7 @@ export default async function EarnMorePage() {
                 Earn More
               </h1>
               <p className="text-base md:text-lg text-gray-600">
-                Tips and strategies to maximize your earnings with Shalean
+                Tips and strategies to maximize your earnings with Bokkie
               </p>
             </div>
           </div>

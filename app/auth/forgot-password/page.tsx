@@ -68,7 +68,7 @@ export default function ForgotPasswordPage() {
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center">
               <span className="text-2xl font-bold text-gray-900" style={{ fontFamily: 'cursive, system-ui' }}>
-                Shalean
+                Bokkie
               </span>
             </Link>
             <Link

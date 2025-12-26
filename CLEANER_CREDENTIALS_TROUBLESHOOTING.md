@@ -137,13 +137,13 @@ If the trigger keeps failing, you can manually create profiles after user creati
 
 ```sql
 -- Find the user ID first
-SELECT id, email FROM auth.users WHERE email = '27792022648@shalean.co.za';
+SELECT id, email FROM auth.users WHERE email = '27792022648@bokkie.co.za';
 
 -- Then create profile (replace USER_ID and CLEANER_ID)
 INSERT INTO profiles (id, email, phone, cleaner_id)
 VALUES (
   'USER_ID_FROM_ABOVE',
-  '27792022648@shalean.co.za',
+  '27792022648@bokkie.co.za',
   '+27792022648',
   'beaul'
 )

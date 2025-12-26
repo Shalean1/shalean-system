@@ -16,7 +16,7 @@ export default function ShareButtons({ referralUrl, referralCode }: ShareButtons
     setHasNativeShare(typeof navigator !== "undefined" && !!navigator.share);
   }, []);
 
-  const shareMessage = `Join Shalean Cleaning Services using my referral code ${referralCode} and get amazing cleaning services! ${referralUrl}`;
+  const shareMessage = `Join Bokkie Cleaning Services using my referral code ${referralCode} and get amazing cleaning services! ${referralUrl}`;
 
   const shareViaWhatsApp = () => {
     const url = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`;
@@ -24,9 +24,9 @@ export default function ShareButtons({ referralUrl, referralCode }: ShareButtons
   };
 
   const shareViaEmail = () => {
-    const subject = encodeURIComponent("Join Shalean Cleaning Services");
+    const subject = encodeURIComponent("Join Bokkie Cleaning Services");
     const body = encodeURIComponent(
-      `Hi there!\n\nI wanted to share Shalean Cleaning Services with you. They offer amazing cleaning services!\n\nUse my referral code: ${referralCode}\n\nSign up here: ${referralUrl}\n\nThanks!`
+      `Hi there!\n\nI wanted to share Bokkie Cleaning Services with you. They offer amazing cleaning services!\n\nUse my referral code: ${referralCode}\n\nSign up here: ${referralUrl}\n\nThanks!`
     );
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
@@ -45,7 +45,7 @@ export default function ShareButtons({ referralUrl, referralCode }: ShareButtons
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Join Shalean Cleaning Services",
+          title: "Join Bokkie Cleaning Services",
           text: shareMessage,
           url: referralUrl,
         });

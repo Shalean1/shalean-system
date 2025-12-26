@@ -1,4 +1,4 @@
-# SEO Analysis Report: Shalean Cleaning Services Booking Page
+# SEO Analysis Report: Bokkie Cleaning Services Booking Page
 
 ## Executive Summary
 **Current SEO Score: 7/10** | **Ranking Potential: Medium-High (65-75%)**

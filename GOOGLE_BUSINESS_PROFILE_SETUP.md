@@ -1,7 +1,7 @@
 # Google Business Profile Setup & Optimization Guide
 **Time Estimate: 1-2 hours** | **Impact: Major local SEO ranking factor**
 
-This guide will walk you through claiming, verifying, and optimizing your Google Business Profile (GBP) for Shalean Cleaning Services.
+This guide will walk you through claiming, verifying, and optimizing your Google Business Profile (GBP) for Bokkie Cleaning Services.
 
 ---
 
@@ -9,11 +9,11 @@ This guide will walk you through claiming, verifying, and optimizing your Google
 
 Before you begin, gather the following information:
 
-- [ ] Business name: **Shalean Cleaning Services**
+- [ ] Business name: **Bokkie Cleaning Services**
 - [ ] Business address: **39 Harvey Road, Claremont, Western Cape, 7708, South Africa**
 - [ ] Phone number: **+27871535250**
-- [ ] Email: **support@shalean.com**
-- [ ] Website: **https://shalean.co.za**
+- [ ] Email: **support@bokkie.com**
+- [ ] Website: **https://bokkie.co.za**
 - [ ] Business hours (24/7 - Monday to Sunday, 00:00-23:59)
 - [ ] Business category: Cleaning Service / Professional Cleaning Services
 - [ ] Service areas: Cape Town, Sea Point, Camps Bay, Claremont, Green Point, V&A Waterfront, Constantia
@@ -26,7 +26,7 @@ Before you begin, gather the following information:
 
 ### Option A: If a profile already exists
 1. Go to [Google Business Profile](https://www.google.com/business/)
-2. Search for "Shalean Cleaning Services" or your business address
+2. Search for "Bokkie Cleaning Services" or your business address
 3. If you find your business, click **"Claim this business"**
 4. Follow the verification process
 
@@ -34,7 +34,7 @@ Before you begin, gather the following information:
 1. Go to [Google Business Profile Manager](https://www.google.com/business/)
 2. Click **"Manage now"** or **"Get started"**
 3. Sign in with your Google account (use a business email if possible)
-4. Enter your business name: **Shalean Cleaning Services**
+4. Enter your business name: **Bokkie Cleaning Services**
 5. Select your business category:
    - Primary: **"Cleaning Service"** or **"Professional Cleaning Service"**
    - Secondary (if available): **"House Cleaning Service"**
@@ -44,7 +44,7 @@ Before you begin, gather the following information:
 ## 📍 Step 2: Add Complete Business Information
 
 ### Basic Information
-- **Business Name**: Shalean Cleaning Services
+- **Business Name**: Bokkie Cleaning Services
 - **Business Category**: Cleaning Service / Professional Cleaning Service
 - **Address**: 
   - Street: 39 Harvey Road
@@ -53,8 +53,8 @@ Before you begin, gather the following information:
   - Postal Code: 7708
   - Country: South Africa
 - **Phone Number**: +27871535250
-- **Website**: https://shalean.co.za
-- **Email**: support@shalean.com
+- **Website**: https://bokkie.co.za
+- **Email**: support@bokkie.com
 
 ### Business Hours
 Set your hours to reflect 24/7 availability:
@@ -86,7 +86,7 @@ Add all service areas:
 
 ### Recommended Description:
 ```
-Shalean Cleaning Services is a professional cleaning company serving Cape Town and surrounding areas including Sea Point, Camps Bay, Claremont, Green Point, V&A Waterfront, and Constantia. We offer comprehensive cleaning services including regular cleaning, deep cleaning, move-in/out cleaning, Airbnb cleaning, office cleaning, apartment cleaning, window cleaning, and home maintenance. Our experienced team uses eco-friendly products and provides 24/7 service with a 100% satisfaction guarantee. Book your cleaning service online at shalean.co.za or call +27871535250.
+Bokkie Cleaning Services is a professional cleaning company serving Cape Town and surrounding areas including Sea Point, Camps Bay, Claremont, Green Point, V&A Waterfront, and Constantia. We offer comprehensive cleaning services including regular cleaning, deep cleaning, move-in/out cleaning, Airbnb cleaning, office cleaning, apartment cleaning, window cleaning, and home maintenance. Our experienced team uses eco-friendly products and provides 24/7 service with a 100% satisfaction guarantee. Book your cleaning service online at bokkie.co.za or call +27871535250.
 ```
 
 **SEO Tips for Description:**
@@ -146,7 +146,7 @@ Shalean Cleaning Services is a professional cleaning company serving Cape Town a
 - Eco-friendly products
 
 ### Photo Optimization Tips:
-- Use descriptive filenames: `shalean-cleaning-team-cape-town.jpg`
+- Use descriptive filenames: `bokkie-cleaning-team-cape-town.jpg`
 - Add alt text when uploading (if option available)
 - Update photos regularly (monthly)
 - Show diversity in services and locations
@@ -171,7 +171,7 @@ Shalean Cleaning Services is a professional cleaning company serving Cape Town a
 
 #### For 5-Star Reviews:
 ```
-Thank you so much, [Name]! We're thrilled to hear about your positive experience with Shalean Cleaning Services. Your feedback means the world to us and motivates our team to continue delivering exceptional service. We look forward to serving you again!
+Thank you so much, [Name]! We're thrilled to hear about your positive experience with Bokkie Cleaning Services. Your feedback means the world to us and motivates our team to continue delivering exceptional service. We look forward to serving you again!
 ```
 
 #### For 4-Star Reviews:
@@ -181,7 +181,7 @@ Thank you for your feedback, [Name]! We appreciate you taking the time to share 
 
 #### For Negative Reviews:
 ```
-Hi [Name], we're sorry to hear about your experience. This doesn't reflect our usual standard of service. We'd like to make this right. Please contact us directly at +27871535250 or support@shalean.com so we can resolve this issue. Thank you for bringing this to our attention.
+Hi [Name], we're sorry to hear about your experience. This doesn't reflect our usual standard of service. We'd like to make this right. Please contact us directly at +27871535250 or support@bokkie.com so we can resolve this issue. Thank you for bringing this to our attention.
 ```
 
 ### Encourage Reviews:
@@ -198,7 +198,7 @@ Hi [Name], we're sorry to hear about your experience. This doesn't reflect our u
 ### Add Website Link:
 1. In your GBP dashboard, go to **"Info"** section
 2. Find **"Website"** field
-3. Enter: **https://shalean.co.za**
+3. Enter: **https://bokkie.co.za**
 4. Save changes
 
 ### Verify Website Connection:
@@ -463,7 +463,7 @@ Before considering your GBP setup complete:
 ---
 
 *Last Updated: 2024*
-*For Shalean Cleaning Services - Cape Town, South Africa*
+*For Bokkie Cleaning Services - Cape Town, South Africa*
 
 
 

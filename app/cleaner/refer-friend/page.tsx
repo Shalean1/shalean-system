@@ -130,7 +130,7 @@ export default async function ReferFriendPage() {
                 Refer a Friend Cleaner
               </h1>
               <p className="text-base md:text-lg text-gray-600">
-                Refer other cleaners to join Shalean and earn rewards when they start working
+                Refer other cleaners to join Bokkie and earn rewards when they start working
               </p>
             </div>
           </div>
@@ -141,7 +141,7 @@ export default async function ReferFriendPage() {
           <ReferralCode 
             code={referralCode} 
             referralUrl={referralUrl}
-            description="Share this code with other cleaners to join Shalean and earn rewards"
+            description="Share this code with other cleaners to join Bokkie and earn rewards"
           />
         </div>
 
@@ -173,7 +173,7 @@ export default async function ReferFriendPage() {
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Share Your Code</h3>
               <p className="text-sm text-gray-600">
-                Copy your unique referral code or share the link with other cleaners who want to join Shalean
+                Copy your unique referral code or share the link with other cleaners who want to join Bokkie
               </p>
             </div>
             <div className="bg-white rounded-lg p-6 border border-blue-100">
@@ -182,7 +182,7 @@ export default async function ReferFriendPage() {
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">They Apply</h3>
               <p className="text-sm text-gray-600">
-                Your referred cleaner applies using your referral code and gets approved to work with Shalean
+                Your referred cleaner applies using your referral code and gets approved to work with Bokkie
               </p>
             </div>
             <div className="bg-white rounded-lg p-6 border border-blue-100">
@@ -191,7 +191,7 @@ export default async function ReferFriendPage() {
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">You Earn Rewards</h3>
               <p className="text-sm text-gray-600">
-                Earn rewards when your referred cleaner completes their first booking with Shalean
+                Earn rewards when your referred cleaner completes their first booking with Bokkie
               </p>
             </div>
           </div>
@@ -207,13 +207,13 @@ export default async function ReferFriendPage() {
             <div className="flex items-start gap-3">
               <div className="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0"></div>
               <p>
-                <span className="font-semibold">Reward for you</span> when your referred cleaner completes their first booking with Shalean
+                <span className="font-semibold">Reward for you</span> when your referred cleaner completes their first booking with Bokkie
               </p>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0"></div>
               <p>
-                Help grow the Shalean team by referring quality cleaners you know and trust
+                Help grow the Bokkie team by referring quality cleaners you know and trust
               </p>
             </div>
             <div className="flex items-start gap-3">

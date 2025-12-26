@@ -75,7 +75,7 @@ const DEEP_SERVICES_ONLY = [
 const services: ServiceType[] = ["standard", "deep", "move-in-out", "airbnb", "office", "holiday", "carpet-cleaning"];
 const frequencies: FrequencyType[] = ["one-time", "weekly", "bi-weekly", "monthly"];
 
-const STORAGE_KEY = "shalean_booking_data";
+const STORAGE_KEY = "bokkie_booking_data";
 
 export default function ReviewPage() {
   const router = useRouter();

@@ -9,8 +9,8 @@ export const siteConfig = {
   ogImage: "/og-image.jpg",
   links: {
     twitter: "https://x.com/shaloclean",
-    facebook: "https://facebook.com/shaleancleaning",
-    instagram: "https://www.instagram.com/shalean_cleaning_services",
+    facebook: "https://facebook.com/bokkiecleaning",
+    instagram: "https://www.instagram.com/bokkie_cleaning_services",
   },
 };
 

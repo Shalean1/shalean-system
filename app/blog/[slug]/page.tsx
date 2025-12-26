@@ -66,7 +66,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const blogSchema = generateBlogPostSchema(
     post.title,
     post.excerpt || post.seo_description || "",
-    `https://shalean.co.za/blog/${post.slug}`,
+    `https://bokkie.co.za/blog/${post.slug}`,
     post.featured_image_url || undefined,
     post.author_name,
     post.published_at || post.created_at,
@@ -78,9 +78,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   );
 
   const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: "Home", url: "https://shalean.co.za" },
-    { name: "Blog", url: "https://shalean.co.za/blog" },
-    { name: post.title, url: `https://shalean.co.za/blog/${post.slug}` },
+    { name: "Home", url: "https://bokkie.co.za" },
+    { name: "Blog", url: "https://bokkie.co.za/blog" },
+    { name: post.title, url: `https://bokkie.co.za/blog/${post.slug}` },
   ]);
 
   return (

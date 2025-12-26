@@ -23,7 +23,7 @@
 
 ```
 ┌────────────────────────────────────────────────────┐
-│  Shalean Admin                    user@email.com   │
+│  Bokkie Admin                    user@email.com   │
 │  [Dashboard] [Popular Services]        [View Site] │
 ├────────────────────────────────────────────────────┤
 │                                                    │

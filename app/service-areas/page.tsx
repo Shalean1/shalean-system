@@ -3,7 +3,7 @@ import { getServiceLocations } from "@/lib/supabase/booking-data";
 import ServiceAreasClient from "@/components/ServiceAreasClient";
 
 export const metadata: Metadata = {
-  title: "Service Areas in Cape Town | Shalean Cleaning Services",
+  title: "Service Areas in Cape Town | Bokkie Cleaning Services",
   description: "Find professional cleaning services in your area. We serve all major suburbs across Cape Town including Atlantic Seaboard, City Bowl, Southern Suburbs, Northern Suburbs, and more.",
   keywords: [
     "cleaning services Cape Town",
@@ -17,16 +17,16 @@ export const metadata: Metadata = {
     "cleaning services Northern Suburbs",
   ],
   openGraph: {
-    title: "Service Areas in Cape Town | Shalean Cleaning Services",
+    title: "Service Areas in Cape Town | Bokkie Cleaning Services",
     description: "Find professional cleaning services in your area. We serve all major suburbs across Cape Town.",
-    url: "https://shalean.co.za/service-areas",
-    siteName: "Shalean Cleaning Services",
+    url: "https://bokkie.co.za/service-areas",
+    siteName: "Bokkie Cleaning Services",
     images: [
       {
-        url: "https://shalean.co.za/og-image.jpg",
+        url: "https://bokkie.co.za/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Shalean Cleaning Services - Service Areas in Cape Town",
+        alt: "Bokkie Cleaning Services - Service Areas in Cape Town",
       },
     ],
     locale: "en_ZA",
@@ -34,12 +34,12 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Service Areas in Cape Town | Shalean Cleaning Services",
+    title: "Service Areas in Cape Town | Bokkie Cleaning Services",
     description: "Find professional cleaning services in your area. We serve all major suburbs across Cape Town.",
-    images: ["https://shalean.co.za/og-image.jpg"],
+    images: ["https://bokkie.co.za/og-image.jpg"],
   },
   alternates: {
-    canonical: "https://shalean.co.za/service-areas",
+    canonical: "https://bokkie.co.za/service-areas",
   },
   robots: {
     index: true,
@@ -101,13 +101,13 @@ export default async function ServiceAreasPage() {
   const totalSuburbs = allSuburbs.length;
 
   // Generate structured data for SEO
-  const baseUrl = "https://shalean.co.za";
+  const baseUrl = "https://bokkie.co.za";
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "@id": `${baseUrl}/service-areas#webpage`,
     url: `${baseUrl}/service-areas`,
-    name: "Service Areas in Cape Town | Shalean Cleaning Services",
+    name: "Service Areas in Cape Town | Bokkie Cleaning Services",
     description: "Find professional cleaning services in your area. We serve all major suburbs across Cape Town including Atlantic Seaboard, City Bowl, Southern Suburbs, Northern Suburbs, and more.",
     inLanguage: "en-ZA",
     isPartOf: {
@@ -141,7 +141,7 @@ export default async function ServiceAreasPage() {
     mainEntity: {
       "@type": "ItemList",
       name: "Cape Town Service Areas",
-      description: "Complete list of suburbs and locations where Shalean Cleaning Services operates",
+      description: "Complete list of suburbs and locations where Bokkie Cleaning Services operates",
       numberOfItems: totalLocations,
       itemListElement: locations.map((location, index) => ({
         "@type": "ListItem",

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a full-stack multi-step booking form system for Shalean Cleaning Services. The system allows users to book cleaning services without requiring login, integrates with Paystack for payments, sends confirmation emails, and stores bookings in JSON files.
+This is a full-stack multi-step booking form system for Bokkie Cleaning Services. The system allows users to book cleaning services without requiring login, integrates with Paystack for payments, sends confirmation emails, and stores bookings in JSON files.
 
 ## Features
 
@@ -12,7 +12,7 @@ This is a full-stack multi-step booking form system for Shalean Cleaning Service
 - ✅ Paystack payment integration
 - ✅ Email confirmations (customer and business)
 - ✅ Booking storage in JSON files
-- ✅ Responsive design matching Shalean website
+- ✅ Responsive design matching Bokkie website
 
 ## Route Structure
 
@@ -31,7 +31,7 @@ Create a `.env.local` file with the following variables:
 # Resend Email Configuration
 RESEND_API_KEY=re_your_resend_api_key_here
 RESEND_FROM_EMAIL=noreply@yourdomain.com
-RESEND_TO_EMAIL=hello@shalean.com
+RESEND_TO_EMAIL=hello@bokkie.com
 
 # Paystack Payment Configuration
 PAYSTACK_PUBLIC_KEY=pk_test_your_public_key_here
@@ -200,6 +200,6 @@ data/
 ## Support
 
 For issues or questions, contact:
-- Email: hello@shalean.com
+- Email: hello@bokkie.com
 - Phone: +27 12 345 6789
 

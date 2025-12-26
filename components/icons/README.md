@@ -1,6 +1,6 @@
 # Custom Icons Guide
 
-This directory contains custom icon components for the Shalean booking system.
+This directory contains custom icon components for the Bokkie booking system.
 
 ## Overview
 

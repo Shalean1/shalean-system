@@ -98,7 +98,7 @@ You should see:
 
 1. Admin selects a cleaner and enters phone/password
 2. System creates a Supabase auth user with:
-   - Email: Constructed from phone (e.g., `27792022648@shalean.co.za`) or provided email
+   - Email: Constructed from phone (e.g., `27792022648@bokkie.co.za`) or provided email
    - Password: The provided password
    - Metadata: Contains `cleaner_id` and `phone`
 3. Trigger automatically creates a profile in `profiles` table with:

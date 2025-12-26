@@ -13,7 +13,7 @@ import { formatPrice } from "@/lib/pricing";
 export const metadata: Metadata = {
   title: generateMetaTitle("Professional Cleaning Services in Cape Town"),
   description: generateMetaDescription(
-    "Discover Shalean Cleaning Services' comprehensive range of professional cleaning services in Cape Town. Residential cleaning, commercial cleaning, deep cleaning, move-in/out, Airbnb cleaning, and specialized services. Trusted by thousands of Cape Town residents."
+    "Discover Bokkie Cleaning Services' comprehensive range of professional cleaning services in Cape Town. Residential cleaning, commercial cleaning, deep cleaning, move-in/out, Airbnb cleaning, and specialized services. Trusted by thousands of Cape Town residents."
   ),
   keywords: [
     "cleaning services Cape Town",
@@ -36,14 +36,14 @@ export const metadata: Metadata = {
     canonical: generateCanonicalUrl("/services"),
   },
   openGraph: {
-    title: "Professional Cleaning Services in Cape Town | Shalean Cleaning Services",
+    title: "Professional Cleaning Services in Cape Town | Bokkie Cleaning Services",
     description:
       "Comprehensive cleaning services in Cape Town: residential, commercial, deep cleaning, move-in/out, Airbnb cleaning, and specialized services. Trusted by thousands.",
     url: generateCanonicalUrl("/services"),
-    siteName: "Shalean Cleaning Services",
+    siteName: "Bokkie Cleaning Services",
     images: [
       {
-        url: "https://shalean.co.za/og-image.jpg",
+        url: "https://bokkie.co.za/og-image.jpg",
         width: 1200,
         height: 630,
         alt: generateImageAlt("Professional Cleaning Services", "Cape Town"),
@@ -55,10 +55,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Professional Cleaning Services in Cape Town | Shalean Cleaning Services",
+    title: "Professional Cleaning Services in Cape Town | Bokkie Cleaning Services",
     description:
       "Comprehensive cleaning services in Cape Town: residential, commercial, deep cleaning, move-in/out, Airbnb cleaning, and specialized services.",
-    images: ["https://shalean.co.za/og-image.jpg"],
+    images: ["https://bokkie.co.za/og-image.jpg"],
     creator: "@shaloclean",
     site: "@shaloclean",
   },
@@ -485,7 +485,7 @@ export default async function ServicesPage() {
                   <span>Why Choose Us</span>
                 </div>
                 <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                  Why Choose Shalean Cleaning Services?
+                  Why Choose Bokkie Cleaning Services?
                 </h2>
                 <p className="text-xl text-gray-600 max-w-2xl mx-auto">
                   We're committed to providing exceptional cleaning services that exceed your expectations.

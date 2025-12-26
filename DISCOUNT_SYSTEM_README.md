@@ -1,6 +1,6 @@
 # Discount Code System
 
-A complete discount code system for the Shalean Cleaning Services booking platform.
+A complete discount code system for the Bokkie Cleaning Services booking platform.
 
 ## Features
 
@@ -215,6 +215,7 @@ The system validates:
 - `components/booking/PriceSummary.tsx` - Display discount code discount
 - `app/booking/service/[type]/review/page.tsx` - Integrated discount component
 - `app/actions/submit-booking.ts` - Server-side validation and tracking
+
 
 
 

@@ -57,7 +57,7 @@ Run `056_add_admin_bookings_policy.sql` to allow admins to see all bookings.
 
 If you want to automate the file modification, run:
 ```powershell
-cd C:\Users\27825\shalean-system
+cd C:\Users\27825\bokkie-system
 .\scripts\prepare_bookings_import.ps1
 ```
 

@@ -109,7 +109,7 @@ export default function BlogPostForm({
   useEffect(() => {
     if (!formData.seo_title && formData.title) {
       const maxLength = 60;
-      const suffix = " | Shalean Cleaning Services";
+      const suffix = " | Bokkie Cleaning Services";
       const availableLength = maxLength - suffix.length;
       const seoTitle =
         formData.title.length <= availableLength

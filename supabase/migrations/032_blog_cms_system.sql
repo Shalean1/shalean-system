@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
   content TEXT NOT NULL,
   featured_image_url TEXT,
   author_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-  author_name TEXT NOT NULL DEFAULT 'Shalean Cleaning Services',
+  author_name TEXT NOT NULL DEFAULT 'Bokkie Cleaning Services',
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'archived')),
   published_at TIMESTAMPTZ,
   
@@ -275,7 +275,7 @@ CREATE POLICY "CMS content is manageable by authenticated users" ON cms_content
 -- ============================================================================
 INSERT INTO blog_categories (name, slug, description, display_order) VALUES
   ('Home Maintenance', 'home-maintenance', 'Home maintenance guides and tips', 2),
-  ('Company News', 'company-news', 'Latest news and updates from Shalean', 3),
+  ('Company News', 'company-news', 'Latest news and updates from Bokkie', 3),
   ('Local Guides', 'local-guides', 'Cape Town area guides and information', 4),
   ('Eco-Friendly', 'eco-friendly', 'Eco-friendly cleaning solutions', 5)
 ON CONFLICT (slug) DO NOTHING;
@@ -384,7 +384,7 @@ INSERT INTO blog_posts (
 </ul>
 
 <h3>Professional Cleaning with Eco-Friendly Products</h3>
-<p>At Shalean, we understand the importance of sustainable cleaning practices. Our professional cleaners use eco-friendly products that:</p>
+<p>At Bokkie, we understand the importance of sustainable cleaning practices. Our professional cleaners use eco-friendly products that:</p>
 <ul>
 <li>Effectively clean without harsh chemicals</li>
 <li>Protect your family''s health</li>
@@ -414,15 +414,15 @@ INSERT INTO blog_posts (
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Top Tips for Selecting the Best Cleaning Service | Shalean Cleaning Services</title>
+  <title>Top Tips for Selecting the Best Cleaning Service | Bokkie Cleaning Services</title>
   <meta name="description" content="Discover how to choose the right cleaning agency with our expert tips. Ensure reliable, efficient cleaning services tailored to your needs." />
-  <link rel="canonical" href="https://shalean.co.za/blog/selecting-best-cleaning-service" />
+  <link rel="canonical" href="https://bokkie.co.za/blog/selecting-best-cleaning-service" />
 
   <!-- Open Graph -->
   <meta property="og:title" content="Top Tips for Selecting the Best Cleaning Service" />
   <meta property="og:description" content="Discover how to choose the right cleaning agency with our expert tips. Ensure reliable, efficient cleaning services tailored to your needs." />
   <meta property="og:type" content="article" />
-  <meta property="og:url" content="https://shalean.co.za/blog/selecting-best-cleaning-service" />
+  <meta property="og:url" content="https://bokkie.co.za/blog/selecting-best-cleaning-service" />
   <meta property="og:image" content="/images/og-selecting-cleaning-service.jpg" />
 
   <!-- Twitter Card -->
@@ -446,7 +446,7 @@ INSERT INTO blog_posts (
   <article itemscope itemtype="https://schema.org/Article">
     <header>
       <h1 itemprop="headline">Top Tips for Selecting the Best Cleaning Service</h1>
-      <p class="byline">By Shalean Cleaning Services — <time datetime="2025-11-19">November 19, 2025</time></p>
+      <p class="byline">By Bokkie Cleaning Services — <time datetime="2025-11-19">November 19, 2025</time></p>
       <p itemprop="description">Discover how to choose the right cleaning agency with our expert tips. Ensure reliable, efficient cleaning services tailored to your needs.</p>
 
       <nav class="toc" aria-label="Table of contents">
@@ -708,7 +708,7 @@ INSERT INTO blog_posts (
   <li><strong>Hourly Cleaners:</strong> R120 – R200 per hour</li>
 </ul>
 
-<p>These are industry averages for Cape Town. At <a href="https://www.shalean.co.za">Shalean Cleaning Services</a>, we keep prices transparent and affordable — without compromising quality.</p>
+<p>These are industry averages for Cape Town. At <a href="https://www.bokkie.co.za">Bokkie Cleaning Services</a>, we keep prices transparent and affordable — without compromising quality.</p>
 
 <h2>Factors That Influence Cleaning Prices</h2>
 
@@ -757,7 +757,7 @@ INSERT INTO blog_posts (
   <li><strong>Choose a reputable company</strong> to avoid redo costs</li>
 </ul>
 
-<h2>Why Choose Shalean Cleaning Services?</h2>
+<h2>Why Choose Bokkie Cleaning Services?</h2>
 
 <p>We are one of Cape Town''s most reliable cleaning companies with:</p>
 
@@ -773,7 +773,7 @@ INSERT INTO blog_posts (
 
 <p>Ready to get your free quote?</p>
 
-<p><a href="https://www.shalean.co.za/book" style="font-weight:bold;">Click here to book Shalean Cleaning Services in Cape Town</a>.</p>
+<p><a href="https://www.bokkie.co.za/book" style="font-weight:bold;">Click here to book Bokkie Cleaning Services in Cape Town</a>.</p>
 ',
     'Discover the real cost of cleaning services in Cape Town. Learn price ranges, what affects cleaning costs, and how to choose the best service for your budget.',
     null,
@@ -789,14 +789,14 @@ INSERT INTO blog_posts (
   ),
   (
     '6ca28e3a-9f52-4658-95ea-4791771a5fb1',
-    'Cleaning Service Costs in Cape Town: Complete Guide by Shalean Cleanin',
-    'cleaning-service-costs-in-cape-town-complete-guide-by-shalean-cleanin',
+    'Cleaning Service Costs in Cape Town: Complete Guide by Bokkie Cleanin',
+    'cleaning-service-costs-in-cape-town-complete-guide-by-bokkie-cleanin',
     '<article>
-  <h1>Cleaning Service Costs in Cape Town: Complete Guide by Shalean Cleaning Services</h1>
+  <h1>Cleaning Service Costs in Cape Town: Complete Guide by Bokkie Cleaning Services</h1>
 
   <section id="intro">
     <h2>Introduction to Cleaning Service Costs in Cape Town</h2>
-    <p>If you''re looking for affordable, reliable cleaning services in Cape Town, understanding how pricing works helps you choose the right provider. At Shalean Cleaning Services, transparency and value are at the heart of what we do. This guide explains the main cost factors, our pricing structure, and how to budget effectively.</p>
+    <p>If you''re looking for affordable, reliable cleaning services in Cape Town, understanding how pricing works helps you choose the right provider. At Bokkie Cleaning Services, transparency and value are at the heart of what we do. This guide explains the main cost factors, our pricing structure, and how to budget effectively.</p>
   </section>
 
   <section id="factors">
@@ -805,7 +805,7 @@ INSERT INTO blog_posts (
   </section>
 
   <section id="pricing">
-    <h2>Shalean Cleaning Services Pricing (Cape Town)</h2>
+    <h2>Bokkie Cleaning Services Pricing (Cape Town)</h2>
 
     <h3>Standard Cleaning</h3>
     <ul>
@@ -844,8 +844,8 @@ INSERT INTO blog_posts (
     </ul>
   </section>
 
-  <section id="why-shalean">
-    <h2>Why Choose Shalean Cleaning Services?</h2>
+  <section id="why-bokkie">
+    <h2>Why Choose Bokkie Cleaning Services?</h2>
     <ul>
       <li>Vetted & insured cleaners</li>
       <li>Transparent pricing — no hidden fees</li>
@@ -873,19 +873,19 @@ INSERT INTO blog_posts (
     <p>Most homes pay between <strong>R550 and R2,200</strong> depending on size and the level of cleaning required.</p>
 
     <h3>Do you bring your own cleaning materials?</h3>
-    <p>Yes, Shalean provides all cleaning supplies and equipment for all services.</p>
+    <p>Yes, Bokkie provides all cleaning supplies and equipment for all services.</p>
 
     <h3>Will I get the same cleaner each time?</h3>
     <p>Yes, recurring clients are matched with a consistent cleaner whenever possible.</p>
   </section>
 
   <section id="conclusion">
-    <h2>Book a Clean With Shalean</h2>
+    <h2>Book a Clean With Bokkie</h2>
     <p>Ready for a personalised quote? <a href="/book">Book online</a> or WhatsApp us at <strong>068 184 9866</strong>. We service Cape Town CBD, Sea Point, Woodstock, Rondebosch, Table View and more.</p>
   </section>
 </article>
 ',
-    'A complete guide to cleaning service costs in Cape Town. Explore Shalean Cleaning Services'' pricing, factors affecting cleaning costs, and tips to choose the ri',
+    'A complete guide to cleaning service costs in Cape Town. Explore Bokkie Cleaning Services'' pricing, factors affecting cleaning costs, and tips to choose the ri',
     '',
     'airbnb-hosts',
     null,
@@ -1001,7 +1001,7 @@ Tailoring your rental cleaning checklist to your specific property is essential 
     'airbnb-hosts',
     null,
     'published',
-    'Complete Airbnb Turnover Cleaning Checklist | Shalean',
+    'Complete Airbnb Turnover Cleaning Checklist | Bokkie',
     'Simplify your vacation rental turnover with our ultimate Airbnb cleaning checklist! Ensure a spotless short-term rental and 5-star reviews.',
     12,
     '2025-10-22 00:00:00+00',
@@ -1198,7 +1198,7 @@ If you want a cleaning experience tailored to your lifestyle—and a chance to s
 <p>Yes. Most local cleaners offer competitive pricing due to fewer overhead costs and flexible service plans.</p>
 
 <h3>4. How can I find reliable local cleaning services?</h3>
-<p>Look for reviews, community recommendations, local websites, or platforms like Shalean Cleanng Services. Ask about experience, pricing, and cleaning methods.</p>
+<p>Look for reviews, community recommendations, local websites, or platforms like Bokkie Cleanng Services. Ask about experience, pricing, and cleaning methods.</p>
 
 <!-- FAQ SCHEMA MARKUP -->
 <script type="application/ld+json">
@@ -1263,7 +1263,7 @@ If you want a cleaning experience tailored to your lifestyle—and a chance to s
 <h2>Understanding Deep Cleaning</h2>
  <h3>What is Deep Cleaning?</h3>
 
-<strong><a href="https://shalean.co.za/blog/10-essential-deep-cleaning-tips-for-every-home">Deep cleaning</a> goes beyond regular cleaning, targeting accumulated grime and dirt in hard-to-reach areas of your home or office.</strong> This cleaning process ensures a much more thorough clean than your typical weekly house cleaning, often involving specialized cleaning products and equipment.
+<strong><a href="https://bokkie.co.za/blog/10-essential-deep-cleaning-tips-for-every-home">Deep cleaning</a> goes beyond regular cleaning, targeting accumulated grime and dirt in hard-to-reach areas of your home or office.</strong> This cleaning process ensures a much more thorough clean than your typical weekly house cleaning, often involving specialized cleaning products and equipment.
 
 <h3>Benefits of a Deep Clean</h3>
 
@@ -1289,7 +1289,7 @@ Several companies offer exceptional deep cleaning services in Cape Town, includi
 <h2>Your Ultimate Guide to Deep Cleaning</h2>
 <h3> Creating a Comprehensive Cleaning Checklist</h3>
 
-Creating a checklist is an essential step in any <strong>guide to deep cleaning</strong>, especially when tackling a <strong>home or office</strong> in a place like <strong><a href="https://shalean.co.za/location/cape-town">Cape Town</a></strong>. It helps ensure a <strong>thorough clean</strong>, covering all areas and preventing you from overlooking crucial tasks. This <strong>cleaning process</strong> should include everything from dusting to scrubbing, creating a systematic approach for your <strong>deep clean</strong>.
+Creating a checklist is an essential step in any <strong>guide to deep cleaning</strong>, especially when tackling a <strong>home or office</strong> in a place like <strong><a href="https://bokkie.co.za/location/cape-town">Cape Town</a></strong>. It helps ensure a <strong>thorough clean</strong>, covering all areas and preventing you from overlooking crucial tasks. This <strong>cleaning process</strong> should include everything from dusting to scrubbing, creating a systematic approach for your <strong>deep clean</strong>.
 
 <h3>Essential Tools and Supplies for Deep Cleaning</h3>
 
@@ -1378,7 +1378,7 @@ Establishing a structured cleaning process is key to long-term cleanliness. Divi
     'cleaning-tips',
     null,
     'published',
-    'Deep Cleaning Guide Cape Town | Expert Tips | Shalean',
+    'Deep Cleaning Guide Cape Town | Expert Tips | Bokkie',
     'Complete guide to deep cleaning your Cape Town home: room-by-room checklist, products, schedules, and professional services.',
     6,
     '2025-10-27 00:00:00+00',

@@ -1,6 +1,6 @@
 # Supabase Setup Guide
 
-This guide will help you set up Supabase for your Shalean Cleaning Services application.
+This guide will help you set up Supabase for your Bokkie Cleaning Services application.
 
 ## Step 1: Create a Supabase Project
 
@@ -8,7 +8,7 @@ This guide will help you set up Supabase for your Shalean Cleaning Services appl
 2. Sign up or log in to your account
 3. Click "New Project"
 4. Fill in your project details:
-   - **Name**: Shalean Cleaning Services
+   - **Name**: Bokkie Cleaning Services
    - **Database Password**: Choose a strong password (save this!)
    - **Region**: Choose the closest region to your users
 5. Click "Create new project"
@@ -163,6 +163,7 @@ The booking actions will need to be updated to use the new Supabase storage inst
 For more information, visit:
 - [Supabase Documentation](https://supabase.com/docs)
 - [Supabase Next.js Guide](https://supabase.com/docs/guides/getting-started/quickstarts/nextjs)
+
 
 
 

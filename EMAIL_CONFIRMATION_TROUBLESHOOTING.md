@@ -117,7 +117,7 @@ Supabase's default email service has limitations. For reliable email delivery, s
      - **Username**: `apikey`
      - **Password**: Your SendGrid API key
      - **Sender email**: Your verified email
-     - **Sender name**: `Shalean Cleaning Services`
+     - **Sender name**: `Bokkie Cleaning Services`
    - Click "Save"
 
 ### Option 3: Using Gmail (Development Only)
@@ -137,7 +137,7 @@ Supabase's default email service has limitations. For reliable email delivery, s
      - **Username**: Your Gmail address
      - **Password**: The app password (not your regular password)
      - **Sender email**: Your Gmail address
-     - **Sender name**: `Shalean Cleaning Services`
+     - **Sender name**: `Bokkie Cleaning Services`
    - Click "Save"
 
 ## Test Email Configuration

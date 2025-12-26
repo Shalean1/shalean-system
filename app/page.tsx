@@ -12,7 +12,7 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Professional Cleaning Services Cape Town | Shalean Cleaning Services",
+  title: "Professional Cleaning Services Cape Town | Bokkie Cleaning Services",
   description: "Book trusted professional cleaners in Cape Town. Same-day booking available for residential, commercial, deep cleaning, move-in/out, Airbnb, and office cleaning. Rated 5 stars with 150+ reviews. Serving Sea Point, Camps Bay, Claremont & more.",
   keywords: [
     "cleaning services Cape Town",
@@ -34,16 +34,16 @@ export const metadata: Metadata = {
     "professional cleaning services South Africa",
   ],
   openGraph: {
-    title: "Professional Cleaning Services Cape Town | Shalean Cleaning Services",
+    title: "Professional Cleaning Services Cape Town | Bokkie Cleaning Services",
     description: "Book trusted professional cleaners in Cape Town. Same-day booking available for residential, commercial, deep cleaning, move-in/out, Airbnb, and office cleaning. Rated 5 stars with 150+ reviews.",
-    url: "https://shalean.co.za",
-    siteName: "Shalean Cleaning Services",
+    url: "https://bokkie.co.za",
+    siteName: "Bokkie Cleaning Services",
     images: [
       {
-        url: "https://shalean.co.za/og-image.jpg",
+        url: "https://bokkie.co.za/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Shalean Cleaning Services - Professional Cleaning Services in Cape Town",
+        alt: "Bokkie Cleaning Services - Professional Cleaning Services in Cape Town",
       },
     ],
     locale: "en_ZA",
@@ -51,14 +51,14 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Professional Cleaning Services Cape Town | Shalean Cleaning Services",
+    title: "Professional Cleaning Services Cape Town | Bokkie Cleaning Services",
     description: "Book trusted professional cleaners in Cape Town. Same-day booking available. Rated 5 stars with 150+ reviews.",
-    images: ["https://shalean.co.za/og-image.jpg"],
+    images: ["https://bokkie.co.za/og-image.jpg"],
     creator: "@shaloclean",
     site: "@shaloclean",
   },
   alternates: {
-    canonical: "https://shalean.co.za",
+    canonical: "https://bokkie.co.za",
   },
   robots: {
     index: true,
@@ -84,23 +84,23 @@ export default function Home() {
   const webpageStructuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "@id": "https://shalean.co.za#webpage",
-    url: "https://shalean.co.za",
-    name: "Professional Cleaning Services Cape Town | Shalean Cleaning Services",
+    "@id": "https://bokkie.co.za#webpage",
+    url: "https://bokkie.co.za",
+    name: "Professional Cleaning Services Cape Town | Bokkie Cleaning Services",
     description: "Book trusted professional cleaners in Cape Town. Same-day booking available for residential, commercial, deep cleaning, move-in/out, Airbnb, and office cleaning.",
     inLanguage: "en-ZA",
     isPartOf: {
-      "@id": "https://shalean.co.za#website",
+      "@id": "https://bokkie.co.za#website",
     },
     about: {
-      "@id": "https://shalean.co.za#organization",
+      "@id": "https://bokkie.co.za#organization",
     },
     primaryImageOfPage: {
       "@type": "ImageObject",
-      url: "https://shalean.co.za/og-image.jpg",
+      url: "https://bokkie.co.za/og-image.jpg",
     },
     breadcrumb: {
-      "@id": "https://shalean.co.za#breadcrumb",
+      "@id": "https://bokkie.co.za#breadcrumb",
     },
   };
 

@@ -37,7 +37,7 @@ export default async function CleanerContractPage() {
             </h1>
           </div>
           <p className="text-base md:text-lg text-gray-600">
-            Terms and conditions for cleaners working with Shalean
+            Terms and conditions for cleaners working with Bokkie
           </p>
         </div>
 
@@ -77,7 +77,7 @@ export default async function CleanerContractPage() {
               <section>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">1. Service Agreement</h3>
                 <p className="text-gray-700 leading-relaxed">
-                  By working with Shalean, you agree to provide professional cleaning services 
+                  By working with Bokkie, you agree to provide professional cleaning services 
                   in accordance with the standards and guidelines set forth by the company. 
                   You are expected to maintain a high level of professionalism and quality in 
                   all cleaning assignments.
@@ -192,7 +192,7 @@ export default async function CleanerContractPage() {
               <section>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">6. Equipment and Supplies</h3>
                 <p className="text-gray-700 leading-relaxed">
-                  Shalean provides necessary cleaning supplies and equipment for all jobs. 
+                  Bokkie provides necessary cleaning supplies and equipment for all jobs. 
                   You are responsible for using these items properly and reporting any 
                   shortages or issues. Personal protective equipment (PPE) will be provided 
                   as required by health and safety regulations.
@@ -225,7 +225,7 @@ export default async function CleanerContractPage() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">8. Termination</h3>
                 <p className="text-gray-700 leading-relaxed">
                   Either party may terminate this agreement with appropriate notice. 
-                  Shalean reserves the right to terminate immediately in cases of 
+                  Bokkie reserves the right to terminate immediately in cases of 
                   misconduct, violation of terms, or failure to meet performance standards.
                 </p>
               </section>
@@ -240,7 +240,7 @@ export default async function CleanerContractPage() {
                 <h3 className="text-lg font-semibold text-blue-900 mb-2">Need Help?</h3>
                 <p className="text-blue-800 text-sm leading-relaxed mb-3">
                   If you have any questions about your contract or need clarification on any terms, 
-                  please contact Shalean support through your dashboard or reach out directly.
+                  please contact Bokkie support through your dashboard or reach out directly.
                 </p>
                 <p className="text-blue-800 text-sm">
                   <strong>Last Updated:</strong> {new Date().toLocaleDateString('en-ZA', { 

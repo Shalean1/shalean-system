@@ -10,7 +10,7 @@
 - **Status:** ✅ COMPLETE
 - **Location:** `app/page.tsx` lines 14-80
 - **Details:**
-  - ✅ Optimized title: "Professional Cleaning Services Cape Town | Shalean Cleaning Services"
+  - ✅ Optimized title: "Professional Cleaning Services Cape Town | Bokkie Cleaning Services"
   - ✅ Enhanced description with keywords, ratings, and service areas
   - ✅ Comprehensive keywords array (17+ relevant terms)
   - ✅ Open Graph tags with full URLs
@@ -65,7 +65,7 @@
 - **Required Action:**
   1. Create `/public/og-image.jpg` (1200x630px recommended)
   2. Image should include:
-     - Shalean Cleaning Services branding
+     - Bokkie Cleaning Services branding
      - Professional cleaning imagery
      - Text: "Professional Cleaning Services Cape Town"
      - Company logo
@@ -73,7 +73,7 @@
   4. Use JPEG or PNG format
 
 **Temporary Workaround:**
-- Can use `/shalean-logo.png` as placeholder, but proper OG image recommended
+- Can use `/bokkie-logo.png` as placeholder, but proper OG image recommended
 
 ### 2. External Hero Image URL 🟡 MEDIUM PRIORITY
 - **Status:** ⚠️ NEEDS ATTENTION

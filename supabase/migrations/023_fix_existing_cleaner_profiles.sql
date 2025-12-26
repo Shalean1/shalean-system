@@ -30,9 +30,9 @@ BEGIN
   
   v_cleaner_id := NULLIF(v_user_metadata->>'cleaner_id', '');
   
-  -- If email is in format {phone}@shalean.co.za, extract phone from email
-  IF v_email LIKE '%@shalean.co.za' AND v_phone IS NULL THEN
-    v_phone := REPLACE(v_email, '@shalean.co.za', '');
+  -- If email is in format {phone}@bokkie.co.za, extract phone from email
+  IF v_email LIKE '%@bokkie.co.za' AND v_phone IS NULL THEN
+    v_phone := REPLACE(v_email, '@bokkie.co.za', '');
     -- Add + if it doesn't start with it (assuming South African numbers)
     IF v_phone NOT LIKE '+%' THEN
       v_phone := '+' || v_phone;
@@ -65,7 +65,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Fix profiles for users with @shalean.co.za emails (cleaner accounts)
+-- Fix profiles for users with @bokkie.co.za emails (cleaner accounts)
 DO $$
 DECLARE
   user_record RECORD;
@@ -73,7 +73,7 @@ BEGIN
   FOR user_record IN 
     SELECT id, email, raw_user_meta_data
     FROM auth.users
-    WHERE email LIKE '%@shalean.co.za'
+    WHERE email LIKE '%@bokkie.co.za'
   LOOP
     BEGIN
       PERFORM fix_cleaner_profile(user_record.id);

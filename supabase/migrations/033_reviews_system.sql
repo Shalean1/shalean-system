@@ -60,7 +60,7 @@ VALUES
   (
     'Sumaya',
     5,
-    'The professionalism of the Company is exceptional, and they ensure a suitable lady is available for your clean day/s. The ladies allocated to me thus far have good cleaning skills... I highly recommend Shalean Cleaning Services.',
+    'The professionalism of the Company is exceptional, and they ensure a suitable lady is available for your clean day/s. The ladies allocated to me thus far have good cleaning skills... I highly recommend Bokkie Cleaning Services.',
     'approved',
     true,
     1,

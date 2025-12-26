@@ -1,4 +1,4 @@
-# Custom Icons Guide for Shalean Booking System
+# Custom Icons Guide for Bokkie Booking System
 
 ## ✅ Yes, Custom Icons Are Possible!
 

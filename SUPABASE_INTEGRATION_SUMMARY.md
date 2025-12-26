@@ -1,6 +1,6 @@
 # ✅ Supabase Integration Complete!
 
-Your Shalean Cleaning Services app is now ready to connect to Supabase! Here's what has been set up:
+Your Bokkie Cleaning Services app is now ready to connect to Supabase! Here's what has been set up:
 
 ## 📦 What Was Installed
 
@@ -237,6 +237,7 @@ Your app is now configured for Supabase. Follow the steps in `SUPABASE_QUICK_STA
 4. Start using authentication!
 
 Happy coding! 🚀
+
 
 
 

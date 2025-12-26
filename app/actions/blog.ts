@@ -191,7 +191,7 @@ export async function createBlogPost(input: BlogPostInput): Promise<{ success: b
       content: input.content,
       featured_image_url: input.featured_image_url || null,
       author_id: user.id,
-      author_name: user.user_metadata?.name || 'Shalean Cleaning Services',
+      author_name: user.user_metadata?.name || 'Bokkie Cleaning Services',
       status: input.status || 'draft',
       published_at: publishedAt,
       seo_title: input.seo_title || null,

@@ -71,7 +71,7 @@ export async function generateMetadata({
         `cleaning services Western Cape`,
       ];
   
-  const title = `Cleaning Services in ${locationName}, Cape Town | Shalean Cleaning Services`;
+  const title = `Cleaning Services in ${locationName}, Cape Town | Bokkie Cleaning Services`;
 
   return {
     title,
@@ -80,14 +80,14 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      url: `https://shalean.co.za/areas/${location}`,
-      siteName: "Shalean Cleaning Services",
+      url: `https://bokkie.co.za/areas/${location}`,
+      siteName: "Bokkie Cleaning Services",
       images: [
         {
-          url: "https://shalean.co.za/og-image.jpg",
+          url: "https://bokkie.co.za/og-image.jpg",
           width: 1200,
           height: 630,
-          alt: `Shalean Cleaning Services - Cleaning Services in ${locationName}`,
+          alt: `Bokkie Cleaning Services - Cleaning Services in ${locationName}`,
         },
       ],
       locale: "en_ZA",
@@ -97,12 +97,12 @@ export async function generateMetadata({
       card: "summary_large_image",
       title,
       description,
-      images: ["https://shalean.co.za/og-image.jpg"],
+      images: ["https://bokkie.co.za/og-image.jpg"],
       creator: "@shaloclean",
       site: "@shaloclean",
     },
     alternates: {
-      canonical: `https://shalean.co.za/areas/${location}`,
+      canonical: `https://bokkie.co.za/areas/${location}`,
     },
     robots: {
       index: true,
@@ -146,7 +146,7 @@ export default async function LocationPage({
   const locationContent = await getLocationContent(location);
 
   // Default/fallback content
-  const defaultIntroParagraph = `Shalean provides trusted and reliable home cleaning services across Cape Town, operating in areas like Sea Point, Camps Bay, Claremont, Green Point, Constantia, and many more. Our experienced cleaning professionals handle everything from regular house cleaning and deep cleaning to move-in/out cleaning, Airbnb cleaning, and office cleaning.`;
+  const defaultIntroParagraph = `Bokkie provides trusted and reliable home cleaning services across Cape Town, operating in areas like Sea Point, Camps Bay, Claremont, Green Point, Constantia, and many more. Our experienced cleaning professionals handle everything from regular house cleaning and deep cleaning to move-in/out cleaning, Airbnb cleaning, and office cleaning.`;
   const defaultMainContent = `Our service is easily booked online, secure, safe, and cashless. Our dedicated cleaning professionals arrive on time, fully equipped with all necessary supplies, and are committed to delivering exceptional results that exceed your expectations.`;
 
   // Use custom content if available, otherwise use defaults
@@ -418,7 +418,7 @@ export default async function LocationPage({
                   </Link>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span>© {new Date().getFullYear()} Shalean Cleaning Services, all rights reserved</span>
+                  <span>© {new Date().getFullYear()} Bokkie Cleaning Services, all rights reserved</span>
                   <Link href="#top" className="hover:text-white transition-colors flex items-center gap-1">
                     <span>To top</span>
                     <ArrowUp className="w-4 h-4" />

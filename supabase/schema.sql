@@ -1,4 +1,4 @@
--- Supabase Database Schema for Shalean Cleaning Services
+-- Supabase Database Schema for Bokkie Cleaning Services
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

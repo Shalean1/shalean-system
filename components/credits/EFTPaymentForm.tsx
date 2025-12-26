@@ -12,8 +12,8 @@ interface EFTPaymentFormProps {
 
 // Bank account details - should be moved to environment variables or database
 const BANK_DETAILS = {
-  bankName: "Shalean Bank Account",
-  accountName: "Shalean Cleaning Services",
+  bankName: "Bokkie Bank Account",
+  accountName: "Bokkie Cleaning Services",
   accountNumber: "1234567890", // Replace with actual account number
   branchCode: "123456", // Replace with actual branch code
   accountType: "Cheque Account",

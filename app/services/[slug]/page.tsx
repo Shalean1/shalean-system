@@ -275,13 +275,13 @@ export async function generateMetadata({
       canonical: generateCanonicalUrl(`/services/${slug}`),
     },
     openGraph: {
-      title: `${service.shortName} in Cape Town | Shalean Cleaning Services`,
+      title: `${service.shortName} in Cape Town | Bokkie Cleaning Services`,
       description: description,
       url: generateCanonicalUrl(`/services/${slug}`),
-      siteName: "Shalean Cleaning Services",
+      siteName: "Bokkie Cleaning Services",
       images: [
         {
-          url: "https://shalean.co.za/og-image.jpg",
+          url: "https://bokkie.co.za/og-image.jpg",
           width: 1200,
           height: 630,
           alt: generateImageAlt(service.shortName, "Cape Town"),
@@ -293,9 +293,9 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: `${service.shortName} in Cape Town | Shalean Cleaning Services`,
+      title: `${service.shortName} in Cape Town | Bokkie Cleaning Services`,
       description: description,
-      images: ["https://shalean.co.za/og-image.jpg"],
+      images: ["https://bokkie.co.za/og-image.jpg"],
       creator: "@shaloclean",
       site: "@shaloclean",
     },
@@ -321,7 +321,7 @@ export async function generateMetadata({
 
 // Generate structured data for service page
 function generateServiceStructuredData(slug: string, service: typeof serviceData[string], price: number) {
-  const baseUrl = "https://shalean.co.za";
+  const baseUrl = "https://bokkie.co.za";
   const serviceUrl = `${baseUrl}/services/${slug}`;
 
   return {
@@ -386,7 +386,7 @@ function generateServiceStructuredData(slug: string, service: typeof serviceData
         description: service.longDescription,
         provider: {
           "@type": "Organization",
-          name: "Shalean Cleaning Services",
+          name: "Bokkie Cleaning Services",
           url: baseUrl,
         },
         areaServed: {

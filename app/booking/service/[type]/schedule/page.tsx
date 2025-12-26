@@ -25,7 +25,7 @@ import {
 import { ServiceLocation, Team } from "@/lib/supabase/booking-data-types";
 import { FALLBACK_CLEANERS, FALLBACK_TEAMS, FALLBACK_FREQUENCIES, FALLBACK_EXTRAS } from "@/lib/supabase/booking-data-fallbacks";
 
-const STORAGE_KEY = "shalean_booking_data";
+const STORAGE_KEY = "bokkie_booking_data";
 
 export default function SchedulePage() {
   const router = useRouter();

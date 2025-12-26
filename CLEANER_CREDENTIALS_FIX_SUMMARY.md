@@ -104,7 +104,7 @@ This will tell you exactly what's failing.
    INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, created_at, updated_at)
    VALUES (
      gen_random_uuid(),
-     'test@shalean.co.za',
+     'test@bokkie.co.za',
      crypt('testpassword', gen_salt('bf')),
      NOW(),
      NOW(),

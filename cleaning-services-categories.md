@@ -10,7 +10,7 @@ Residential cleaning services focus on homes and private properties, ensuring cl
 
 ### Popular Providers:
 - Sweepsouth (4.4★, 1491 reviews) - On-demand platform for residential and office cleaning
-- Shalean Cleaning Services (4.8★, 119 reviews) - Professional home and office cleaning with transparent pricing
+- Bokkie Cleaning Services (4.8★, 119 reviews) - Professional home and office cleaning with transparent pricing
 - Tania Cleaning Services (5.0★, 3 reviews) - Residential cleaning with eco-friendly products
 - Sandy's Reliable Ladies - Professional residential cleaning services
 
@@ -29,7 +29,7 @@ Commercial cleaning services maintain cleanliness in business environments, ensu
 ### Popular Providers:
 - Cleaning Africa Services (4.6★, 18 reviews) - Comprehensive business cleaning solutions
 - Hammertime Professional Services - Tailored commercial property cleaning solutions
-- Shalean Cleaning Services - Office cleaning with same-day availability
+- Bokkie Cleaning Services - Office cleaning with same-day availability
 
 ---
 
@@ -49,7 +49,7 @@ Specialized cleaning services address specific cleaning needs that apply to both
 
 ### Popular Providers:
 - Super Cleaning (4.6★, 14 reviews) - Window washing, carpet cleaning, deep cleaning
-- Shalean Cleaning Services - Deep cleaning, move-in/out, and specialized cleaning services
+- Bokkie Cleaning Services - Deep cleaning, move-in/out, and specialized cleaning services
 - Cleaning Africa Services - Waste management and specialized cleaning solutions
 
 ---

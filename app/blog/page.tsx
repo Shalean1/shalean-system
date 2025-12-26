@@ -44,7 +44,7 @@ export default async function BlogPage({
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Blog</h1>
           <p className="text-xl text-blue-100">
-            Tips, guides, and insights from Shalean Cleaning Services
+            Tips, guides, and insights from Bokkie Cleaning Services
           </p>
         </div>
       </div>
