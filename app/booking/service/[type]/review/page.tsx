@@ -554,7 +554,7 @@ export default function ReviewPage() {
       // Handle credit payment
       if (paymentMethod === "credits") {
         if (!user) {
-          setErrors({ payment: "Please log in to use ShalCred credits" });
+          setErrors({ payment: "Please log in to use BokCred credits" });
           setIsProcessing(false);
           return;
         }
@@ -1596,7 +1596,7 @@ export default function ReviewPage() {
                       } ${creditBalance < priceBreakdown.total ? "opacity-50 cursor-not-allowed" : ""}`}
                     >
                       <Coins className="w-5 h-5 mx-auto mb-2 text-gray-600" />
-                      <p className="font-medium text-sm text-gray-700">ShalCred</p>
+                      <p className="font-medium text-sm text-gray-700">BokCred</p>
                       {loadingCredits ? (
                         <p className="text-xs text-gray-500 mt-1">Loading...</p>
                       ) : (
@@ -1632,7 +1632,7 @@ export default function ReviewPage() {
                 {paymentMethod === "credits" && user && (
                   <p className="text-xs text-gray-500 mb-4 flex items-center gap-1">
                     <Coins className="w-3 h-3" />
-                    Payment will be deducted from your ShalCred balance
+                    Payment will be deducted from your BokCred balance
                   </p>
                 )}
               </div>

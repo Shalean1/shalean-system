@@ -392,7 +392,7 @@ export default function HowItWorksPage() {
                       Book Your Clean Today
                     </Link>
                     <a
-                      href="tel:+27871535250"
+                      href="tel:+27724162547"
                       className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white hover:bg-gray-50 text-gray-900 font-semibold rounded-xl transition-colors shadow-lg border border-gray-300"
                     >
                       <Phone className="w-5 h-5" />
@@ -727,11 +727,11 @@ export default function HowItWorksPage() {
                   Get Started Now
                 </Link>
                 <a
-                  href="tel:+27871535250"
+                  href="tel:+27724162547"
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent hover:bg-white/10 text-white font-semibold rounded-xl transition-colors border-2 border-white"
                 >
                   <Phone className="w-5 h-5" />
-                  Call +27 87 153 5250
+                  Call +27 72 416 2547
                 </a>
               </div>
             </div>

@@ -57,7 +57,7 @@ export default async function HelpPage() {
       questions: [
         {
           question: "What payment methods do you accept?",
-          answer: "We accept credit/debit cards through our secure payment gateway (Paystack) and ShalCred credits. Card payments are processed instantly, while EFT deposits require manual verification before credits are added to your account."
+          answer: "We accept credit/debit cards through our secure payment gateway (Paystack) and BokCred credits. Card payments are processed instantly, while EFT deposits require manual verification before credits are added to your account."
         },
         {
           question: "Is my payment information secure?",
@@ -65,7 +65,7 @@ export default async function HelpPage() {
         },
         {
           question: "When do I pay for my booking?",
-          answer: "Payment is required at the time of booking. You can pay immediately using a card or use your ShalCred credits balance if you have sufficient funds."
+          answer: "Payment is required at the time of booking. You can pay immediately using a card or use your BokCred credits balance if you have sufficient funds."
         },
         {
           question: "Can I add a tip for my cleaner?",
@@ -82,28 +82,28 @@ export default async function HelpPage() {
       ]
     },
     {
-      title: "ShalCred Credits",
+      title: "BokCred Credits",
       icon: Coins,
       questions: [
         {
-          question: "What are ShalCred credits?",
-          answer: "ShalCred credits are a prepaid balance system that allows you to purchase credits and use them to pay for bookings instantly. Credits never expire and can be purchased in amounts from R20 to R5000."
+          question: "What are BokCred credits?",
+          answer: "BokCred credits are a prepaid balance system that allows you to purchase credits and use them to pay for bookings instantly. Credits never expire and can be purchased in amounts from R20 to R5000."
         },
         {
-          question: "How do I purchase ShalCred credits?",
-          answer: "Visit the ShalCred page in your dashboard, select the amount you want to purchase, and complete the payment. Card payments are instant, while EFT deposits require manual verification (usually within 1-2 business days)."
+          question: "How do I purchase BokCred credits?",
+          answer: "Visit the BokCred page in your dashboard, select the amount you want to purchase, and complete the payment. Card payments are instant, while EFT deposits require manual verification (usually within 1-2 business days)."
         },
         {
           question: "Can I use credits to pay for bookings?",
-          answer: "Yes! When booking a service, you can choose to pay with ShalCred credits if you have sufficient balance. Credits provide instant payment without needing to enter card details each time."
+          answer: "Yes! When booking a service, you can choose to pay with BokCred credits if you have sufficient balance. Credits provide instant payment without needing to enter card details each time."
         },
         {
           question: "Do credits expire?",
-          answer: "No, ShalCred credits never expire. You can use them anytime for future bookings."
+          answer: "No, BokCred credits never expire. You can use them anytime for future bookings."
         },
         {
           question: "How do I check my credit balance?",
-          answer: "Your current ShalCred balance is displayed on the ShalCred page in your dashboard. You can also view your complete transaction history there."
+          answer: "Your current BokCred balance is displayed on the BokCred page in your dashboard. You can also view your complete transaction history there."
         },
         {
           question: "What happens if I don't have enough credits?",
@@ -159,7 +159,7 @@ export default async function HelpPage() {
         },
         {
           question: "What is the Refer & Earn program?",
-          answer: "Refer & Earn allows you to share your unique referral code with friends. When they sign up and complete their first booking, you both earn R50 in ShalCred credits. Visit the Refer & Earn page to get your code and start sharing!"
+          answer: "Refer & Earn allows you to share your unique referral code with friends. When they sign up and complete their first booking, you both earn R50 in BokCred credits. Visit the Refer & Earn page to get your code and start sharing!"
         }
       ]
     },
@@ -230,7 +230,7 @@ export default async function HelpPage() {
             className="bg-white rounded-lg border border-gray-200 p-4 hover:border-yellow-300 hover:shadow-md transition-all group"
           >
             <Coins className="w-6 h-6 text-yellow-600 mb-2 group-hover:scale-110 transition-transform" />
-            <h3 className="font-semibold text-gray-900 text-sm">ShalCred</h3>
+            <h3 className="font-semibold text-gray-900 text-sm">BokCred</h3>
             <p className="text-xs text-gray-600 mt-1">Manage credits</p>
           </Link>
           <Link

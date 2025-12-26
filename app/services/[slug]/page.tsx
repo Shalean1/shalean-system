@@ -10,6 +10,8 @@ import { Home, CheckCircle2, Shield, Clock, Leaf, ArrowRight, Sparkle, Star, Use
 import { getServiceCategoryPricingByCategoryId } from "@/lib/supabase/booking-data";
 import { formatPrice } from "@/lib/pricing";
 
+export const dynamic = 'force-dynamic';
+
 // Map old service IDs to new ones or redirect to services section
 const serviceRedirects: Record<string, string> = {
   "holiday-cleaning": "residential-cleaning",
@@ -238,22 +240,23 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  try {
+    const { slug } = await params;
 
-  // If it's an old service ID, redirect to the new one
-  if (serviceRedirects[slug] && serviceRedirects[slug] !== slug) {
-    return {};
-  }
+    // If it's an old service ID, redirect to the new one
+    if (serviceRedirects[slug] && serviceRedirects[slug] !== slug) {
+      return {};
+    }
 
-  // If it's not a valid service, return empty metadata (will redirect)
-  if (!validServices.includes(slug)) {
-    return {};
-  }
+    // If it's not a valid service, return empty metadata (will redirect)
+    if (!validServices.includes(slug)) {
+      return {};
+    }
 
-  const service = serviceData[slug];
-  if (!service) {
-    return {};
-  }
+    const service = serviceData[slug];
+    if (!service) {
+      return {};
+    }
 
   const title = `${service.shortName} in Cape Town`;
   const description = `${service.description}. Professional ${service.shortName.toLowerCase()} services throughout Cape Town. Trusted by thousands of residents.`;
@@ -317,6 +320,13 @@ export async function generateMetadata({
       "ICBM": "-33.9806, 18.4653",
     },
   };
+  } catch (error) {
+    console.error("Error generating metadata for service page:", error);
+    return {
+      title: "Service Page",
+      description: "Cleaning services in Cape Town",
+    };
+  }
 }
 
 // Generate structured data for service page
@@ -437,9 +447,16 @@ export default async function ServicePage({
     redirect("/services");
   }
 
-  // Fetch pricing
-  const pricing = await getServiceCategoryPricingByCategoryId(slug);
-  const displayPrice = pricing?.display_price || 500;
+  // Fetch pricing with error handling
+  let displayPrice = 500;
+  try {
+    const pricing = await getServiceCategoryPricingByCategoryId(slug);
+    displayPrice = pricing?.display_price || 500;
+  } catch (error) {
+    console.error(`Error fetching pricing for ${slug}:`, error);
+    // Use default price if fetch fails
+  }
+  
   const Icon = service.icon;
 
   // Generate structured data
@@ -453,7 +470,7 @@ export default async function ServicePage({
       />
       <main className="min-h-screen bg-white">
         {/* Hero Section */}
-        <section className={`relative bg-gradient-to-br ${service.gradient} pt-4 pb-20 md:pb-28 overflow-hidden`}>
+        <section className={`relative bg-gradient-to-br ${service.gradient} pt-4 pb-16 sm:pb-20 md:pb-28 overflow-hidden`}>
           {/* Background Image */}
           <div className="absolute inset-0 z-0">
             <ServiceImage
@@ -473,46 +490,39 @@ export default async function ServicePage({
           
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
                 {/* Content Section */}
                 <div className="text-center lg:text-left">
-                  <Link
-                    href="/services"
-                    className="inline-flex items-center gap-2 text-white/90 hover:text-white mb-6 text-sm font-medium transition-colors"
-                  >
-                    ← Back to Services
-                  </Link>
-                  
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-semibold mb-6">
-                    <Icon className="w-4 h-4" />
+                  <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs sm:text-sm font-semibold mb-4 sm:mb-6">
+                    <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
                     <span>{service.shortName}</span>
                   </div>
                   
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight">
                     {service.shortName}
-                    <span className="block mt-2 bg-gradient-to-r from-yellow-200 to-yellow-300 bg-clip-text text-transparent">
+                    <span className="block mt-1 sm:mt-2 bg-gradient-to-r from-yellow-200 to-yellow-300 bg-clip-text text-transparent">
                       in Cape Town
                     </span>
                   </h1>
                   
-                  <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-3xl mx-auto lg:mx-0 leading-relaxed">
+                  <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 mb-6 sm:mb-8 md:mb-10 max-w-3xl mx-auto lg:mx-0 leading-relaxed px-2 sm:px-0">
                     {service.longDescription}
                   </p>
                   
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start px-2 sm:px-0">
                     <Link
                       href="/booking/quote"
-                      className="group bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all text-lg shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-2"
+                      className="group bg-white text-blue-600 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all text-base sm:text-lg shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-2"
                     >
                       Book Now
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
                     </Link>
                     <Link
                       href="#features"
-                      className="bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-xl font-semibold border-2 border-white/30 hover:bg-white/20 transition-all text-lg flex items-center justify-center gap-2"
+                      className="bg-white/10 backdrop-blur-sm text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold border-2 border-white/30 hover:bg-white/20 transition-all text-base sm:text-lg flex items-center justify-center gap-2"
                     >
                       Learn More
-                      <ChevronDown className="w-5 h-5" />
+                      <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5" />
                     </Link>
                   </div>
                 </div>
@@ -535,42 +545,48 @@ export default async function ServicePage({
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-20 md:py-24 bg-gradient-to-b from-white to-gray-50">
+        <section id="features" className="py-12 sm:py-16 md:py-20 lg:py-24 bg-gradient-to-b from-white to-gray-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
-              <div className="text-center mb-16">
-                <div className={`inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r ${service.bgGradient} rounded-full text-blue-600 text-sm font-semibold mb-4`}>
-                  <Star className="w-4 h-4 fill-blue-600" />
+              <div className="text-center mb-10 sm:mb-12 md:mb-16">
+                <div className={`inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r ${service.bgGradient} rounded-full text-blue-600 text-xs sm:text-sm font-semibold mb-3 sm:mb-4`}>
+                  <Star className="w-3 h-3 sm:w-4 sm:h-4 fill-blue-600" />
                   <span>What's Included</span>
                 </div>
-                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 px-2 sm:px-0">
                   Comprehensive {service.shortName} Services
                 </h2>
-                <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-4 sm:px-0">
                   Our professional cleaners provide thorough, consistent cleaning tailored to your needs.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-10 md:mb-12">
                 {service.features.map((feature, idx) => (
-                  <div key={idx} className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all border border-gray-100">
-                    <CheckCircle2 className="w-6 h-6 text-emerald-500 mb-3" />
-                    <p className="text-gray-700 font-medium">{feature}</p>
+                  <div key={idx} className="bg-white p-4 sm:p-5 md:p-6 rounded-xl shadow-md hover:shadow-lg transition-all border border-gray-100">
+                    <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500 mb-2 sm:mb-3" />
+                    <p className="text-sm sm:text-base text-gray-700 font-medium">{feature}</p>
                   </div>
                 ))}
               </div>
 
               {/* Benefits Section */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                 {service.benefits.map((benefit, idx) => {
                   const BenefitIcon = benefit.icon;
+                  // Determine icon color based on service gradient
+                  const iconColor = slug === "residential-cleaning" 
+                    ? "text-blue-600" 
+                    : slug === "commercial-cleaning" 
+                    ? "text-emerald-600" 
+                    : "text-purple-600";
                   return (
                     <div key={idx} className="text-center group">
-                      <div className={`w-16 h-16 ${service.bgGradient} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
-                        <BenefitIcon className={`w-8 h-8 bg-gradient-to-br ${service.gradient} bg-clip-text text-transparent`} />
+                      <div className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 ${service.bgGradient} rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
+                        <BenefitIcon className={`w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 ${iconColor}`} />
                       </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">{benefit.title}</h3>
-                      <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{benefit.title}</h3>
+                      <p className="text-sm sm:text-base text-gray-600 leading-relaxed px-2 sm:px-0">{benefit.description}</p>
                     </div>
                   );
                 })}
@@ -580,40 +596,40 @@ export default async function ServicePage({
         </section>
 
         {/* Pricing Section */}
-        <section className="py-20 bg-white">
+        <section className="py-12 sm:py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              <div className="text-center mb-8 sm:mb-10 md:mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 px-2 sm:px-0">
                   Transparent Pricing
                 </h2>
-                <p className="text-xl text-gray-600">
+                <p className="text-base sm:text-lg md:text-xl text-gray-600 px-4 sm:px-0">
                   No hidden fees. Get an instant quote based on your property size and needs.
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 md:p-12 shadow-xl border border-gray-200">
-                <div className="text-center mb-8">
-                  <span className="text-sm text-gray-500 font-medium">Starting from</span>
-                  <p className={`text-5xl font-bold bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent mt-2`}>
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 sm:p-8 md:p-12 shadow-xl border border-gray-200">
+                <div className="text-center mb-6 sm:mb-8">
+                  <span className="text-xs sm:text-sm text-gray-500 font-medium">Starting from</span>
+                  <p className={`text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent mt-2`}>
                     {formatPrice(displayPrice)}
                   </p>
-                  <p className="text-gray-600 mt-4">
+                  <p className="text-sm sm:text-base text-gray-600 mt-3 sm:mt-4 px-2 sm:px-0">
                     Final price depends on property size, frequency, and additional services
                   </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                   <Link
                     href="/booking/quote"
-                    className={`group px-8 py-4 bg-gradient-to-r ${service.gradient} text-white rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2 hover:scale-105`}
+                    className={`group px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r ${service.gradient} text-white rounded-xl font-semibold hover:shadow-lg transition-all text-sm sm:text-base flex items-center justify-center gap-2 hover:scale-105`}
                   >
                     Get Instant Quote
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
                   </Link>
                   <Link
                     href="/how-it-works"
-                    className="px-8 py-4 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
+                    className="px-6 sm:px-8 py-3 sm:py-4 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all text-sm sm:text-base flex items-center justify-center gap-2"
                   >
                     How It Works
                   </Link>
@@ -624,37 +640,37 @@ export default async function ServicePage({
         </section>
 
         {/* Popular Areas Section */}
-        <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-gray-50 to-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              <div className="text-center mb-8 sm:mb-10 md:mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 px-2 sm:px-0">
                   Serving All of Cape Town
                 </h2>
-                <p className="text-xl text-gray-600">
+                <p className="text-base sm:text-lg md:text-xl text-gray-600 px-4 sm:px-0">
                   We provide {service.shortName.toLowerCase()} services throughout Cape Town and surrounding areas
                 </p>
               </div>
 
-              <div className="bg-white rounded-2xl p-8 md:p-12 shadow-lg border border-gray-200">
-                <div className="flex flex-wrap gap-3 justify-center">
+              <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-12 shadow-lg border border-gray-200">
+                <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
                   {service.popularAreas.map((area) => (
                     <Link
                       key={area}
                       href={`/areas/${area.toLowerCase().replace(/\s+/g, "-")}`}
-                      className="px-6 py-3 bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-medium rounded-lg shadow-sm border border-gray-200 hover:border-gray-300 transition-all"
+                      className="px-4 sm:px-6 py-2 sm:py-3 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs sm:text-sm font-medium rounded-lg shadow-sm border border-gray-200 hover:border-gray-300 transition-all"
                     >
                       {area}
                     </Link>
                   ))}
                 </div>
-                <div className="text-center mt-8">
+                <div className="text-center mt-6 sm:mt-8">
                   <Link
                     href="/service-areas"
-                    className="text-blue-600 hover:text-blue-700 font-semibold inline-flex items-center gap-2"
+                    className="text-blue-600 hover:text-blue-700 font-semibold inline-flex items-center gap-2 text-sm sm:text-base"
                   >
                     View All Service Areas
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
                   </Link>
                 </div>
               </div>
@@ -663,19 +679,19 @@ export default async function ServicePage({
         </section>
 
         {/* FAQ Section */}
-        <section className="py-20 bg-white">
+        <section className="py-12 sm:py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              <div className="text-center mb-10 sm:mb-12 md:mb-16">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 px-2 sm:px-0">
                   Frequently Asked Questions
                 </h2>
-                <p className="text-xl text-gray-600">
+                <p className="text-base sm:text-lg md:text-xl text-gray-600 px-4 sm:px-0">
                   Everything you need to know about our {service.shortName.toLowerCase()} services
                 </p>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {service.faqs.map((faq, idx) => (
                   <FAQItem key={idx} question={faq.question} answer={faq.answer} />
                 ))}
@@ -685,7 +701,7 @@ export default async function ServicePage({
         </section>
 
         {/* CTA Section */}
-        <section className={`relative py-20 bg-gradient-to-br ${service.gradient} overflow-hidden`}>
+        <section className={`relative py-12 sm:py-16 md:py-20 bg-gradient-to-br ${service.gradient} overflow-hidden`}>
           {/* Decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute top-20 right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
@@ -694,31 +710,31 @@ export default async function ServicePage({
           
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-medium mb-6">
-                <Sparkle className="w-4 h-4" />
+              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs sm:text-sm font-medium mb-4 sm:mb-6">
+                <Sparkle className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span>Same-day booking available</span>
               </div>
               
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 px-2 sm:px-0">
                 Ready to Book Your {service.shortName}?
               </h2>
-              <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto px-4 sm:px-0">
                 Get an instant quote and book your preferred cleaner today. Same-day booking available!
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2 sm:px-0">
                 <Link
                   href="/booking/quote"
-                  className="group bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all text-lg shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-2"
+                  className="group bg-white text-blue-600 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all text-sm sm:text-base md:text-lg shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-2"
                 >
                   Get Started Now
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
                   href="/service-areas"
-                  className="bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-xl font-semibold border-2 border-white/30 hover:bg-white/20 transition-all text-lg flex items-center justify-center gap-2"
+                  className="bg-white/10 backdrop-blur-sm text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold border-2 border-white/30 hover:bg-white/20 transition-all text-sm sm:text-base md:text-lg flex items-center justify-center gap-2"
                 >
                   View Service Areas
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Link>
               </div>
             </div>

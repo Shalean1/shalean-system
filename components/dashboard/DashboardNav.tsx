@@ -68,7 +68,7 @@ export default function DashboardNav({ onMobileMenuClose, variant }: DashboardNa
     },
     {
       href: "/dashboard/shalcred",
-      label: "ShalCred",
+      label: "BokCred",
       icon: Coins,
     },
     {

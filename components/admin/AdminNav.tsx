@@ -24,6 +24,7 @@ import {
   Bell,
   CheckCircle2,
   Sparkles,
+  MapPin,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -144,6 +145,11 @@ export default function AdminNav({ onMobileMenuClose, variant }: AdminNavProps) 
           href: "/admin/services",
           label: "Services",
           icon: Sparkles,
+        },
+        {
+          href: "/admin/locations",
+          label: "Locations",
+          icon: MapPin,
         },
       ],
     },

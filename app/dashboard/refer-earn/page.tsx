@@ -137,7 +137,7 @@ export default async function ReferEarnPage() {
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">You Earn Rewards</h3>
               <p className="text-sm text-gray-600">
-                Earn R50 in ShalCred credits for each successful referral when they complete their first booking
+                Earn R50 in BokCred credits for each successful referral when they complete their first booking
               </p>
             </div>
           </div>
@@ -153,7 +153,7 @@ export default async function ReferEarnPage() {
             <div className="flex items-start gap-3">
               <div className="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0"></div>
               <p>
-                <span className="font-semibold">R50 ShalCred Credits</span> for you and <span className="font-semibold">R50 for your friend</span> when they complete their first booking
+                <span className="font-semibold">R50 BokCred Credits</span> for you and <span className="font-semibold">R50 for your friend</span> when they complete their first booking
               </p>
             </div>
             <div className="flex items-start gap-3">
@@ -165,7 +165,7 @@ export default async function ReferEarnPage() {
             <div className="flex items-start gap-3">
               <div className="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0"></div>
               <p>
-                Use your ShalCred credits to pay for bookings instantly - no expiration date!
+                Use your BokCred credits to pay for bookings instantly - no expiration date!
               </p>
             </div>
             <div className="flex items-start gap-3">

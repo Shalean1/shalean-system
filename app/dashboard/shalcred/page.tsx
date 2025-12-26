@@ -42,7 +42,7 @@ export default async function ShalCredPage() {
             </div>
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-                ShalCred
+                BokCred
               </h1>
               <p className="text-base md:text-lg text-gray-600">
                 Purchase credits and manage your balance
@@ -87,7 +87,7 @@ export default async function ShalCredPage() {
 
         {/* Info Section */}
         <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="font-medium text-blue-900 mb-2">About ShalCred</h3>
+          <h3 className="font-medium text-blue-900 mb-2">About BokCred</h3>
           <ul className="space-y-2 text-sm text-blue-800">
             <li>• Purchase credits from R20 to R5000</li>
             <li>• Use credits to pay for bookings instantly</li>
@@ -100,6 +100,7 @@ export default async function ShalCredPage() {
     </div>
   );
 }
+
 
 
 

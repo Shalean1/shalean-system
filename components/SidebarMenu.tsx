@@ -123,7 +123,7 @@ export default function SidebarMenu({ isOpen, onClose }: SidebarMenuProps) {
     },
     {
       href: "/dashboard/shalcred",
-      label: "ShalCred",
+      label: "BokCred",
       icon: Coins,
     },
     {

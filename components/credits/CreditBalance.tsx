@@ -43,7 +43,7 @@ export default function CreditBalance({
       </div>
       <div>
         {showLabel && (
-          <p className="text-xs font-medium text-gray-600 mb-1">ShalCred Balance</p>
+          <p className="text-xs font-medium text-gray-600 mb-1">BokCred Balance</p>
         )}
         {loading ? (
           <p className="text-2xl font-bold text-gray-400">Loading...</p>
@@ -56,6 +56,7 @@ export default function CreditBalance({
     </div>
   );
 }
+
 
 
 

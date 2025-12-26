@@ -118,7 +118,7 @@ export default function CreditPurchaseForm({
         </div>
         {amount >= 20 && amount <= 5000 && (
           <p className="mt-2 text-sm text-gray-600">
-            You will receive R{amount.toFixed(2)} in ShalCred credits
+            You will receive R{amount.toFixed(2)} in BokCred credits
           </p>
         )}
       </div>
@@ -185,6 +185,7 @@ export default function CreditPurchaseForm({
     </div>
   );
 }
+
 
 
 

@@ -195,7 +195,7 @@ export default function Hero() {
             </form>
 
             {/* Category Tags - Top 5 Most Booked */}
-            <div className="flex flex-wrap items-center gap-2 mb-4">
+            <div className="hidden md:flex flex-wrap items-center gap-2 mb-4">
               {topBookedCategories.map((category) => (
                 <Link
                   key={category.id}

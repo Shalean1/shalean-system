@@ -199,7 +199,7 @@ const faqs = [
   {
     question: "Can I book same-day cleaning services?",
     answer:
-      "Yes! We offer same-day booking for cleaning services throughout Cape Town. Availability depends on cleaner schedules, but we work hard to accommodate urgent requests. Book online or call us at +27871535250.",
+      "Yes! We offer same-day booking for cleaning services throughout Cape Town. Availability depends on cleaner schedules, but we work hard to accommodate urgent requests. Book online or call us at +27 72 416 2547.",
   },
   {
     question: "Are your cleaners insured and vetted?",

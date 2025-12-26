@@ -223,7 +223,7 @@ export async function updateRoomPricing(
  */
 export async function updateAdditionalService(
   id: string,
-  updates: { price_modifier?: number; name?: string; description?: string; is_active?: boolean }
+  updates: { price_modifier?: number; service_id?: string; name?: string; description?: string; icon_name?: string; is_active?: boolean }
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const supabase = await createClient();
@@ -293,5 +293,163 @@ export async function updateSystemSetting(
   } catch (error) {
     console.error("Error updating system setting:", error);
     return { success: false, error: "Failed to update system setting" };
+  }
+}
+
+/**
+ * Create a new service type pricing
+ */
+export async function createServiceTypePricing(data: {
+  service_type: string;
+  service_name: string;
+  base_price: number;
+  description?: string;
+  display_order?: number;
+  is_active?: boolean;
+}): Promise<{ success: boolean; error?: string; data?: ServiceTypePricing }> {
+  try {
+    const supabase = await createClient();
+    
+    // If display_order not provided, calculate it (put at the end)
+    let displayOrder = data.display_order;
+    if (displayOrder === undefined) {
+      const { data: existingServices } = await supabase
+        .from("service_type_pricing")
+        .select("display_order")
+        .order("display_order", { ascending: false })
+        .limit(1);
+      
+      displayOrder = existingServices && existingServices.length > 0
+        ? (existingServices[0].display_order || 0) + 1
+        : 1;
+    }
+
+    const { data: newService, error } = await supabase
+      .from("service_type_pricing")
+      .insert({
+        service_type: data.service_type,
+        service_name: data.service_name,
+        base_price: data.base_price,
+        description: data.description || null,
+        display_order: displayOrder,
+        is_active: data.is_active !== undefined ? data.is_active : true,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error creating service type pricing:", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data: newService };
+  } catch (error) {
+    console.error("Error creating service type pricing:", error);
+    return { success: false, error: "Failed to create service type pricing" };
+  }
+}
+
+/**
+ * Delete a service type pricing
+ */
+export async function deleteServiceTypePricing(
+  id: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase
+      .from("service_type_pricing")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error deleting service type pricing:", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting service type pricing:", error);
+    return { success: false, error: "Failed to delete service type pricing" };
+  }
+}
+
+/**
+ * Create a new additional service
+ */
+export async function createAdditionalService(data: {
+  service_id: string;
+  name: string;
+  description?: string;
+  icon_name?: string;
+  price_modifier: number;
+  display_order?: number;
+  is_active?: boolean;
+}): Promise<{ success: boolean; error?: string; data?: AdditionalService }> {
+  try {
+    const supabase = await createClient();
+    
+    // If display_order not provided, calculate it (put at the end)
+    let displayOrder = data.display_order;
+    if (displayOrder === undefined) {
+      const { data: existingServices } = await supabase
+        .from("additional_services")
+        .select("display_order")
+        .order("display_order", { ascending: false })
+        .limit(1);
+      
+      displayOrder = existingServices && existingServices.length > 0
+        ? (existingServices[0].display_order || 0) + 1
+        : 1;
+    }
+
+    const { data: newService, error } = await supabase
+      .from("additional_services")
+      .insert({
+        service_id: data.service_id,
+        name: data.name,
+        description: data.description || null,
+        icon_name: data.icon_name || null,
+        price_modifier: data.price_modifier,
+        display_order: displayOrder,
+        is_active: data.is_active !== undefined ? data.is_active : true,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error creating additional service:", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data: newService };
+  } catch (error) {
+    console.error("Error creating additional service:", error);
+    return { success: false, error: "Failed to create additional service" };
+  }
+}
+
+/**
+ * Delete an additional service
+ */
+export async function deleteAdditionalService(
+  id: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase
+      .from("additional_services")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error deleting additional service:", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting additional service:", error);
+    return { success: false, error: "Failed to delete additional service" };
   }
 }
