@@ -64,3 +64,4 @@ CREATE POLICY "Service role can insert pageviews" ON pageviews
 
 
 
+

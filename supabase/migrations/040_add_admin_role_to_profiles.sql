@@ -21,3 +21,4 @@ COMMENT ON COLUMN profiles.is_admin IS 'Indicates if the user has admin role and
 
 
 
+
