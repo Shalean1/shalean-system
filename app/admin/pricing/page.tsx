@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { 
   getAllPricingData,
   updateServiceTypePricing,
@@ -13,6 +13,13 @@ import {
   createAdditionalService,
   deleteAdditionalService,
 } from "@/app/actions/admin-pricing";
+import {
+  getAllPopularServices,
+  addPopularService,
+  updatePopularService,
+  deletePopularService,
+  type PopularService,
+} from "@/app/actions/popular-services";
 import type {
   ServiceTypePricing,
   AdditionalService,
@@ -35,6 +42,10 @@ import {
   Save,
   X,
   Trash2,
+  Sparkles,
+  Search,
+  Edit,
+  Clock,
 } from "lucide-react";
 
 export default function AdminPricingPage() {
@@ -44,6 +55,7 @@ export default function AdminPricingPage() {
   const [additionalServices, setAdditionalServices] = useState<AdditionalService[]>([]);
   const [frequencyOptions, setFrequencyOptions] = useState<FrequencyOption[]>([]);
   const [pricingSettings, setPricingSettings] = useState<SystemSetting[]>([]);
+  const [popularServices, setPopularServices] = useState<PopularService[]>([]);
   
   // Edit state management
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -51,6 +63,29 @@ export default function AdminPricingPage() {
   const [editValue, setEditValue] = useState<string>("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Popular Services state management
+  const [popularServicesSearchQuery, setPopularServicesSearchQuery] = useState("");
+  const [popularServicesStatusFilter, setPopularServicesStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [showAddPopularModal, setShowAddPopularModal] = useState(false);
+  const [showEditPopularModal, setShowEditPopularModal] = useState(false);
+  const [isAddingPopular, setIsAddingPopular] = useState(false);
+  const [isUpdatingPopular, setIsUpdatingPopular] = useState(false);
+  const [isDeletingPopular, setIsDeletingPopular] = useState<string | null>(null);
+  const [deletePopularConfirmId, setDeletePopularConfirmId] = useState<string | null>(null);
+  const [editingPopularServiceId, setEditingPopularServiceId] = useState<string | null>(null);
+  const [newPopularService, setNewPopularService] = useState({
+    name: "",
+    slug: "",
+    description: "",
+    base_price: "",
+  });
+  const [editPopularService, setEditPopularService] = useState({
+    name: "",
+    slug: "",
+    description: "",
+    base_price: "",
+  });
   
   // Add service state management
   const [showAddForm, setShowAddForm] = useState(false);
@@ -92,6 +127,9 @@ export default function AdminPricingPage() {
       setAdditionalServices(data.additionalServices);
       setFrequencyOptions(data.frequencyOptions);
       setPricingSettings(data.pricingSettings);
+      
+      const popularData = await getAllPopularServices();
+      setPopularServices(popularData || []);
     } catch (error) {
       console.error("Error fetching pricing data:", error);
     } finally {
@@ -102,6 +140,185 @@ export default function AdminPricingPage() {
   useEffect(() => {
     fetchPricingData();
   }, []);
+  
+  // Popular Services helper functions
+  const generateSlug = (name: string): string => {
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/[\s_-]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  };
+  
+  const handlePopularNameChange = (name: string) => {
+    setNewPopularService({
+      ...newPopularService,
+      name,
+      slug: generateSlug(name),
+    });
+  };
+  
+  const handleEditPopularNameChange = (name: string) => {
+    setEditPopularService({
+      ...editPopularService,
+      name,
+      slug: generateSlug(name),
+    });
+  };
+  
+  const handleAddPopularService = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!newPopularService.name.trim() || !newPopularService.slug.trim()) {
+      setError("Name and slug are required");
+      return;
+    }
+
+    setIsAddingPopular(true);
+    setError(null);
+
+    try {
+      const basePrice = newPopularService.base_price.trim() 
+        ? parseFloat(newPopularService.base_price.trim()) 
+        : undefined;
+      
+      if (basePrice !== undefined && (isNaN(basePrice) || basePrice < 0)) {
+        setError("Price must be a valid positive number");
+        return;
+      }
+
+      const result = await addPopularService(
+        newPopularService.name.trim(),
+        newPopularService.slug.trim(),
+        newPopularService.description.trim() || undefined,
+        basePrice
+      );
+
+      if (result.success && result.data) {
+        setPopularServices([...popularServices, result.data]);
+        setShowAddPopularModal(false);
+        setNewPopularService({ name: "", slug: "", description: "", base_price: "" });
+        setError(null);
+      } else {
+        setError(result.error || "Failed to add service");
+      }
+    } catch (err) {
+      console.error("Error adding popular service:", err);
+      setError(err instanceof Error ? err.message : "Failed to add service");
+    } finally {
+      setIsAddingPopular(false);
+    }
+  };
+  
+  const handleDeletePopularService = async (id: string) => {
+    setIsDeletingPopular(id);
+    setError(null);
+
+    try {
+      const result = await deletePopularService(id);
+
+      if (result.success) {
+        setPopularServices(popularServices.filter((s) => s.id !== id));
+        setDeletePopularConfirmId(null);
+      } else {
+        setError(result.error || "Failed to delete service");
+      }
+    } catch (err) {
+      console.error("Error deleting popular service:", err);
+      setError(err instanceof Error ? err.message : "Failed to delete service");
+    } finally {
+      setIsDeletingPopular(null);
+    }
+  };
+  
+  const handleEditPopularClick = (service: PopularService) => {
+    setEditingPopularServiceId(service.id);
+    setEditPopularService({
+      name: service.name,
+      slug: service.slug,
+      description: service.description || "",
+      base_price: service.base_price !== null && service.base_price !== undefined ? service.base_price.toString() : "",
+    });
+    setShowEditPopularModal(true);
+    setError(null);
+  };
+  
+  const handleUpdatePopularService = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!editingPopularServiceId) return;
+    
+    if (!editPopularService.name.trim() || !editPopularService.slug.trim()) {
+      setError("Name and slug are required");
+      return;
+    }
+
+    setIsUpdatingPopular(true);
+    setError(null);
+
+    try {
+      const basePrice = editPopularService.base_price.trim() 
+        ? parseFloat(editPopularService.base_price.trim()) 
+        : undefined;
+      
+      if (basePrice !== undefined && (isNaN(basePrice) || basePrice < 0)) {
+        setError("Price must be a valid positive number");
+        return;
+      }
+
+      const result = await updatePopularService(editingPopularServiceId, {
+        name: editPopularService.name.trim(),
+        slug: editPopularService.slug.trim(),
+        description: editPopularService.description.trim() || undefined,
+        base_price: basePrice,
+      });
+
+      if (result.success && result.data) {
+        setPopularServices(popularServices.map((s) => (s.id === editingPopularServiceId ? result.data! : s)));
+        setShowEditPopularModal(false);
+        setEditingPopularServiceId(null);
+        setEditPopularService({ name: "", slug: "", description: "", base_price: "" });
+        setError(null);
+      } else {
+        setError(result.error || "Failed to update service");
+      }
+    } catch (err) {
+      console.error("Error updating popular service:", err);
+      setError(err instanceof Error ? err.message : "Failed to update service");
+    } finally {
+      setIsUpdatingPopular(false);
+    }
+  };
+  
+  // Filter popular services
+  const filteredPopularServices = useMemo(() => {
+    let result = popularServices;
+
+    if (popularServicesSearchQuery.trim()) {
+      const query = popularServicesSearchQuery.toLowerCase();
+      result = result.filter((service) => {
+        const name = service.name.toLowerCase();
+        const slug = service.slug.toLowerCase();
+        const description = (service.description || "").toLowerCase();
+        
+        return (
+          name.includes(query) ||
+          slug.includes(query) ||
+          description.includes(query) ||
+          service.id.toLowerCase().includes(query)
+        );
+      });
+    }
+
+    if (popularServicesStatusFilter === "active") {
+      result = result.filter((service) => service.is_active);
+    } else if (popularServicesStatusFilter === "inactive") {
+      result = result.filter((service) => !service.is_active);
+    }
+
+    return result;
+  }, [popularServices, popularServicesSearchQuery, popularServicesStatusFilter]);
 
   const formatPrice = (amount: number): string => {
     return `R${amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
@@ -527,6 +744,161 @@ export default function AdminPricingPage() {
         {error && (
           <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-sm text-red-600">{error}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Popular Services */}
+      <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6 mb-4 md:mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-blue-600" />
+            <h2 className="text-lg md:text-xl font-semibold text-gray-900">Popular Services (Homepage)</h2>
+          </div>
+          <button
+            onClick={() => setShowAddPopularModal(true)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors touch-manipulation"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Service</span>
+          </button>
+        </div>
+
+        {/* Search and Filters */}
+        <div className="bg-gray-50 rounded-lg border border-gray-200 p-3 md:p-4 mb-4">
+          <div className="space-y-3 md:space-y-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by name, slug, or description..."
+                value={popularServicesSearchQuery}
+                onChange={(e) => setPopularServicesSearchQuery(e.target.value)}
+                className="w-full pl-9 md:pl-10 pr-4 py-2.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none touch-manipulation"
+              />
+            </div>
+            <div className="flex items-center gap-3">
+              <label className="text-xs md:text-sm font-medium text-gray-700">Status:</label>
+              <select
+                value={popularServicesStatusFilter}
+                onChange={(e) => setPopularServicesStatusFilter(e.target.value as typeof popularServicesStatusFilter)}
+                className="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none touch-manipulation"
+              >
+                <option value="all">All Services</option>
+                <option value="active">Active Only</option>
+                <option value="inactive">Inactive Only</option>
+              </select>
+              {(popularServicesSearchQuery || popularServicesStatusFilter !== "all") && (
+                <button
+                  onClick={() => {
+                    setPopularServicesSearchQuery("");
+                    setPopularServicesStatusFilter("all");
+                  }}
+                  className="text-xs md:text-sm text-blue-600 hover:text-blue-700 active:text-blue-800 font-medium underline touch-manipulation"
+                >
+                  Clear filters
+                </button>
+              )}
+              <div className="text-xs md:text-sm text-gray-600 md:ml-auto">
+                Showing {filteredPopularServices.length} of {popularServices.length} services
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {filteredPopularServices.length === 0 ? (
+          <div className="text-center py-12">
+            <Sparkles className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-900 text-lg font-semibold mb-2">No popular services found</p>
+            <p className="text-gray-600 text-sm">
+              {popularServicesSearchQuery || popularServicesStatusFilter !== "all"
+                ? "Try adjusting your filters or search criteria."
+                : "No popular services have been added yet."}
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredPopularServices.map((service) => (
+              <div
+                key={service.id}
+                className="bg-gray-50 rounded-lg border border-gray-200 p-4 md:p-6 hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-start justify-between gap-4 mb-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Sparkles className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                      <h3 className="text-lg font-semibold text-gray-900 truncate">
+                        {service.name}
+                      </h3>
+                    </div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Tag className="w-4 h-4 text-gray-400" />
+                      <p className="text-xs text-gray-500 font-mono truncate">
+                        {service.slug}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex-shrink-0">
+                    {service.is_active ? (
+                      <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                        <CheckCircle2 className="w-3 h-3 mr-1" />
+                        Active
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-700">
+                        <XCircle className="w-3 h-3 mr-1" />
+                        Inactive
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {service.description && (
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+                    {service.description}
+                  </p>
+                )}
+
+                {service.base_price !== null && service.base_price !== undefined && (
+                  <div className="flex items-center gap-2 mb-4">
+                    <DollarSign className="w-4 h-4 text-green-600" />
+                    <span className="text-lg font-semibold text-green-600">
+                      R{service.base_price.toFixed(2)}
+                    </span>
+                    <span className="text-xs text-gray-500">base price</span>
+                  </div>
+                )}
+
+                <div className="pt-4 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <span>Order: {service.display_order}</span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {new Date(service.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleEditPopularClick(service)}
+                        className="flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors touch-manipulation"
+                      >
+                        <Edit className="w-3 h-3" />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => setDeletePopularConfirmId(service.id)}
+                        disabled={isDeletingPopular === service.id}
+                        className="flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 active:bg-red-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        {isDeletingPopular === service.id ? "Deleting..." : "Delete"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -1362,6 +1734,287 @@ export default function AdminPricingPage() {
           </div>
         )}
       </div>
+
+      {/* Add Popular Service Modal */}
+      {showAddPopularModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-900">Add New Popular Service</h2>
+              <button
+                onClick={() => {
+                  setShowAddPopularModal(false);
+                  setNewPopularService({ name: "", slug: "", description: "", base_price: "" });
+                  setError(null);
+                }}
+                className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleAddPopularService} className="p-6 space-y-4">
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                  <p className="text-red-800 text-sm">{error}</p>
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="popular-service-name" className="block text-sm font-medium text-gray-700 mb-1">
+                  Service Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="popular-service-name"
+                  type="text"
+                  value={newPopularService.name}
+                  onChange={(e) => handlePopularNameChange(e.target.value)}
+                  placeholder="e.g., Spring Cleaning"
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="popular-service-slug" className="block text-sm font-medium text-gray-700 mb-1">
+                  Slug <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="popular-service-slug"
+                  type="text"
+                  value={newPopularService.slug}
+                  onChange={(e) => setNewPopularService({ ...newPopularService, slug: e.target.value })}
+                  placeholder="e.g., spring-cleaning"
+                  required
+                  pattern="[a-z0-9-]+"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono text-sm"
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  URL-friendly identifier (lowercase, hyphens only)
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="popular-service-description" className="block text-sm font-medium text-gray-700 mb-1">
+                  Description (Optional)
+                </label>
+                <textarea
+                  id="popular-service-description"
+                  value={newPopularService.description}
+                  onChange={(e) => setNewPopularService({ ...newPopularService, description: e.target.value })}
+                  placeholder="Brief description of the service..."
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="popular-service-price" className="block text-sm font-medium text-gray-700 mb-1">
+                  Base Price (Optional)
+                </label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    id="popular-service-price"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={newPopularService.base_price}
+                    onChange={(e) => setNewPopularService({ ...newPopularService, base_price: e.target.value })}
+                    placeholder="e.g., 250.00"
+                    className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  />
+                </div>
+                <p className="mt-1 text-xs text-gray-500">
+                  Base price in ZAR (e.g., 250.00)
+                </p>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddPopularModal(false);
+                    setNewPopularService({ name: "", slug: "", description: "", base_price: "" });
+                    setError(null);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isAddingPopular || !newPopularService.name.trim() || !newPopularService.slug.trim()}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isAddingPopular ? "Adding..." : "Add Service"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Popular Service Confirmation Modal */}
+      {deletePopularConfirmId && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">Delete Popular Service</h2>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to delete this popular service? This action cannot be undone.
+              </p>
+              
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                  <p className="text-red-800 text-sm">{error}</p>
+                </div>
+              )}
+
+              <div className="flex items-center justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setDeletePopularConfirmId(null);
+                    setError(null);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDeletePopularService(deletePopularConfirmId)}
+                  disabled={isDeletingPopular === deletePopularConfirmId}
+                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isDeletingPopular === deletePopularConfirmId ? "Deleting..." : "Delete"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Popular Service Modal */}
+      {showEditPopularModal && editingPopularServiceId && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-900">Edit Popular Service</h2>
+              <button
+                onClick={() => {
+                  setShowEditPopularModal(false);
+                  setEditingPopularServiceId(null);
+                  setEditPopularService({ name: "", slug: "", description: "", base_price: "" });
+                  setError(null);
+                }}
+                className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleUpdatePopularService} className="p-6 space-y-4">
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                  <p className="text-red-800 text-sm">{error}</p>
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="edit-popular-service-name" className="block text-sm font-medium text-gray-700 mb-1">
+                  Service Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="edit-popular-service-name"
+                  type="text"
+                  value={editPopularService.name}
+                  onChange={(e) => handleEditPopularNameChange(e.target.value)}
+                  placeholder="e.g., Spring Cleaning"
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="edit-popular-service-slug" className="block text-sm font-medium text-gray-700 mb-1">
+                  Slug <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="edit-popular-service-slug"
+                  type="text"
+                  value={editPopularService.slug}
+                  onChange={(e) => setEditPopularService({ ...editPopularService, slug: e.target.value })}
+                  placeholder="e.g., spring-cleaning"
+                  required
+                  pattern="[a-z0-9-]+"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono text-sm"
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  URL-friendly identifier (lowercase, hyphens only)
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="edit-popular-service-description" className="block text-sm font-medium text-gray-700 mb-1">
+                  Description (Optional)
+                </label>
+                <textarea
+                  id="edit-popular-service-description"
+                  value={editPopularService.description}
+                  onChange={(e) => setEditPopularService({ ...editPopularService, description: e.target.value })}
+                  placeholder="Brief description of the service..."
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="edit-popular-service-price" className="block text-sm font-medium text-gray-700 mb-1">
+                  Base Price (Optional)
+                </label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    id="edit-popular-service-price"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={editPopularService.base_price}
+                    onChange={(e) => setEditPopularService({ ...editPopularService, base_price: e.target.value })}
+                    placeholder="e.g., 250.00"
+                    className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  />
+                </div>
+                <p className="mt-1 text-xs text-gray-500">
+                  Base price in ZAR (e.g., 250.00)
+                </p>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditPopularModal(false);
+                    setEditingPopularServiceId(null);
+                    setEditPopularService({ name: "", slug: "", description: "", base_price: "" });
+                    setError(null);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isUpdatingPopular || !editPopularService.name.trim() || !editPopularService.slug.trim()}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isUpdatingPopular ? "Updating..." : "Update Service"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

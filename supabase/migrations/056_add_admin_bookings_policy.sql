@@ -55,3 +55,4 @@ CREATE POLICY "Admins can delete all bookings" ON bookings
 
 
 
+

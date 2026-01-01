@@ -25,25 +25,87 @@ export function initializePaystack(config: PaystackConfig): void {
   // Load Paystack inline JS if not already loaded
   const loadPaystackScript = (): Promise<void> => {
     return new Promise((resolve, reject) => {
+      // Check if PaystackPop is already available
       if ((window as any).PaystackPop) {
         resolve();
         return;
       }
 
+      // Check if script is already in the DOM
+      const existingScript = document.querySelector('script[src="https://js.paystack.co/v1/inline.js"]') as HTMLScriptElement;
+      if (existingScript) {
+        // If script is complete, check if PaystackPop is available
+        if (existingScript.complete || existingScript.readyState === 'complete') {
+          // Wait a bit for PaystackPop to initialize
+          const checkInterval = setInterval(() => {
+            if ((window as any).PaystackPop) {
+              clearInterval(checkInterval);
+              resolve();
+            }
+          }, 50);
+
+          // Timeout after 3 seconds
+          setTimeout(() => {
+            clearInterval(checkInterval);
+            if ((window as any).PaystackPop) {
+              resolve();
+            } else {
+              reject(new Error("Paystack script loaded but PaystackPop is not available. Please refresh the page."));
+            }
+          }, 3000);
+          return;
+        }
+
+        // Script is loading, wait for it
+        existingScript.addEventListener('load', () => {
+          setTimeout(() => {
+            if ((window as any).PaystackPop) {
+              resolve();
+            } else {
+              reject(new Error("Paystack script loaded but PaystackPop is not available. Please refresh the page."));
+            }
+          }, 100);
+        }, { once: true });
+        
+        existingScript.addEventListener('error', () => {
+          reject(new Error("Failed to load Paystack script. Please check your internet connection and try again."));
+        }, { once: true });
+        return;
+      }
+
+      // Create and load new script
       const script = document.createElement("script");
       script.src = "https://js.paystack.co/v1/inline.js";
       script.async = true;
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error("Failed to load Paystack script"));
+      script.onload = () => {
+        // Wait a moment for PaystackPop to initialize after script loads
+        setTimeout(() => {
+          if ((window as any).PaystackPop) {
+            resolve();
+          } else {
+            reject(new Error("Paystack script loaded but PaystackPop is not available. Please refresh the page."));
+          }
+        }, 100);
+      };
+      script.onerror = () => {
+        reject(new Error("Failed to load Paystack script. Please check your internet connection and try again."));
+      };
       document.body.appendChild(script);
     });
   };
 
   loadPaystackScript()
     .then(() => {
+      // Ensure amount is a valid integer (Paystack requirement)
+      const amount = Math.round(config.amount);
+      
+      if (!Number.isInteger(amount) || amount <= 0) {
+        throw new Error(`Invalid payment amount: ${amount}. Amount must be a positive integer.`);
+      }
+
       const handler = (window as any).PaystackPop.setup({
         key: config.publicKey,
-        amount: config.amount,
+        amount: amount,
         email: config.email,
         ref: config.reference,
         currency: config.currency || "ZAR", // Default to ZAR (South African Rand)
@@ -74,7 +136,10 @@ export function initializePaystack(config: PaystackConfig): void {
     })
     .catch((error) => {
       console.error("Error loading Paystack:", error);
-      alert("Failed to load payment gateway. Please refresh the page and try again.");
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : "Failed to load payment gateway. Please refresh the page and try again.";
+      alert(errorMessage);
     });
 }
 

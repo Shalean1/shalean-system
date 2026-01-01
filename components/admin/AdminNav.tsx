@@ -142,11 +142,6 @@ export default function AdminNav({ onMobileMenuClose, variant }: AdminNavProps) 
           icon: Briefcase,
         },
         {
-          href: "/admin/services",
-          label: "Services",
-          icon: Sparkles,
-        },
-        {
           href: "/admin/locations",
           label: "Locations",
           icon: MapPin,

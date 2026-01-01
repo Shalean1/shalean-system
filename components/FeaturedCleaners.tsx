@@ -1,29 +1,26 @@
-import Image from "next/image";
 import { CheckCircle } from "lucide-react";
+import Avatar from "./Avatar";
 
 const featuredCleaners = [
   {
     id: 1,
     name: "Lucia",
-    image: "/cleaners/team-lucia.jpg",
     positiveReviews: 100,
-    completedTasks: "1.2k",
+    completedTasks: "98",
     tagline: "Expert cleaning professional",
   },
   {
     id: 2,
     name: "Nyasha",
-    image: "/cleaners/team-nyasha.jpg",
     positiveReviews: 100,
-    completedTasks: "950",
+    completedTasks: "87",
     tagline: "Expert cleaning professional",
   },
   {
     id: 3,
     name: "Normatter",
-    image: "/cleaners/team-normatter.jpg",
     positiveReviews: 100,
-    completedTasks: "800",
+    completedTasks: "76",
     tagline: "Expert cleaning professional",
   },
 ];
@@ -51,14 +48,8 @@ export default function FeaturedCleaners() {
             >
               {/* Profile Picture */}
               <div className="relative h-64 bg-gradient-to-br from-[#e6f0ff] to-[#cce0ff] flex items-center justify-center p-8">
-                <div className="relative w-48 h-48 rounded-full overflow-hidden shadow-lg">
-                  <Image
-                    src={cleaner.image}
-                    alt={cleaner.name}
-                    fill
-                    className="object-cover object-top"
-                    sizes="(max-width: 768px) 192px, 192px"
-                  />
+                <div className="relative w-48 h-48 rounded-full overflow-visible shadow-lg">
+                  <Avatar name={cleaner.name} size={192} />
                   {/* Verified Badge */}
                   <div className="absolute bottom-0 right-0 bg-[#007bff] rounded-full p-1.5 shadow-md border-2 border-white">
                     <CheckCircle className="w-5 h-5 text-white" />

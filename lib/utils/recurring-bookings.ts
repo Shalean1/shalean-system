@@ -11,10 +11,11 @@ export function generateRecurringGroupId(): string {
 
 /**
  * Calculate how many bookings to create for a given frequency over a period
+ * Default is now 1 month (bookings auto-generated monthly)
  */
 export function getRecurringBookingCount(
   frequency: FrequencyType,
-  months: number = 3
+  months: number = 1
 ): number {
   if (frequency === "one-time") {
     return 0;
@@ -40,11 +41,12 @@ export function getRecurringBookingCount(
 /**
  * Calculate all recurring dates for a given frequency starting from a start date
  * Returns an array of date strings in YYYY-MM-DD format
+ * Now defaults to 1 month only (to be auto-generated monthly)
  */
 export function calculateRecurringDates(
   frequency: FrequencyType,
   startDate: string,
-  months: number = 3
+  months: number = 1
 ): string[] {
   if (frequency === "one-time") {
     return [];
@@ -63,7 +65,7 @@ export function calculateRecurringDates(
 
   switch (frequency) {
     case "weekly": {
-      // Weekly: add 7 days for each occurrence
+      // Weekly: add 7 days for each occurrence (1 month = ~4 bookings)
       for (let i = 0; i < count; i++) {
         const date = new Date(start);
         date.setDate(date.getDate() + (i * 7));
@@ -72,7 +74,7 @@ export function calculateRecurringDates(
       break;
     }
     case "bi-weekly": {
-      // Bi-weekly: add 14 days for each occurrence
+      // Bi-weekly: add 14 days for each occurrence (1 month = ~2 bookings)
       for (let i = 0; i < count; i++) {
         const date = new Date(start);
         date.setDate(date.getDate() + (i * 14));
@@ -81,7 +83,7 @@ export function calculateRecurringDates(
       break;
     }
     case "monthly": {
-      // Monthly: same day of month, next month
+      // Monthly: same day of month (1 month = 1 booking)
       for (let i = 0; i < count; i++) {
         const date = new Date(start);
         date.setMonth(date.getMonth() + i);
@@ -123,6 +125,8 @@ export function isValidDateString(dateString: string): boolean {
   const date = new Date(dateString);
   return !isNaN(date.getTime()) && dateString === formatDate(date);
 }
+
+
 
 
 

@@ -496,7 +496,7 @@ export default function CheckServicesPage() {
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           <a
-            href="/admin/services"
+            href="/admin/pricing"
             className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
           >
             <Sparkles className="w-5 h-5 text-blue-600" />

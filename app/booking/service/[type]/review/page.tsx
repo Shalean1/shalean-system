@@ -1206,7 +1206,9 @@ export default function ReviewPage() {
                   <p suppressHydrationWarning>
                     <strong>Time:</strong> {isMounted ? (formData.scheduledTime || "Not specified") : "Not specified"}
                   </p>
-                  <p><strong>Frequency:</strong> {getFrequencyName(formData.frequency || "one-time")}</p>
+                  <p suppressHydrationWarning>
+                    <strong>Frequency:</strong> {isMounted ? getFrequencyName(formData.frequency || "one-time") : getFrequencyName("one-time")}
+                  </p>
                 </div>
               )}
             </section>

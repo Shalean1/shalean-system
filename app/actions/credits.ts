@@ -343,7 +343,8 @@ export async function initializeCreditPurchase(
     const reference = `credit-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
     // Convert amount to cents (Paystack uses smallest currency unit)
-    const amountInCents = amount * 100;
+    // Round to ensure we have a valid integer (Paystack requirement)
+    const amountInCents = Math.round(amount * 100);
 
     return {
       success: true,

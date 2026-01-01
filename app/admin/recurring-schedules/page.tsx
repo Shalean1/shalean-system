@@ -13,6 +13,8 @@ import {
   Customer,
   Cleaner as CleanerType,
 } from "@/app/actions/admin-bookings";
+import { syncRecurringBookingsToSchedules } from "@/app/actions/sync-recurring-schedules";
+import { generateMonthlyBookingsFromSchedules } from "@/app/actions/generate-monthly-bookings";
 import DatePicker from "@/components/booking/DatePicker";
 import { getTimeSlots } from "@/app/actions/booking-data";
 import { FALLBACK_TIME_SLOTS } from "@/lib/supabase/booking-data-fallbacks";
@@ -57,6 +59,9 @@ export default function RecurringSchedulesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
   
   // New modals and forms
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -497,6 +502,54 @@ export default function RecurringSchedulesPage() {
     }
   };
 
+  const handleSyncBookings = async () => {
+    setIsSyncing(true);
+    setSyncMessage(null);
+    setSubmitError(null);
+
+    try {
+      const result = await syncRecurringBookingsToSchedules();
+      setSyncMessage(result.message);
+      
+      if (result.success) {
+        await fetchRecurringSchedules();
+        // Clear error after successful sync
+        setTimeout(() => setSyncMessage(null), 5000);
+      } else {
+        // Show errors if any
+        if (result.errors && result.errors.length > 0) {
+          setSubmitError(result.errors.slice(0, 5).join(". ")); // Show first 5 errors
+          console.error("Sync errors:", result.errors);
+        }
+      }
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Failed to sync bookings";
+      setSubmitError(errorMsg);
+      console.error("Sync error:", err);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  const handleGenerateBookings = async () => {
+    setIsGenerating(true);
+    setSyncMessage(null);
+    setSubmitError(null);
+
+    try {
+      const result = await generateMonthlyBookingsFromSchedules();
+      setSyncMessage(result.message);
+      
+      if (!result.success && result.errors.length > 0) {
+        setSubmitError(result.errors.slice(0, 3).join(", ")); // Show first 3 errors
+      }
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Failed to generate bookings");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-4 md:p-8">
@@ -521,13 +574,29 @@ export default function RecurringSchedulesPage() {
               Manage and view all recurring booking series
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <button
               onClick={openCreateModal}
               className="flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors touch-manipulation"
             >
               <Plus className="w-4 h-4" />
               <span>Create New</span>
+            </button>
+            <button
+              onClick={handleSyncBookings}
+              disabled={isSyncing}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-300 rounded-lg hover:bg-purple-100 active:bg-purple-200 transition-colors touch-manipulation disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 ${isSyncing ? "animate-spin" : ""}`} />
+              <span>{isSyncing ? "Syncing..." : "Sync from Bookings"}</span>
+            </button>
+            <button
+              onClick={handleGenerateBookings}
+              disabled={isGenerating}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-green-700 bg-green-50 border border-green-300 rounded-lg hover:bg-green-100 active:bg-green-200 transition-colors touch-manipulation disabled:opacity-50"
+            >
+              <Calendar className={`w-4 h-4 ${isGenerating ? "animate-spin" : ""}`} />
+              <span>{isGenerating ? "Generating..." : "Generate Monthly"}</span>
             </button>
             <button
               onClick={fetchRecurringSchedules}
@@ -539,6 +608,25 @@ export default function RecurringSchedulesPage() {
           </div>
         </div>
       </div>
+
+      {/* Sync/Generate Messages */}
+      {(syncMessage || submitError) && (
+        <div className={`mb-4 rounded-lg p-4 ${
+          syncMessage && !submitError 
+            ? "bg-green-50 border border-green-200 text-green-800" 
+            : "bg-red-50 border border-red-200 text-red-800"
+        }`}>
+          {syncMessage && (
+            <p className="text-sm font-medium mb-1">{syncMessage}</p>
+          )}
+          {submitError && (
+            <div>
+              <p className="text-sm font-semibold mb-1">Errors:</p>
+              <p className="text-sm">{submitError}</p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Stats Summary */}
       {recurringSchedules.length > 0 && (

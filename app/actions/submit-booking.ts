@@ -309,10 +309,10 @@ export async function submitBooking(
     // Save first booking
     await saveBooking(booking);
 
-    // Create recurring bookings if applicable
+    // Create recurring bookings if applicable (only 1 month ahead now)
     if (isRecurring && data.scheduledDate) {
       try {
-        const recurringDates = calculateRecurringDates(data.frequency, data.scheduledDate, 3);
+        const recurringDates = calculateRecurringDates(data.frequency, data.scheduledDate, 1);
         
         // Create recurring bookings for each date
         const recurringBookings: Booking[] = recurringDates.map((date, index) => {

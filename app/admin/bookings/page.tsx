@@ -21,11 +21,15 @@ import {
   XCircle,
   Clock,
   Plus,
+  RotateCcw,
+  List,
+  Grid3x3,
 } from "lucide-react";
 
 type StatusFilter = Booking["status"] | "all";
 type PaymentStatusFilter = Booking["paymentStatus"] | "all";
 type CleanerResponseFilter = Booking["cleanerResponse"] | "all" | "no-response";
+type ViewMode = "all" | "recurring" | "one-time";
 
 type SortOption = "date-desc" | "date-asc" | "amount-desc" | "amount-asc" | "name-asc" | "name-desc";
 
@@ -36,8 +40,10 @@ export default function AdminBookingsPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [paymentStatusFilter, setPaymentStatusFilter] = useState<PaymentStatusFilter>("all");
   const [cleanerResponseFilter, setCleanerResponseFilter] = useState<CleanerResponseFilter>("all");
+  const [viewMode, setViewMode] = useState<ViewMode>("all");
   const [sortBy, setSortBy] = useState<SortOption>("date-desc");
   const [stats, setStats] = useState<any>(null);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
   const fetchBookings = async () => {
     setLoading(true);
@@ -59,9 +65,42 @@ export default function AdminBookingsPage() {
     fetchBookings();
   }, []);
 
+  // Group recurring bookings by recurring_group_id
+  const recurringGroups = useMemo(() => {
+    const groups = new Map<string, Booking[]>();
+    
+    bookings
+      .filter((b) => b.isRecurring && b.recurringGroupId)
+      .forEach((booking) => {
+        const groupId = booking.recurringGroupId!;
+        if (!groups.has(groupId)) {
+          groups.set(groupId, []);
+        }
+        groups.get(groupId)!.push(booking);
+      });
+    
+    // Sort bookings within each group by sequence
+    groups.forEach((groupBookings) => {
+      groupBookings.sort((a, b) => {
+        const seqA = a.recurringSequence ?? 0;
+        const seqB = b.recurringSequence ?? 0;
+        return seqA - seqB;
+      });
+    });
+    
+    return groups;
+  }, [bookings]);
+
   // Filter and search bookings
   const filteredBookings = useMemo(() => {
     let result = bookings;
+
+    // Apply view mode filter (recurring vs one-time)
+    if (viewMode === "recurring") {
+      result = result.filter((b) => b.isRecurring);
+    } else if (viewMode === "one-time") {
+      result = result.filter((b) => !b.isRecurring);
+    }
 
     // Apply status filter
     if (statusFilter !== "all") {
@@ -108,7 +147,7 @@ export default function AdminBookingsPage() {
     }
 
     return result;
-  }, [bookings, statusFilter, paymentStatusFilter, cleanerResponseFilter, searchQuery]);
+  }, [bookings, viewMode, statusFilter, paymentStatusFilter, cleanerResponseFilter, searchQuery]);
 
   // Sort bookings
   const sortedBookings = useMemo(() => {
@@ -196,6 +235,31 @@ export default function AdminBookingsPage() {
       );
     }
     return null;
+  };
+
+  const toggleGroup = (groupId: string) => {
+    setExpandedGroups((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(groupId)) {
+        newSet.delete(groupId);
+      } else {
+        newSet.add(groupId);
+      }
+      return newSet;
+    });
+  };
+
+  const formatFrequency = (frequency: string) => {
+    switch (frequency) {
+      case "weekly":
+        return "Weekly";
+      case "bi-weekly":
+        return "Bi-weekly";
+      case "monthly":
+        return "Monthly";
+      default:
+        return frequency;
+    }
   };
 
   if (loading) {
@@ -321,6 +385,17 @@ export default function AdminBookingsPage() {
               <option value="declined">Declined</option>
             </select>
 
+            {/* View Mode Filter */}
+            <select
+              value={viewMode}
+              onChange={(e) => setViewMode(e.target.value as ViewMode)}
+              className="flex-1 md:flex-none px-3 py-2.5 md:py-2 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none touch-manipulation"
+            >
+              <option value="all">All Bookings</option>
+              <option value="recurring">Recurring Only</option>
+              <option value="one-time">One-Time Only</option>
+            </select>
+
             {/* Sort */}
             <div className="flex items-center gap-2 md:ml-auto">
               <ArrowUpDown className="w-4 h-4 text-gray-600 flex-shrink-0" />
@@ -342,12 +417,18 @@ export default function AdminBookingsPage() {
           {/* Results Count */}
           <div className="text-xs md:text-sm text-gray-600">
             Showing {sortedBookings.length} of {bookings.length} booking{sortedBookings.length !== 1 ? "s" : ""}
-            {(statusFilter !== "all" || paymentStatusFilter !== "all" || cleanerResponseFilter !== "all" || searchQuery) && (
+            {viewMode === "recurring" && recurringGroups.size > 0 && (
+              <span className="ml-2">
+                ({recurringGroups.size} recurring series)
+              </span>
+            )}
+            {(statusFilter !== "all" || paymentStatusFilter !== "all" || cleanerResponseFilter !== "all" || viewMode !== "all" || searchQuery) && (
               <button
                 onClick={() => {
                   setStatusFilter("all");
                   setPaymentStatusFilter("all");
                   setCleanerResponseFilter("all");
+                  setViewMode("all");
                   setSearchQuery("");
                 }}
                 className="ml-2 text-blue-600 hover:text-blue-700 active:text-blue-800 font-medium underline touch-manipulation"
@@ -358,6 +439,91 @@ export default function AdminBookingsPage() {
           </div>
         </div>
       </div>
+
+      {/* Recurring Bookings Grouped View (when viewing recurring only) */}
+      {viewMode === "recurring" && recurringGroups.size > 0 && (
+        <div className="mb-6 space-y-4">
+          <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+            <RotateCcw className="w-5 h-5 text-blue-600" />
+            Recurring Booking Series ({recurringGroups.size} series)
+          </h2>
+          {Array.from(recurringGroups.entries()).map(([groupId, groupBookings]) => {
+            const isExpanded = expandedGroups.has(groupId);
+            const firstBooking = groupBookings[0];
+            const paidCount = groupBookings.filter((b) => b.paymentStatus === "completed").length;
+            const pendingCount = groupBookings.filter((b) => b.paymentStatus === "pending").length;
+            
+            return (
+              <div key={groupId} className="bg-white rounded-lg border border-gray-200 shadow-sm">
+                <div
+                  className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                  onClick={() => toggleGroup(groupId)}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <RotateCcw className="w-4 h-4 text-blue-600" />
+                        <h3 className="font-semibold text-gray-900">
+                          {firstBooking.firstName} {firstBooking.lastName}
+                        </h3>
+                        <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded">
+                          {formatFrequency(firstBooking.frequency)}
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-600 space-y-1">
+                        <div>{firstBooking.streetAddress}, {firstBooking.suburb}</div>
+                        <div className="flex items-center gap-4">
+                          <span>{groupBookings.length} bookings</span>
+                          <span className="text-green-600">{paidCount} paid</span>
+                          <span className="text-yellow-600">{pendingCount} pending</span>
+                        </div>
+                      </div>
+                    </div>
+                    <button className="ml-4 p-2 hover:bg-gray-100 rounded">
+                      {isExpanded ? (
+                        <Calendar className="w-5 h-5 text-gray-600" />
+                      ) : (
+                        <List className="w-5 h-5 text-gray-600" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+                {isExpanded && (
+                  <div className="border-t border-gray-200 bg-gray-50 p-4 space-y-2">
+                    {groupBookings.map((booking) => (
+                      <Link
+                        key={booking.id}
+                        href={`/admin/bookings/${booking.bookingReference}`}
+                        className="block bg-white rounded-lg border border-gray-200 p-3 hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="text-sm font-mono text-gray-600 mb-1">
+                              {booking.bookingReference}
+                            </div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {formatDate(booking.scheduledDate)} {formatTime(booking.scheduledTime)}
+                            </div>
+                            {booking.recurringSequence !== undefined && (
+                              <div className="text-xs text-gray-500 mt-1">
+                                Sequence #{booking.recurringSequence}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex flex-col items-end gap-2 ml-4">
+                            <StatusBadge status={booking.status} />
+                            <PaymentStatusBadge paymentStatus={booking.paymentStatus} />
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Mobile Card View */}
       <div className="block md:hidden space-y-3">
@@ -484,9 +650,19 @@ export default function AdminBookingsPage() {
                 {sortedBookings.map((booking) => (
                   <tr key={booking.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-4 py-2.5 whitespace-nowrap">
-                      <div className="text-sm font-mono text-gray-900">{booking.bookingReference}</div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-mono text-gray-900">{booking.bookingReference}</div>
+                        {booking.isRecurring && (
+                          <RotateCcw className="w-4 h-4 text-blue-600" title="Recurring booking" />
+                        )}
+                      </div>
                       <div className="text-xs text-gray-500">
                         {formatDate(booking.createdAt)}
+                        {booking.recurringSequence !== undefined && (
+                          <span className="ml-2 text-blue-600">
+                            (Seq: {booking.recurringSequence})
+                          </span>
+                        )}
                       </div>
                     </td>
                     <td className="px-4 py-2.5">

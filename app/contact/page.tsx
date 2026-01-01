@@ -197,7 +197,7 @@ export default function ContactPage() {
         name: "How quickly can I get a response?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "We aim to respond to all inquiries within 24 hours. For urgent requests, please call us directly at +27 87 153 5250. Same-day booking is available for cleaning services.",
+          text: "We aim to respond to all inquiries within 24 hours. For urgent requests, please contact us directly. Same-day booking is available for cleaning services.",
         },
       },
       {
@@ -213,7 +213,7 @@ export default function ContactPage() {
         name: "Can I book a cleaning service over the phone?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes! You can book a cleaning service by calling us at +27 87 153 5250. Our team will help you choose the right service, select a cleaner, and schedule your preferred date and time. You can also book online through our website.",
+          text: "Yes! You can book a cleaning service by contacting us. Our team will help you choose the right service, select a cleaner, and schedule your preferred date and time. You can also book online through our website.",
         },
       },
     ],
@@ -443,7 +443,7 @@ export default function ContactPage() {
                     How quickly can I get a response?
                   </h3>
                   <p className="text-gray-700">
-                    We aim to respond to all inquiries within 24 hours. For urgent requests, please call us directly at +27 72 416 2547. Same-day booking is available for cleaning services.
+                    We aim to respond to all inquiries within 24 hours. For urgent requests, please contact us directly. Same-day booking is available for cleaning services.
                   </p>
                 </div>
 
@@ -461,7 +461,7 @@ export default function ContactPage() {
                     Can I book a cleaning service over the phone?
                   </h3>
                   <p className="text-gray-700">
-                    Yes! You can book a cleaning service by calling us at +27 87 153 5250. Our team will help you choose the right service, select a cleaner, and schedule your preferred date and time. You can also book online through our website.
+                    Yes! You can book a cleaning service by contacting us. Our team will help you choose the right service, select a cleaner, and schedule your preferred date and time. You can also book online through our website.
                   </p>
                 </div>
               </div>

@@ -8,6 +8,7 @@ export interface PopularService {
   name: string;
   slug: string;
   description?: string;
+  base_price?: number;
   display_order: number;
   is_active: boolean;
   created_at: string;
@@ -168,7 +169,8 @@ export async function getAllPopularServices(): Promise<PopularService[]> {
 export async function addPopularService(
   name: string,
   slug: string,
-  description?: string
+  description?: string,
+  base_price?: number
 ): Promise<{ success: boolean; error?: string; data?: PopularService }> {
   const supabase = await createClient();
 
@@ -197,6 +199,7 @@ export async function addPopularService(
       name,
       slug,
       description,
+      base_price: base_price !== undefined && base_price !== null ? base_price : null,
       display_order: nextOrder,
       is_active: true,
     })
@@ -209,6 +212,7 @@ export async function addPopularService(
   }
 
   revalidatePath("/");
+  revalidatePath("/admin/pricing");
 
   return { success: true, data };
 }
@@ -216,7 +220,7 @@ export async function addPopularService(
 // Update a popular service
 export async function updatePopularService(
   id: string,
-  updates: Partial<Pick<PopularService, "name" | "slug" | "description" | "display_order" | "is_active">>
+  updates: Partial<Pick<PopularService, "name" | "slug" | "description" | "base_price" | "display_order" | "is_active">>
 ): Promise<{ success: boolean; error?: string; data?: PopularService }> {
   const supabase = await createClient();
 
@@ -242,6 +246,7 @@ export async function updatePopularService(
   }
 
   revalidatePath("/");
+  revalidatePath("/admin/pricing");
 
   return { success: true, data };
 }
@@ -272,7 +277,7 @@ export async function deletePopularService(
   }
 
   revalidatePath("/");
-  revalidatePath("/admin/popular-services");
+  revalidatePath("/admin/pricing");
 
   return { success: true };
 }
@@ -303,7 +308,7 @@ export async function reorderPopularServices(
   try {
     await Promise.all(updates);
     revalidatePath("/");
-    revalidatePath("/admin/popular-services");
+    revalidatePath("/admin/pricing");
     return { success: true };
   } catch (error) {
     console.error("Error reordering popular services:", error);

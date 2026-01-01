@@ -514,7 +514,8 @@ export async function purchaseVoucher(
 
     // Generate payment reference
     const reference = `voucher-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-    const amountInCents = Number(voucherData.purchase_price) * 100;
+    // Convert to cents and round to ensure valid integer (Paystack requirement)
+    const amountInCents = Math.round(Number(voucherData.purchase_price) * 100);
 
     // Create pending purchase record
     const { error: pendingError } = await supabase

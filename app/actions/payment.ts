@@ -35,7 +35,8 @@ export async function initializePaymentWithAmount(
 
     // Convert amount to cents (Paystack uses smallest currency unit)
     // ZAR amounts are multiplied by 100 to convert to cents
-    const amountInCents = amount * 100;
+    // Round to ensure we have a valid integer (Paystack requirement)
+    const amountInCents = Math.round(amount * 100);
 
     return {
       success: true,
@@ -97,7 +98,8 @@ export async function initializePayment(
 
     // Convert amount to cents (Paystack uses smallest currency unit)
     // ZAR amounts are multiplied by 100 to convert to cents
-    const amountInCents = priceBreakdown.total * 100;
+    // Round to ensure we have a valid integer (Paystack requirement)
+    const amountInCents = Math.round(priceBreakdown.total * 100);
 
     return {
       success: true,
