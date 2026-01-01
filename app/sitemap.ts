@@ -3,7 +3,7 @@ import { getBlogPosts } from "@/app/actions/blog";
 import { capeTownAreas, getLocationSlug } from "@/lib/constants/areas";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://bokkie.co.za";
+  const baseUrl = "https://bokkiecleaning.co.za";
 
   // Static routes
   const routes = [
