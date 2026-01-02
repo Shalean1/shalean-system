@@ -4,7 +4,7 @@ import { ArrowLeft, Phone, Mail, MapPin, Clock, MessageSquare, Send } from "luci
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Contact Us | Professional Cleaning Services Cape Town",
+  title: { default: "Contact Us | Professional Cleaning Services Cape Town" },
   description: "Get in touch with Bokkie Cleaning Services in Cape Town. Contact us via phone, email, or visit our office in Lansdowne. We're available 24/7 to help with your cleaning needs. Professional cleaners serving Sea Point, Camps Bay, Claremont & more.",
   keywords: [
     "contact cleaning services Cape Town",

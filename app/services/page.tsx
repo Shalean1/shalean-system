@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { generateMetaTitle, generateMetaDescription, generateCanonicalUrl, generateImageAlt } from "@/lib/seo";
+import { truncateTitle, generateMetaDescription, generateCanonicalUrl, generateImageAlt } from "@/lib/seo";
 import { generateServicesPageStructuredData } from "@/lib/structured-data";
 import ServiceImage from "@/components/services/ServiceImage";
 import FAQItem from "@/components/services/FAQItem";
@@ -11,7 +11,7 @@ import { getServiceCategoryPricing } from "@/lib/supabase/booking-data";
 import { formatPrice } from "@/lib/pricing";
 
 export const metadata: Metadata = {
-  title: generateMetaTitle("Professional Cleaning Services in Cape Town"),
+  title: { default: truncateTitle("Professional Cleaning Services in Cape Town") },
   description: generateMetaDescription(
     "Discover Bokkie Cleaning Services' comprehensive range of professional cleaning services in Cape Town. Residential cleaning, commercial cleaning, deep cleaning, move-in/out, Airbnb cleaning, and specialized services. Trusted by thousands of Cape Town residents."
   ),

@@ -12,7 +12,7 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Professional Cleaning Services Cape Town | Bokkie Cleaning Services",
+  title: { default: "Professional Cleaning Services Cape Town" },
   description: "Book trusted professional cleaners in Cape Town. Same-day booking available for residential, commercial, deep cleaning, move-in/out, Airbnb, and office cleaning. Rated 5 stars with 150+ reviews. Serving Sea Point, Camps Bay, Claremont & more.",
   keywords: [
     "cleaning services Cape Town",

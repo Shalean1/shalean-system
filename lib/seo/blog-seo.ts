@@ -3,7 +3,7 @@
  */
 
 import type { Metadata } from 'next';
-import { siteConfig } from '@/lib/seo';
+import { siteConfig, truncateTitle } from '@/lib/seo';
 
 export interface BlogSEOMetadata {
   title: string;
@@ -39,10 +39,8 @@ export function generateBlogSEOMetadata(
   const seoTitle = customTitle || postTitle;
   const seoDescription = customDescription || postDescription;
   
-  // Ensure title is within limits (60 chars)
-  const finalTitle = seoTitle.length > 60 
-    ? `${seoTitle.substring(0, 57)}...` 
-    : seoTitle;
+  // Ensure title is within limits (60 chars) - truncate for template
+  const finalTitle = truncateTitle(seoTitle);
   
   // Ensure description is within limits (155 chars)
   const finalDescription = seoDescription.length > 155
@@ -54,7 +52,7 @@ export function generateBlogSEOMetadata(
     : `${baseUrl}/og-image.jpg`;
 
   const metadata: Metadata = {
-    title: finalTitle,
+    title: { default: finalTitle },
     description: finalDescription,
     keywords: keywords.length > 0 ? keywords : undefined,
     alternates: {
@@ -113,7 +111,7 @@ export function generateBlogSEOMetadata(
 
 export function generateBlogListingSEOMetadata(): Metadata {
   return {
-    title: 'Blog | Bokkie Cleaning Services',
+    title: { default: 'Blog' },
     description: 'Read our latest blog posts about cleaning tips, home maintenance, and professional cleaning services in Cape Town.',
     openGraph: {
       type: 'website',

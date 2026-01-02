@@ -71,10 +71,10 @@ export async function generateMetadata({
         `cleaning services Western Cape`,
       ];
   
-  const title = `Cleaning Services in ${locationName}, Cape Town | Bokkie Cleaning Services`;
+  const title = `Cleaning Services in ${locationName}, Cape Town`;
 
   return {
-    title,
+    title: { default: title },
     description,
     keywords,
     openGraph: {

@@ -3,7 +3,7 @@ import { getServiceLocations } from "@/lib/supabase/booking-data";
 import ServiceAreasClient from "@/components/ServiceAreasClient";
 
 export const metadata: Metadata = {
-  title: "Service Areas in Cape Town | Bokkie Cleaning Services",
+  title: { default: "Service Areas in Cape Town" },
   description: "Find professional cleaning services in your area. We serve all major suburbs across Cape Town including Atlantic Seaboard, City Bowl, Southern Suburbs, Northern Suburbs, and more.",
   keywords: [
     "cleaning services Cape Town",

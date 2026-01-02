@@ -15,7 +15,24 @@ export const siteConfig = {
 };
 
 /**
- * Generate meta title with proper length
+ * Truncate title to fit within max length (for use with layout template)
+ * The layout template adds " | Bokkie Cleaning Services" automatically
+ */
+export function truncateTitle(title: string, maxLength: number = 60): string {
+  const suffixLength = " | Bokkie Cleaning Services".length;
+  const availableLength = maxLength - suffixLength;
+  
+  if (title.length <= availableLength) {
+    return title;
+  }
+  
+  return `${title.substring(0, availableLength - 3)}...`;
+}
+
+/**
+ * Generate meta title with proper length (legacy - for backwards compatibility)
+ * Note: Prefer using truncateTitle with object form title so layout template applies
+ * @deprecated Use truncateTitle with title: { default: ... } instead
  */
 export function generateMetaTitle(title: string): string {
   const maxLength = 60;

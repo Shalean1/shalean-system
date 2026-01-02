@@ -7,7 +7,7 @@ const BookingLayoutHeader = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Book Cleaning Service | Bokkie Cleaning Services",
+  title: { default: "Book Cleaning Service" },
   description: "Book professional cleaning services in Cape Town. Select your service, schedule, and complete your booking.",
 };
 

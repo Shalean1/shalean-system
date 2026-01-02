@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { generateMetaTitle, generateMetaDescription, generateCanonicalUrl, generateImageAlt } from "@/lib/seo";
+import { truncateTitle, generateMetaDescription, generateCanonicalUrl, generateImageAlt } from "@/lib/seo";
 import ServiceImage from "@/components/services/ServiceImage";
 import FAQItem from "@/components/services/FAQItem";
 import Footer from "@/components/Footer";
@@ -258,11 +258,11 @@ export async function generateMetadata({
       return {};
     }
 
-  const title = `${service.shortName} in Cape Town`;
+  const title = truncateTitle(`${service.shortName} in Cape Town`);
   const description = `${service.description}. Professional ${service.shortName.toLowerCase()} services throughout Cape Town. Trusted by thousands of residents.`;
 
   return {
-    title: generateMetaTitle(title),
+    title: { default: title },
     description: generateMetaDescription(description),
     keywords: [
       `${service.shortName.toLowerCase()} Cape Town`,

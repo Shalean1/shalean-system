@@ -1230,7 +1230,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: guide.title,
+    title: { default: guide.title },
     description: guide.description,
     openGraph: {
       title: guide.title,

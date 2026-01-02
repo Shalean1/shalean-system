@@ -19,7 +19,7 @@ import { generateCanonicalUrl, generateMetaDescription } from "@/lib/seo";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "How It Works: Book Professional Cleaning Services in Cape Town | Bokkie Cleaning Services",
+  title: { default: "How It Works: Book Professional Cleaning Services in Cape Town" },
   description: generateMetaDescription("Learn how to book professional cleaning services in Cape Town with Bokkie. Simple 5-step process: choose service, select cleaner, schedule, pay securely, and enjoy your clean space. Same-day booking available. Rated 4.8 stars with 150+ reviews."),
   keywords: [
     "how it works cleaning service Cape Town",
