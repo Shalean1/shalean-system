@@ -34,11 +34,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "How It Works: Book Professional Cleaning Services in Cape Town",
     description: "Learn how to book professional cleaning services in Cape Town with Bokkie. Simple 5-step process with same-day booking available.",
-    url: "https://bokkie.co.za/how-it-works",
+    url: "https://bokkiecleaning.co.za/how-it-works",
     siteName: "Bokkie Cleaning Services",
     images: [
       {
-        url: "https://bokkie.co.za/og-image.jpg",
+        url: "https://bokkiecleaning.co.za/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "How It Works - Bokkie Cleaning Services Cape Town",
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "How It Works: Book Professional Cleaning Services in Cape Town",
     description: "Learn how to book professional cleaning services in Cape Town. Simple 5-step process with same-day booking.",
-    images: ["https://bokkie.co.za/og-image.jpg"],
+    images: ["https://bokkiecleaning.co.za/og-image.jpg"],
   },
   alternates: {
     canonical: generateCanonicalUrl("/how-it-works"),
@@ -286,13 +286,13 @@ export default function HowItWorksPage() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://bokkie.co.za",
+        item: "https://bokkiecleaning.co.za",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "How It Works",
-        item: "https://bokkie.co.za/how-it-works",
+        item: "https://bokkiecleaning.co.za/how-it-works",
       },
     ],
   };
@@ -300,19 +300,19 @@ export default function HowItWorksPage() {
   const webpageStructuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "@id": "https://bokkie.co.za/how-it-works#webpage",
-    url: "https://bokkie.co.za/how-it-works",
+    "@id": "https://bokkiecleaning.co.za/how-it-works#webpage",
+    url: "https://bokkiecleaning.co.za/how-it-works",
     name: "How It Works: Book Professional Cleaning Services in Cape Town",
     description: "Learn how to book professional cleaning services in Cape Town with Bokkie. Simple 5-step process with same-day booking available.",
     inLanguage: "en-ZA",
     isPartOf: {
-      "@id": "https://bokkie.co.za#website",
+      "@id": "https://bokkiecleaning.co.za#website",
     },
     about: {
-      "@id": "https://bokkie.co.za#organization",
+      "@id": "https://bokkiecleaning.co.za#organization",
     },
     breadcrumb: {
-      "@id": "https://bokkie.co.za/how-it-works#breadcrumb",
+      "@id": "https://bokkiecleaning.co.za/how-it-works#breadcrumb",
     },
   };
 

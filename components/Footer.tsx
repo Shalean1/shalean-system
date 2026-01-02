@@ -41,7 +41,7 @@ export default function Footer() {
               <Facebook className="w-5 h-5" />
             </a>
             <a
-              href="https://x.com/shaloclean"
+              href="https://x.com/bokkiecleaning"
               target="_blank"
               rel="noopener noreferrer"
               className="w-10 h-10 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-colors"

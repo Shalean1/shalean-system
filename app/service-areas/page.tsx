@@ -19,11 +19,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Service Areas in Cape Town | Bokkie Cleaning Services",
     description: "Find professional cleaning services in your area. We serve all major suburbs across Cape Town.",
-    url: "https://bokkie.co.za/service-areas",
+    url: "https://bokkiecleaning.co.za/service-areas",
     siteName: "Bokkie Cleaning Services",
     images: [
       {
-        url: "https://bokkie.co.za/og-image.jpg",
+        url: "https://bokkiecleaning.co.za/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Bokkie Cleaning Services - Service Areas in Cape Town",
@@ -36,10 +36,10 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Service Areas in Cape Town | Bokkie Cleaning Services",
     description: "Find professional cleaning services in your area. We serve all major suburbs across Cape Town.",
-    images: ["https://bokkie.co.za/og-image.jpg"],
+    images: ["https://bokkiecleaning.co.za/og-image.jpg"],
   },
   alternates: {
-    canonical: "https://bokkie.co.za/service-areas",
+    canonical: "https://bokkiecleaning.co.za/service-areas",
   },
   robots: {
     index: true,
@@ -101,7 +101,7 @@ export default async function ServiceAreasPage() {
   const totalSuburbs = allSuburbs.length;
 
   // Generate structured data for SEO
-  const baseUrl = "https://bokkie.co.za";
+  const baseUrl = "https://bokkiecleaning.co.za";
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",

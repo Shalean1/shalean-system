@@ -69,8 +69,8 @@ export const metadata: Metadata = {
     title: "Bokkie Cleaning Services | Professional Cleaning Services Cape Town",
     description: "Professional cleaning services in Cape Town. Expert cleaners offering residential, commercial, and specialized cleaning services.",
     images: ["/og-image.jpg"],
-    creator: "@shaloclean",
-    site: "@shaloclean",
+    creator: "@bokkiecleaning",
+    site: "@bokkiecleaning",
   },
   robots: {
     index: true,

@@ -8,7 +8,7 @@ export const siteConfig = {
   description: "Professional cleaning services in Cape Town. Expert cleaners offering residential, commercial, and specialized cleaning services.",
   ogImage: "/og-image.jpg",
   links: {
-    twitter: "https://x.com/shaloclean",
+    twitter: "https://x.com/bokkiecleaning",
     facebook: "https://facebook.com/bokkiecleaning",
     instagram: "https://www.instagram.com/bokkie_cleaning_services",
   },

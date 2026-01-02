@@ -80,11 +80,11 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      url: `https://bokkie.co.za/areas/${location}`,
+      url: `https://bokkiecleaning.co.za/areas/${location}`,
       siteName: "Bokkie Cleaning Services",
       images: [
         {
-          url: "https://bokkie.co.za/og-image.jpg",
+          url: "https://bokkiecleaning.co.za/og-image.jpg",
           width: 1200,
           height: 630,
           alt: `Bokkie Cleaning Services - Cleaning Services in ${locationName}`,
@@ -97,12 +97,12 @@ export async function generateMetadata({
       card: "summary_large_image",
       title,
       description,
-      images: ["https://bokkie.co.za/og-image.jpg"],
-      creator: "@shaloclean",
-      site: "@shaloclean",
+      images: ["https://bokkiecleaning.co.za/og-image.jpg"],
+      creator: "@bokkiecleaning",
+      site: "@bokkiecleaning",
     },
     alternates: {
-      canonical: `https://bokkie.co.za/areas/${location}`,
+      canonical: `https://bokkiecleaning.co.za/areas/${location}`,
     },
     robots: {
       index: true,

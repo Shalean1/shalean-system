@@ -284,7 +284,7 @@ export async function generateMetadata({
       siteName: "Bokkie Cleaning Services",
       images: [
         {
-          url: "https://bokkie.co.za/og-image.jpg",
+          url: "https://bokkiecleaning.co.za/og-image.jpg",
           width: 1200,
           height: 630,
           alt: generateImageAlt(service.shortName, "Cape Town"),
@@ -298,9 +298,9 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: `${service.shortName} in Cape Town | Bokkie Cleaning Services`,
       description: description,
-      images: ["https://bokkie.co.za/og-image.jpg"],
-      creator: "@shaloclean",
-      site: "@shaloclean",
+      images: ["https://bokkiecleaning.co.za/og-image.jpg"],
+      creator: "@bokkiecleaning",
+      site: "@bokkiecleaning",
     },
     robots: {
       index: true,
@@ -331,7 +331,7 @@ export async function generateMetadata({
 
 // Generate structured data for service page
 function generateServiceStructuredData(slug: string, service: typeof serviceData[string], price: number) {
-  const baseUrl = "https://bokkie.co.za";
+  const baseUrl = "https://bokkiecleaning.co.za";
   const serviceUrl = `${baseUrl}/services/${slug}`;
 
   return {

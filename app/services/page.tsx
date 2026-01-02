@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     siteName: "Bokkie Cleaning Services",
     images: [
       {
-        url: "https://bokkie.co.za/og-image.jpg",
+        url: "https://bokkiecleaning.co.za/og-image.jpg",
         width: 1200,
         height: 630,
         alt: generateImageAlt("Professional Cleaning Services", "Cape Town"),
@@ -58,9 +58,9 @@ export const metadata: Metadata = {
     title: "Professional Cleaning Services in Cape Town | Bokkie Cleaning Services",
     description:
       "Comprehensive cleaning services in Cape Town: residential, commercial, deep cleaning, move-in/out, Airbnb cleaning, and specialized services.",
-    images: ["https://bokkie.co.za/og-image.jpg"],
-    creator: "@shaloclean",
-    site: "@shaloclean",
+    images: ["https://bokkiecleaning.co.za/og-image.jpg"],
+    creator: "@bokkiecleaning",
+    site: "@bokkiecleaning",
   },
   robots: {
     index: true,

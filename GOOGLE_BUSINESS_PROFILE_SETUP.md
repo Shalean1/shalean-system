@@ -12,8 +12,8 @@ Before you begin, gather the following information:
 - [ ] Business name: **Bokkie Cleaning Services**
 - [ ] Business address: **39 Harvey Road, Claremont, Western Cape, 7708, South Africa**
 - [ ] Phone number: **+27871535250**
-- [ ] Email: **support@bokkie.com**
-- [ ] Website: **https://bokkie.co.za**
+- [ ] Email: **support@bokkiecleaning.co.za**
+- [ ] Website: **https://bokkiecleaning.co.za**
 - [ ] Business hours (24/7 - Monday to Sunday, 00:00-23:59)
 - [ ] Business category: Cleaning Service / Professional Cleaning Services
 - [ ] Service areas: Cape Town, Sea Point, Camps Bay, Claremont, Green Point, V&A Waterfront, Constantia
@@ -53,8 +53,8 @@ Before you begin, gather the following information:
   - Postal Code: 7708
   - Country: South Africa
 - **Phone Number**: +27871535250
-- **Website**: https://bokkie.co.za
-- **Email**: support@bokkie.com
+- **Website**: https://bokkiecleaning.co.za
+- **Email**: support@bokkiecleaning.co.za
 
 ### Business Hours
 Set your hours to reflect 24/7 availability:
@@ -86,7 +86,7 @@ Add all service areas:
 
 ### Recommended Description:
 ```
-Bokkie Cleaning Services is a professional cleaning company serving Cape Town and surrounding areas including Sea Point, Camps Bay, Claremont, Green Point, V&A Waterfront, and Constantia. We offer comprehensive cleaning services including regular cleaning, deep cleaning, move-in/out cleaning, Airbnb cleaning, office cleaning, apartment cleaning, window cleaning, and home maintenance. Our experienced team uses eco-friendly products and provides 24/7 service with a 100% satisfaction guarantee. Book your cleaning service online at bokkie.co.za or call +27871535250.
+Bokkie Cleaning Services is a professional cleaning company serving Cape Town and surrounding areas including Sea Point, Camps Bay, Claremont, Green Point, V&A Waterfront, and Constantia. We offer comprehensive cleaning services including regular cleaning, deep cleaning, move-in/out cleaning, Airbnb cleaning, office cleaning, apartment cleaning, window cleaning, and home maintenance. Our experienced team uses eco-friendly products and provides 24/7 service with a 100% satisfaction guarantee. Book your cleaning service online at bokkiecleaning.co.za or call +27871535250.
 ```
 
 **SEO Tips for Description:**
@@ -181,7 +181,7 @@ Thank you for your feedback, [Name]! We appreciate you taking the time to share 
 
 #### For Negative Reviews:
 ```
-Hi [Name], we're sorry to hear about your experience. This doesn't reflect our usual standard of service. We'd like to make this right. Please contact us directly at +27871535250 or support@bokkie.com so we can resolve this issue. Thank you for bringing this to our attention.
+Hi [Name], we're sorry to hear about your experience. This doesn't reflect our usual standard of service. We'd like to make this right. Please contact us directly at +27871535250 or support@bokkiecleaning.co.za so we can resolve this issue. Thank you for bringing this to our attention.
 ```
 
 ### Encourage Reviews:
@@ -198,7 +198,7 @@ Hi [Name], we're sorry to hear about your experience. This doesn't reflect our u
 ### Add Website Link:
 1. In your GBP dashboard, go to **"Info"** section
 2. Find **"Website"** field
-3. Enter: **https://bokkie.co.za**
+3. Enter: **https://bokkiecleaning.co.za**
 4. Save changes
 
 ### Verify Website Connection:

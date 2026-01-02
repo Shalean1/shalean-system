@@ -31,7 +31,7 @@ Create a `.env.local` file with the following variables:
 # Resend Email Configuration
 RESEND_API_KEY=re_your_resend_api_key_here
 RESEND_FROM_EMAIL=noreply@yourdomain.com
-RESEND_TO_EMAIL=hello@bokkie.com
+RESEND_TO_EMAIL=hello@bokkiecleaning.co.za
 
 # Paystack Payment Configuration
 PAYSTACK_PUBLIC_KEY=pk_test_your_public_key_here
@@ -200,6 +200,6 @@ data/
 ## Support
 
 For issues or questions, contact:
-- Email: hello@bokkie.com
+- Email: hello@bokkiecleaning.co.za
 - Phone: +27 12 345 6789
 

@@ -149,7 +149,7 @@ export async function createCleanerCredentials(
 
     // Step 4: Create auth user
     // BYPASS: Always use email authentication to avoid requiring phone auth in Supabase
-    // If no email provided, generate email from phone number using domain bokkie.co.za
+    // If no email provided, generate email from phone number using domain bokkiecleaning.co.za
     const email = data.email?.trim() || constructCleanerEmail(data.phone.trim());
     const isEmail = true; // Always use email auth to bypass phone auth requirement
 

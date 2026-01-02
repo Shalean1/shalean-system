@@ -13,7 +13,7 @@ export default function SEOPreview({
   url,
   imageUrl,
 }: SEOPreviewProps) {
-  const baseUrl = "https://bokkie.co.za";
+  const baseUrl = "https://bokkiecleaning.co.za";
   const fullUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;
   const displayImage = imageUrl
     ? imageUrl.startsWith("http")
@@ -50,7 +50,7 @@ export default function SEOPreview({
             </div>
           )}
           <div className="p-3">
-            <div className="text-xs text-gray-500 uppercase mb-1">bokkie.co.za</div>
+            <div className="text-xs text-gray-500 uppercase mb-1">bokkiecleaning.co.za</div>
             <div className="text-base font-semibold text-gray-900 mb-1 line-clamp-2">
               {title}
             </div>

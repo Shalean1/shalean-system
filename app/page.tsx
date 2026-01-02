@@ -36,11 +36,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Professional Cleaning Services Cape Town | Bokkie Cleaning Services",
     description: "Book trusted professional cleaners in Cape Town. Same-day booking available for residential, commercial, deep cleaning, move-in/out, Airbnb, and office cleaning. Rated 5 stars with 150+ reviews.",
-    url: "https://bokkie.co.za",
+    url: "https://bokkiecleaning.co.za",
     siteName: "Bokkie Cleaning Services",
     images: [
       {
-        url: "https://bokkie.co.za/og-image.jpg",
+        url: "https://bokkiecleaning.co.za/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Bokkie Cleaning Services - Professional Cleaning Services in Cape Town",
@@ -53,12 +53,12 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Professional Cleaning Services Cape Town | Bokkie Cleaning Services",
     description: "Book trusted professional cleaners in Cape Town. Same-day booking available. Rated 5 stars with 150+ reviews.",
-    images: ["https://bokkie.co.za/og-image.jpg"],
-    creator: "@shaloclean",
-    site: "@shaloclean",
+    images: ["https://bokkiecleaning.co.za/og-image.jpg"],
+    creator: "@bokkiecleaning",
+    site: "@bokkiecleaning",
   },
   alternates: {
-    canonical: "https://bokkie.co.za",
+    canonical: "https://bokkiecleaning.co.za",
   },
   robots: {
     index: true,
@@ -84,23 +84,23 @@ export default function Home() {
   const webpageStructuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "@id": "https://bokkie.co.za#webpage",
-    url: "https://bokkie.co.za",
+    "@id": "https://bokkiecleaning.co.za#webpage",
+    url: "https://bokkiecleaning.co.za",
     name: "Professional Cleaning Services Cape Town | Bokkie Cleaning Services",
     description: "Book trusted professional cleaners in Cape Town. Same-day booking available for residential, commercial, deep cleaning, move-in/out, Airbnb, and office cleaning.",
     inLanguage: "en-ZA",
     isPartOf: {
-      "@id": "https://bokkie.co.za#website",
+      "@id": "https://bokkiecleaning.co.za#website",
     },
     about: {
-      "@id": "https://bokkie.co.za#organization",
+      "@id": "https://bokkiecleaning.co.za#organization",
     },
     primaryImageOfPage: {
       "@type": "ImageObject",
-      url: "https://bokkie.co.za/og-image.jpg",
+      url: "https://bokkiecleaning.co.za/og-image.jpg",
     },
     breadcrumb: {
-      "@id": "https://bokkie.co.za#breadcrumb",
+      "@id": "https://bokkiecleaning.co.za#breadcrumb",
     },
   };
 

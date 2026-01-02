@@ -10,7 +10,7 @@ export default async function ShareProfilePage() {
   }
 
   // Generate the profile link
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://bokkie.co.za";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://bokkiecleaning.co.za";
   const profileLink = `${baseUrl}/cleaners/${cleaner.cleanerId}`;
 
   return <ShareProfileClient cleaner={cleaner} profileLink={profileLink} />;

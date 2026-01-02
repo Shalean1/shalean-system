@@ -39,8 +39,8 @@ export const metadata: Metadata = {
     title: "Contact Us | Bokkie Cleaning Services Cape Town",
     description: "Get in touch with Bokkie Cleaning Services. Available 24/7. Call +27 72 416 2547 or email info@bokkiecleaning.co.za",
     images: ["https://www.bokkiecleaning.co.za/og-image.jpg"],
-    creator: "@shaloclean",
-    site: "@shaloclean",
+    creator: "@bokkiecleaning",
+    site: "@bokkiecleaning",
   },
   alternates: {
     canonical: "https://www.bokkiecleaning.co.za/contact",

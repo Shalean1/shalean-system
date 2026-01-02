@@ -416,13 +416,13 @@ INSERT INTO blog_posts (
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Top Tips for Selecting the Best Cleaning Service | Bokkie Cleaning Services</title>
   <meta name="description" content="Discover how to choose the right cleaning agency with our expert tips. Ensure reliable, efficient cleaning services tailored to your needs." />
-  <link rel="canonical" href="https://bokkie.co.za/blog/selecting-best-cleaning-service" />
+  <link rel="canonical" href="https://bokkiecleaning.co.za/blog/selecting-best-cleaning-service" />
 
   <!-- Open Graph -->
   <meta property="og:title" content="Top Tips for Selecting the Best Cleaning Service" />
   <meta property="og:description" content="Discover how to choose the right cleaning agency with our expert tips. Ensure reliable, efficient cleaning services tailored to your needs." />
   <meta property="og:type" content="article" />
-  <meta property="og:url" content="https://bokkie.co.za/blog/selecting-best-cleaning-service" />
+  <meta property="og:url" content="https://bokkiecleaning.co.za/blog/selecting-best-cleaning-service" />
   <meta property="og:image" content="/images/og-selecting-cleaning-service.jpg" />
 
   <!-- Twitter Card -->
@@ -708,7 +708,7 @@ INSERT INTO blog_posts (
   <li><strong>Hourly Cleaners:</strong> R120 – R200 per hour</li>
 </ul>
 
-<p>These are industry averages for Cape Town. At <a href="https://www.bokkie.co.za">Bokkie Cleaning Services</a>, we keep prices transparent and affordable — without compromising quality.</p>
+<p>These are industry averages for Cape Town. At <a href="https://bokkiecleaning.co.za">Bokkie Cleaning Services</a>, we keep prices transparent and affordable — without compromising quality.</p>
 
 <h2>Factors That Influence Cleaning Prices</h2>
 
@@ -773,7 +773,7 @@ INSERT INTO blog_posts (
 
 <p>Ready to get your free quote?</p>
 
-<p><a href="https://www.bokkie.co.za/book" style="font-weight:bold;">Click here to book Bokkie Cleaning Services in Cape Town</a>.</p>
+<p><a href="https://bokkiecleaning.co.za/book" style="font-weight:bold;">Click here to book Bokkie Cleaning Services in Cape Town</a>.</p>
 ',
     'Discover the real cost of cleaning services in Cape Town. Learn price ranges, what affects cleaning costs, and how to choose the best service for your budget.',
     null,
@@ -1263,7 +1263,7 @@ If you want a cleaning experience tailored to your lifestyle—and a chance to s
 <h2>Understanding Deep Cleaning</h2>
  <h3>What is Deep Cleaning?</h3>
 
-<strong><a href="https://bokkie.co.za/blog/10-essential-deep-cleaning-tips-for-every-home">Deep cleaning</a> goes beyond regular cleaning, targeting accumulated grime and dirt in hard-to-reach areas of your home or office.</strong> This cleaning process ensures a much more thorough clean than your typical weekly house cleaning, often involving specialized cleaning products and equipment.
+<strong><a href="https://bokkiecleaning.co.za/blog/10-essential-deep-cleaning-tips-for-every-home">Deep cleaning</a> goes beyond regular cleaning, targeting accumulated grime and dirt in hard-to-reach areas of your home or office.</strong> This cleaning process ensures a much more thorough clean than your typical weekly house cleaning, often involving specialized cleaning products and equipment.
 
 <h3>Benefits of a Deep Clean</h3>
 
@@ -1289,7 +1289,7 @@ Several companies offer exceptional deep cleaning services in Cape Town, includi
 <h2>Your Ultimate Guide to Deep Cleaning</h2>
 <h3> Creating a Comprehensive Cleaning Checklist</h3>
 
-Creating a checklist is an essential step in any <strong>guide to deep cleaning</strong>, especially when tackling a <strong>home or office</strong> in a place like <strong><a href="https://bokkie.co.za/location/cape-town">Cape Town</a></strong>. It helps ensure a <strong>thorough clean</strong>, covering all areas and preventing you from overlooking crucial tasks. This <strong>cleaning process</strong> should include everything from dusting to scrubbing, creating a systematic approach for your <strong>deep clean</strong>.
+Creating a checklist is an essential step in any <strong>guide to deep cleaning</strong>, especially when tackling a <strong>home or office</strong> in a place like <strong><a href="https://bokkiecleaning.co.za/location/cape-town">Cape Town</a></strong>. It helps ensure a <strong>thorough clean</strong>, covering all areas and preventing you from overlooking crucial tasks. This <strong>cleaning process</strong> should include everything from dusting to scrubbing, creating a systematic approach for your <strong>deep clean</strong>.
 
 <h3>Essential Tools and Supplies for Deep Cleaning</h3>
 

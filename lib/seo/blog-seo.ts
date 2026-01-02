@@ -96,8 +96,8 @@ export function generateBlogSEOMetadata(
       title: finalTitle,
       description: finalDescription,
       images: [ogImageUrl],
-      creator: '@shaloclean',
-      site: '@shaloclean',
+      creator: '@bokkiecleaning',
+      site: '@bokkiecleaning',
     },
     other: {
       'article:published_time': publishedTime || '',
