@@ -36,10 +36,17 @@ export const capeTownAreas = [
   "Simon's Town",
 ];
 
+export function getLocationSlug(areaName: string): string {
+  return areaName
+    .toLowerCase()
+    .replace(/&/g, "") // Remove ampersands (e.g., "V&A" -> "va")
+    .replace(/\s+/g, "-");
+}
+
 export function formatLocationName(slug: string): string {
-  // Find the original area name
+  // Find the original area name using the same slug generation logic
   const originalArea = capeTownAreas.find(
-    (area) => area.toLowerCase().replace(/\s+/g, "-") === slug
+    (area) => getLocationSlug(area) === slug
   );
   
   if (originalArea) {
@@ -51,14 +58,10 @@ export function formatLocationName(slug: string): string {
     .split("-")
     .map((word) => {
       // Handle special cases
-      if (word === "v&a") return "V&A";
+      if (word === "va") return "V&A"; // Handle "va" as it comes from "V&A" after ampersand removal
       if (word === "devil's") return "Devil's";
       return word.charAt(0).toUpperCase() + word.slice(1);
     })
     .join(" ");
-}
-
-export function getLocationSlug(areaName: string): string {
-  return areaName.toLowerCase().replace(/\s+/g, "-");
 }
 
