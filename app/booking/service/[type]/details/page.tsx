@@ -26,7 +26,7 @@ import DatePicker from "@/components/booking/DatePicker";
 import { BookingFormData, ServiceType, FrequencyType, CleanerPreference } from "@/lib/types/booking";
 import { calculatePrice, formatPrice, PricingConfig } from "@/lib/pricing";
 import { getPricingConfig } from "@/app/actions/pricing";
-import { getAdditionalServices, getTimeSlots } from "@/app/actions/booking-data";
+import { getAdditionalServices, getTimeSlots, getServiceTypePricing } from "@/app/actions/booking-data";
 import { FALLBACK_EXTRAS, FALLBACK_TIME_SLOTS } from "@/lib/supabase/booking-data-fallbacks";
 
 // Icon mapping for additional services
@@ -54,8 +54,6 @@ const DEEP_SERVICES_ONLY = [
   'exterior-windows',
 ];
 
-const services: ServiceType[] = ["standard", "deep", "move-in-out", "airbnb", "office", "holiday", "carpet-cleaning"];
-
 const STORAGE_KEY = "bokkie_booking_data";
 
 export default function ServiceDetailsPage() {
@@ -66,19 +64,35 @@ export default function ServiceDetailsPage() {
     ? params.type[0] 
     : (params?.type as string | undefined) || 'standard';
 
+  // Fetch services from database - declare state before useMemo
+  const [availableServices, setAvailableServices] = useState<Array<{ service_type: ServiceType; service_name: string }>>([]);
+
   // Map URL param to service type - memoized to ensure stable reference
   const urlServiceType = useMemo((): ServiceType => {
-    const mapping: Record<string, ServiceType> = {
+    // Build mapping from available services if loaded, otherwise use fallback
+    if (availableServices.length > 0) {
+      const mapping: Record<string, ServiceType> = {};
+      availableServices.forEach(svc => {
+        mapping[svc.service_type] = svc.service_type;
+        // Handle URL slugs (e.g., "move-in-out" vs "move-in-out")
+        const slug = svc.service_type.replace(/_/g, '-');
+        mapping[slug] = svc.service_type;
+      });
+      return mapping[serviceTypeFromUrl] || "standard";
+    }
+    
+    // Fallback mapping while services are loading
+    const fallbackMapping: Record<string, ServiceType> = {
       standard: "standard",
       deep: "deep",
       "move-in-out": "move-in-out",
       airbnb: "airbnb",
       office: "office",
-      holiday: "holiday",
+      express: "express",
       "carpet-cleaning": "carpet-cleaning",
     };
-    return mapping[serviceTypeFromUrl] || "standard";
-  }, [serviceTypeFromUrl]);
+    return fallbackMapping[serviceTypeFromUrl] || "standard";
+  }, [serviceTypeFromUrl, availableServices]);
 
   // Map service type to URL slug
   const getServiceSlug = (service: ServiceType): string => {
@@ -126,11 +140,49 @@ export default function ServiceDetailsPage() {
         setIsLoadingData(true);
         
         // Fetch all data in parallel
-        const [additionalServicesData, timeSlotsData, pricing] = await Promise.all([
+        const [additionalServicesData, timeSlotsData, pricing, servicesData] = await Promise.all([
           getAdditionalServices(),
           getTimeSlots(),
           getPricingConfig(),
+          getServiceTypePricing(),
         ]);
+        
+        // Set available services
+        if (servicesData.length > 0) {
+          // Debug: Log all services from database
+          console.log('[ServiceDetailsPage] All services from database:', servicesData.map(s => ({ 
+            service_type: s.service_type, 
+            service_name: s.service_name, 
+            is_active: s.is_active,
+            display_order: s.display_order 
+          })));
+          
+          // Valid service types from ServiceType union
+          const validServiceTypes: ServiceType[] = ["standard", "deep", "move-in-out", "airbnb", "office", "express", "carpet-cleaning"];
+          
+          const mappedServices = servicesData
+            .filter(svc => {
+              const isValid = svc.is_active && validServiceTypes.includes(svc.service_type as ServiceType);
+              if (!isValid) {
+                console.log(`[ServiceDetailsPage] Filtered out service: ${svc.service_type} (is_active: ${svc.is_active}, valid: ${validServiceTypes.includes(svc.service_type as ServiceType)})`);
+              }
+              return isValid;
+            })
+            .map(svc => ({
+              service_type: svc.service_type as ServiceType,
+              service_name: svc.service_name,
+            }))
+            .sort((a, b) => {
+              const orderA = servicesData.find(s => s.service_type === a.service_type)?.display_order || 999;
+              const orderB = servicesData.find(s => s.service_type === b.service_type)?.display_order || 999;
+              return orderA - orderB;
+            });
+          
+          console.log('[ServiceDetailsPage] Mapped services after filtering:', mappedServices);
+          setAvailableServices(mappedServices);
+        } else {
+          console.warn('[ServiceDetailsPage] No services data received from database');
+        }
         
         // Set additional services/extras
         if (additionalServicesData.length > 0) {
@@ -159,8 +211,8 @@ export default function ServiceDetailsPage() {
               if (currentServiceType === 'standard' || currentServiceType === 'airbnb') {
                 return !DEEP_SERVICES_ONLY.includes(service.id);
               }
-              // For other service types (office, holiday, carpet-cleaning): show carpet-cleaning and standard extras
-              if (currentServiceType === 'office' || currentServiceType === 'holiday' || currentServiceType === 'carpet-cleaning') {
+              // For other service types (office, express, carpet-cleaning): show carpet-cleaning and standard extras
+              if (currentServiceType === 'office' || currentServiceType === 'express' || currentServiceType === 'carpet-cleaning') {
                 return !DEEP_SERVICES_ONLY.includes(service.id);
               }
               // Default: don't show extras
@@ -266,8 +318,8 @@ export default function ServiceDetailsPage() {
           if (formData.service === 'standard' || formData.service === 'airbnb') {
             return !DEEP_SERVICES_ONLY.includes(extra.id);
           }
-          // For other service types (office, holiday, carpet-cleaning): allow non-deep-only services
-          if (formData.service === 'office' || formData.service === 'holiday' || formData.service === 'carpet-cleaning') {
+          // For other service types (office, express, carpet-cleaning): allow non-deep-only services
+          if (formData.service === 'office' || formData.service === 'express' || formData.service === 'carpet-cleaning') {
             return !DEEP_SERVICES_ONLY.includes(extra.id);
           }
           // Default: no extras allowed
@@ -294,8 +346,8 @@ export default function ServiceDetailsPage() {
           if (formData.service === 'standard' || formData.service === 'airbnb') {
             return !DEEP_SERVICES_ONLY.includes(service.id);
           }
-          // For other service types (office, holiday, carpet-cleaning): show carpet-cleaning and standard extras
-          if (formData.service === 'office' || formData.service === 'holiday' || formData.service === 'carpet-cleaning') {
+          // For other service types (office, express, carpet-cleaning): show carpet-cleaning and standard extras
+          if (formData.service === 'office' || formData.service === 'express' || formData.service === 'carpet-cleaning') {
             return !DEEP_SERVICES_ONLY.includes(service.id);
           }
           // Default: don't show extras
@@ -455,14 +507,22 @@ export default function ServiceDetailsPage() {
             <section className="bg-white border border-gray-200 rounded-xl p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-6">Choose your cleaning service</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {services.map((service) => (
-                  <ServiceCard
-                    key={service}
-                    service={service}
-                    isSelected={formData.service === service}
-                    onClick={() => handleServiceSelect(service)}
-                  />
-                ))}
+                {availableServices.length > 0 ? (
+                  availableServices.map((svc) => (
+                    <ServiceCard
+                      key={svc.service_type}
+                      service={svc.service_type}
+                      serviceName={svc.service_name}
+                      isSelected={formData.service === svc.service_type}
+                      onClick={() => handleServiceSelect(svc.service_type)}
+                    />
+                  ))
+                ) : (
+                  // Fallback while loading
+                  <div className="col-span-full text-center text-gray-500 py-4">
+                    Loading services...
+                  </div>
+                )}
               </div>
             </section>
 

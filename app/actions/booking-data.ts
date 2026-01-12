@@ -10,6 +10,7 @@ import {
   getTeamMembers as getTeamMembersServer,
   checkTeamAvailability as checkTeamAvailabilityServer,
   getSystemSetting as getSystemSettingServer,
+  getServiceTypePricing as getServiceTypePricingServer,
   TimeSlot,
   AdditionalService,
   ServiceLocation,
@@ -17,6 +18,7 @@ import {
   FrequencyOption,
   Team,
   TeamMember,
+  ServiceTypePricing,
 } from "@/lib/supabase/booking-data";
 
 /**
@@ -62,5 +64,9 @@ export async function checkTeamAvailability(teamId: string, date: string): Promi
 
 export async function getSystemSetting(key: string): Promise<string | null> {
   return await getSystemSettingServer(key);
+}
+
+export async function getServiceTypePricing(): Promise<ServiceTypePricing[]> {
+  return await getServiceTypePricingServer();
 }
 

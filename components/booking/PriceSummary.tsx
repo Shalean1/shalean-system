@@ -5,6 +5,7 @@ import { PriceBreakdown } from "@/lib/types/booking";
 import { formatPrice, getServiceName, getFrequencyName } from "@/lib/pricing";
 import { ServiceType, FrequencyType, CleanerPreference } from "@/lib/types/booking";
 import { ChevronUp, X } from "lucide-react";
+import { calculateRecurringDates } from "@/lib/utils/recurring-bookings";
 
 interface Cleaner {
   id: CleanerPreference;
@@ -89,6 +90,21 @@ export default function PriceSummary({
   const selectedCleanerName = getSelectedCleanerName();
   const isCarpetCleaning = service === "carpet-cleaning";
   const isOffice = service === "office";
+
+  // Calculate monthly total for recurring bookings
+  const isRecurring = frequency !== "one-time";
+  let monthlyTotal = priceBreakdown.total;
+  let numberOfBookings = 1;
+  
+  if (isRecurring && scheduledDate) {
+    const recurringDates = calculateRecurringDates(
+      frequency,
+      scheduledDate,
+      1 // Only current month
+    );
+    numberOfBookings = recurringDates.length;
+    monthlyTotal = priceBreakdown.total * numberOfBookings;
+  }
 
   // Render booking details section
   const renderBookingDetails = () => (
@@ -314,11 +330,28 @@ export default function PriceSummary({
           <h2 className="text-xl font-bold text-gray-900 mb-6">Booking Summary</h2>
           {renderBookingDetails()}
           {renderPricingBreakdown()}
+          {isRecurring && numberOfBookings > 1 && (
+            <div className="mb-2 pt-2 border-t border-gray-200">
+              <div className="flex justify-between text-sm text-gray-600 mb-1">
+                <span>Per booking ({numberOfBookings} bookings):</span>
+                <span className="font-medium">{isMounted ? formatPrice(priceBreakdown.total) : `R ${priceBreakdown.total.toFixed(2)}`}</span>
+              </div>
+            </div>
+          )}
           <div className="flex justify-between pt-2 border-t-2 border-gray-300 mt-2">
-            <span className="text-lg font-bold text-gray-900">Total</span>
-            <span className="text-2xl font-bold text-blue-600" suppressHydrationWarning>
-              {isMounted ? formatPrice(priceBreakdown.total) : `R ${priceBreakdown.total.toFixed(2)}`}
+            <span className="text-lg font-bold text-gray-900">
+              {isRecurring && numberOfBookings > 1 ? "Monthly Total" : "Total"}
             </span>
+            <div className="text-right">
+              <span className="text-2xl font-bold text-blue-600" suppressHydrationWarning>
+                {isMounted ? formatPrice(monthlyTotal) : `R ${monthlyTotal.toFixed(2)}`}
+              </span>
+              {isRecurring && numberOfBookings > 1 && (
+                <p className="text-xs text-gray-500 mt-1">
+                  {numberOfBookings} bookings × {isMounted ? formatPrice(priceBreakdown.total) : `R ${priceBreakdown.total.toFixed(2)}`}
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
@@ -328,11 +361,20 @@ export default function PriceSummary({
             onClick={() => setIsSheetOpen(true)}
             className="w-full flex items-center justify-between py-4"
           >
-            <span className="text-lg font-bold text-gray-900">Total</span>
+            <span className="text-lg font-bold text-gray-900">
+              {isRecurring && numberOfBookings > 1 ? "Monthly Total" : "Total"}
+            </span>
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-blue-600" suppressHydrationWarning>
-                {isMounted ? formatPrice(priceBreakdown.total) : `R ${priceBreakdown.total.toFixed(2)}`}
-              </span>
+              <div className="text-right">
+                <span className="text-2xl font-bold text-blue-600" suppressHydrationWarning>
+                  {isMounted ? formatPrice(monthlyTotal) : `R ${monthlyTotal.toFixed(2)}`}
+                </span>
+                {isRecurring && numberOfBookings > 1 && (
+                  <p className="text-xs text-gray-500">
+                    {numberOfBookings} bookings
+                  </p>
+                )}
+              </div>
               <ChevronUp className="w-5 h-5 text-gray-600" />
             </div>
           </button>
@@ -362,11 +404,28 @@ export default function PriceSummary({
             <div className="px-6 py-4">
               {renderBookingDetails()}
               {renderPricingBreakdown()}
+              {isRecurring && numberOfBookings > 1 && (
+                <div className="mb-2 pt-2 border-t border-gray-200">
+                  <div className="flex justify-between text-sm text-gray-600 mb-1">
+                    <span>Per booking ({numberOfBookings} bookings):</span>
+                    <span className="font-medium">{isMounted ? formatPrice(priceBreakdown.total) : `R ${priceBreakdown.total.toFixed(2)}`}</span>
+                  </div>
+                </div>
+              )}
               <div className="flex justify-between pt-2 border-t-2 border-gray-300 mt-2">
-                <span className="text-lg font-bold text-gray-900">Total</span>
-                <span className="text-2xl font-bold text-blue-600" suppressHydrationWarning>
-                  {isMounted ? formatPrice(priceBreakdown.total) : `R ${priceBreakdown.total.toFixed(2)}`}
+                <span className="text-lg font-bold text-gray-900">
+                  {isRecurring && numberOfBookings > 1 ? "Monthly Total" : "Total"}
                 </span>
+                <div className="text-right">
+                  <span className="text-2xl font-bold text-blue-600" suppressHydrationWarning>
+                    {isMounted ? formatPrice(monthlyTotal) : `R ${monthlyTotal.toFixed(2)}`}
+                  </span>
+                  {isRecurring && numberOfBookings > 1 && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {numberOfBookings} bookings × {isMounted ? formatPrice(priceBreakdown.total) : `R ${priceBreakdown.total.toFixed(2)}`}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           </div>

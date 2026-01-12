@@ -281,7 +281,25 @@ export async function submitBooking(
     const isRecurring = data.frequency !== "one-time";
     const recurringGroupId = isRecurring ? generateRecurringGroupId() : undefined;
 
-    // Create booking object
+    // For recurring bookings, calculate all dates in the current month
+    let allBookingDates: string[] = [];
+    if (isRecurring && data.scheduledDate) {
+      allBookingDates = calculateRecurringDates(data.frequency, data.scheduledDate, 1);
+      // Include the first booking date if not already in the list
+      if (!allBookingDates.includes(data.scheduledDate)) {
+        allBookingDates.unshift(data.scheduledDate);
+      }
+    } else if (data.scheduledDate) {
+      // For one-time bookings, just use the scheduled date
+      allBookingDates = [data.scheduledDate];
+    }
+
+    // For recurring bookings paid upfront, all bookings in the month should be marked as paid
+    const shouldMarkAllAsPaid = isRecurring && paymentStatus === "completed";
+    const finalPaymentStatus = shouldMarkAllAsPaid ? "completed" as const : paymentStatus;
+    const finalStatus = shouldMarkAllAsPaid ? "confirmed" as const : (paymentStatus === "completed" ? "confirmed" : "pending");
+
+    // Create first booking object
     const booking: Booking = {
       ...data,
       cleanerPreference: normalizedPreference,
@@ -289,9 +307,9 @@ export async function submitBooking(
       bookingReference,
       createdAt: new Date().toISOString(),
       totalAmount: priceBreakdown.total,
-      paymentStatus,
+      paymentStatus: finalPaymentStatus,
       paymentReference: paymentMethod === "credits" ? `credits-${bookingReference}` : paymentReference,
-      status: paymentStatus === "completed" ? "confirmed" : "pending",
+      status: finalStatus,
       // Price breakdown fields
       subtotal: priceBreakdown.subtotal,
       frequencyDiscount: priceBreakdown.frequencyDiscount,
@@ -309,10 +327,11 @@ export async function submitBooking(
     // Save first booking
     await saveBooking(booking);
 
-    // Create recurring bookings if applicable (only 1 month ahead now)
-    if (isRecurring && data.scheduledDate) {
+    // Create recurring bookings if applicable (only for current month)
+    if (isRecurring && data.scheduledDate && allBookingDates.length > 1) {
       try {
-        const recurringDates = calculateRecurringDates(data.frequency, data.scheduledDate, 1);
+        // Filter out the first booking date since we already created it
+        const recurringDates = allBookingDates.slice(1);
         
         // Create recurring bookings for each date
         const recurringBookings: Booking[] = recurringDates.map((date, index) => {
@@ -327,16 +346,17 @@ export async function submitBooking(
             scheduledDate: date, // Use calculated recurring date
             createdAt: new Date().toISOString(),
             totalAmount: priceBreakdown.total,
-            paymentStatus: "pending" as const, // Not charged upfront
-            status: "pending" as const, // Not confirmed yet
+            paymentStatus: finalPaymentStatus, // Mark as paid if payment completed
+            paymentReference: paymentMethod === "credits" ? `credits-${bookingReference}` : paymentReference, // Same payment reference
+            status: finalStatus, // Mark as confirmed if payment completed
             // Price breakdown fields (same as first booking)
             subtotal: priceBreakdown.subtotal,
             frequencyDiscount: priceBreakdown.frequencyDiscount,
             discountCodeDiscount: priceBreakdown.discountCodeDiscount,
             serviceFee: priceBreakdown.serviceFee,
-            // Cleaner earnings fields (will be calculated when booking is confirmed)
-            cleanerEarnings: undefined,
-            cleanerEarningsPercentage: undefined,
+            // Cleaner earnings fields (same as first booking if paid)
+            cleanerEarnings: shouldMarkAllAsPaid ? cleanerEarnings : undefined,
+            cleanerEarningsPercentage: shouldMarkAllAsPaid ? cleanerEarningsPercentage : undefined,
             // Recurring booking fields
             recurringGroupId,
             recurringSequence: index + 1, // 1, 2, 3, etc.
@@ -356,7 +376,7 @@ export async function submitBooking(
           }
         }
 
-        console.log(`Created ${recurringBookings.length} recurring bookings for group ${recurringGroupId}`);
+        console.log(`Created ${recurringBookings.length} recurring bookings for group ${recurringGroupId} (all marked as ${finalPaymentStatus})`);
       } catch (error) {
         // Log error but don't fail the main booking
         console.error("Failed to create recurring bookings (non-critical):", error);

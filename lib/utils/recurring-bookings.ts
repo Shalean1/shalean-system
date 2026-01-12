@@ -39,9 +39,24 @@ export function getRecurringBookingCount(
 }
 
 /**
+ * Get the last day of the month for a given date
+ */
+function getLastDayOfMonth(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+}
+
+/**
+ * Check if a date is within the same calendar month as the start date
+ */
+function isInSameMonth(date: Date, startDate: Date): boolean {
+  return date.getFullYear() === startDate.getFullYear() && 
+         date.getMonth() === startDate.getMonth();
+}
+
+/**
  * Calculate all recurring dates for a given frequency starting from a start date
  * Returns an array of date strings in YYYY-MM-DD format
- * Now defaults to 1 month only (to be auto-generated monthly)
+ * Only generates dates within the calendar month containing the start date
  */
 export function calculateRecurringDates(
   frequency: FrequencyType,
@@ -61,41 +76,55 @@ export function calculateRecurringDates(
     return [];
   }
 
-  const count = getRecurringBookingCount(frequency, months);
+  // Get the last day of the month containing the start date
+  const lastDayOfMonth = getLastDayOfMonth(start);
+  const startYear = start.getFullYear();
+  const startMonth = start.getMonth();
 
   switch (frequency) {
     case "weekly": {
-      // Weekly: add 7 days for each occurrence (1 month = ~4 bookings)
-      for (let i = 0; i < count; i++) {
+      // Weekly: add 7 days for each occurrence until we exceed the current month
+      let i = 0;
+      while (true) {
         const date = new Date(start);
         date.setDate(date.getDate() + (i * 7));
+        
+        // Stop if we've moved to the next month
+        if (!isInSameMonth(date, start)) {
+          break;
+        }
+        
         dates.push(formatDate(date));
+        i++;
+        
+        // Safety check to prevent infinite loops
+        if (i > 10) break;
       }
       break;
     }
     case "bi-weekly": {
-      // Bi-weekly: add 14 days for each occurrence (1 month = ~2 bookings)
-      for (let i = 0; i < count; i++) {
+      // Bi-weekly: add 14 days for each occurrence until we exceed the current month
+      let i = 0;
+      while (true) {
         const date = new Date(start);
         date.setDate(date.getDate() + (i * 14));
+        
+        // Stop if we've moved to the next month
+        if (!isInSameMonth(date, start)) {
+          break;
+        }
+        
         dates.push(formatDate(date));
+        i++;
+        
+        // Safety check to prevent infinite loops
+        if (i > 10) break;
       }
       break;
     }
     case "monthly": {
-      // Monthly: same day of month (1 month = 1 booking)
-      for (let i = 0; i < count; i++) {
-        const date = new Date(start);
-        date.setMonth(date.getMonth() + i);
-        
-        // Handle edge case: if start date is 31st and next month has fewer days
-        // Adjust to last day of month
-        const originalDay = start.getDate();
-        const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-        date.setDate(Math.min(originalDay, lastDayOfMonth));
-        
-        dates.push(formatDate(date));
-      }
+      // Monthly: only the start date (already in current month)
+      dates.push(formatDate(start));
       break;
     }
   }

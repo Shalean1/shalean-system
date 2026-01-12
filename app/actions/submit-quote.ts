@@ -146,9 +146,15 @@ export async function submitQuote(
 
     console.log("Quote saved to database successfully:", insertData.id);
 
-    // Send notification email to business
-    await sendQuoteEmail(data);
-    console.log("Business notification email sent successfully");
+    // Send notification email to business (don't fail if email fails)
+    try {
+      await sendQuoteEmail(data);
+      console.log("Business notification email sent successfully");
+    } catch (adminEmailError) {
+      // Log error but don't fail the entire submission if admin email fails
+      console.error("Failed to send admin notification email (non-critical):", adminEmailError);
+      // Still return success since the quote was saved
+    }
 
     // Send confirmation email to customer
     try {
@@ -157,7 +163,7 @@ export async function submitQuote(
     } catch (customerEmailError) {
       // Log error but don't fail the entire submission if customer email fails
       console.error("Failed to send customer confirmation email (non-critical):", customerEmailError);
-      // Still return success since the business was notified
+      // Still return success since the quote was saved
     }
 
     return {

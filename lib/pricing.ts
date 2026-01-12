@@ -29,7 +29,7 @@ export const FALLBACK_PRICING_CONFIG: PricingConfig = {
     "move-in-out": 500,
     airbnb: 350,
     office: 300,
-    holiday: 450,
+    express: 450,
     "carpet-cleaning": 350,
   },
   roomPricing: {
@@ -38,7 +38,7 @@ export const FALLBACK_PRICING_CONFIG: PricingConfig = {
     "move-in-out": { bedroom: 160, bathroom: 220 },
     airbnb: { bedroom: 18, bathroom: 26 },
     office: { bedroom: 30, bathroom: 40 },
-    holiday: { bedroom: 30, bathroom: 40 },
+    express: { bedroom: 30, bathroom: 40 },
     "carpet-cleaning": { bedroom: 0, bathroom: 0 },
   },
   extrasPricing: {
@@ -196,7 +196,7 @@ export function getServiceName(service: ServiceType): string {
     "move-in-out": "Move In / Out",
     airbnb: "Airbnb Cleaning",
     office: "Office Cleaning",
-    holiday: "Holiday Cleaning",
+    express: "Express Cleaning",
     "carpet-cleaning": "Carpet Cleaning",
   };
   return names[service];

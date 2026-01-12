@@ -10,6 +10,7 @@ import { getPricingConfig } from "@/app/actions/pricing";
 import { useAuth } from "@/lib/hooks/useSupabase";
 import { submitBooking } from "@/app/actions/submit-booking";
 import { validateDiscountCode } from "@/app/actions/discount";
+import { calculateRecurringDates } from "@/lib/utils/recurring-bookings";
 
 export default function ConfirmationPage() {
   const router = useRouter();
@@ -461,6 +462,31 @@ export default function ConfirmationPage() {
     ? `${booking.streetAddress}${booking.aptUnit ? `, ${booking.aptUnit}` : ""}, ${booking.suburb || ""}, ${booking.city || ""}`
     : "Not specified";
 
+  // Calculate monthly total for recurring bookings
+  const isRecurring = booking.frequency && booking.frequency !== "one-time";
+  let monthlyTotal = booking.totalAmount || 0;
+  let numberOfBookings = 1;
+  let singleBookingPrice = booking.totalAmount || 0;
+  
+  if (isRecurring && booking.scheduledDate) {
+    const recurringDates = calculateRecurringDates(
+      booking.frequency as FrequencyType,
+      booking.scheduledDate,
+      1 // Only current month
+    );
+    numberOfBookings = recurringDates.length;
+    
+    // Use priceBreakdown.total if available, otherwise use booking.totalAmount
+    if (priceBreakdown) {
+      singleBookingPrice = priceBreakdown.total;
+      monthlyTotal = priceBreakdown.total * numberOfBookings;
+    } else if (booking.totalAmount) {
+      // Fallback: use booking.totalAmount as single booking price
+      singleBookingPrice = booking.totalAmount;
+      monthlyTotal = booking.totalAmount * numberOfBookings;
+    }
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -571,10 +597,17 @@ export default function ConfirmationPage() {
               </div>
 
               <div className="pt-4 border-t border-gray-200">
-                <p className="text-sm text-gray-600 mb-1">Total Amount Paid</p>
-                <p className="text-2xl font-bold text-blue-600">
-                  {booking.totalAmount ? formatPrice(booking.totalAmount) : "N/A"}
+                <p className="text-sm text-gray-600 mb-1">
+                  {isRecurring && numberOfBookings > 1 ? "Total Amount Paid (Monthly)" : "Total Amount Paid"}
                 </p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {monthlyTotal > 0 ? formatPrice(monthlyTotal) : booking.totalAmount ? formatPrice(booking.totalAmount) : "N/A"}
+                </p>
+                {isRecurring && numberOfBookings > 1 && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    {numberOfBookings} bookings × {formatPrice(singleBookingPrice)} per booking
+                  </p>
+                )}
                 <p className="text-xs text-blue-600 mt-1">✓ Payment Confirmed</p>
                 
                 {/* Discount Information */}

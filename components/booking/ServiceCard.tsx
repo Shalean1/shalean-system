@@ -5,6 +5,7 @@ import { Home, Star, Package, Calendar, Briefcase, Gift, Layers } from "lucide-r
 
 interface ServiceCardProps {
   service: ServiceType;
+  serviceName?: string; // Optional: if provided, use this instead of the mapped name
   isSelected: boolean;
   onClick: () => void;
 }
@@ -15,7 +16,7 @@ const serviceIcons: Record<ServiceType, typeof Home> = {
   "move-in-out": Package,
   airbnb: Calendar,
   office: Briefcase,
-  holiday: Gift,
+  express: Gift, // Using Gift icon for Express Cleaning
   "carpet-cleaning": Layers,
 };
 
@@ -25,12 +26,13 @@ const serviceNames: Record<ServiceType, string> = {
   "move-in-out": "Move In / Out",
   airbnb: "Airbnb Cleaning",
   office: "Office Cleaning",
-  holiday: "Holiday Cleaning",
+  express: "Express Cleaning",
   "carpet-cleaning": "Carpet Cleaning",
 };
 
-export default function ServiceCard({ service, isSelected, onClick }: ServiceCardProps) {
-  const Icon = serviceIcons[service];
+export default function ServiceCard({ service, serviceName, isSelected, onClick }: ServiceCardProps) {
+  const Icon = serviceIcons[service] || Home; // Fallback to Home icon if service type not found
+  const displayName = serviceName || serviceNames[service] || service;
 
   return (
     <button
@@ -63,7 +65,7 @@ export default function ServiceCard({ service, isSelected, onClick }: ServiceCar
       )}
       <Icon className={`w-8 h-8 mx-auto mb-2 ${isSelected ? "text-blue-500" : "text-gray-400"}`} />
       <p className={`text-sm font-medium ${isSelected ? "text-blue-600" : "text-gray-700"}`}>
-        {serviceNames[service]}
+        {displayName}
       </p>
     </button>
   );

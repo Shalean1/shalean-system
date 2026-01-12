@@ -40,9 +40,10 @@ import { calculatePrice, getServiceName, formatPrice, getFrequencyName, PricingC
 import { getPricingConfig } from "@/app/actions/pricing";
 import { initializePayment } from "@/app/actions/payment";
 import { submitBooking } from "@/app/actions/submit-booking";
+import { calculateRecurringDates } from "@/lib/utils/recurring-bookings";
 import { getUserCreditBalanceAction } from "@/app/actions/credits";
 import { initializePaystack } from "@/lib/paystack";
-import { getAdditionalServices, getTimeSlots, getCleaners, getTeams } from "@/app/actions/booking-data";
+import { getAdditionalServices, getTimeSlots, getCleaners, getTeams, getServiceTypePricing } from "@/app/actions/booking-data";
 import { FALLBACK_EXTRAS, FALLBACK_TIME_SLOTS, FALLBACK_CLEANERS, FALLBACK_TEAMS } from "@/lib/supabase/booking-data-fallbacks";
 import { useUser } from "@/lib/hooks/useSupabase";
 import { getUserProfileClient } from "@/lib/storage/profile-supabase-client";
@@ -72,7 +73,6 @@ const DEEP_SERVICES_ONLY = [
   'exterior-windows',
 ];
 
-const services: ServiceType[] = ["standard", "deep", "move-in-out", "airbnb", "office", "holiday", "carpet-cleaning"];
 const frequencies: FrequencyType[] = ["one-time", "weekly", "bi-weekly", "monthly"];
 
 const STORAGE_KEY = "bokkie_booking_data";
@@ -132,6 +132,7 @@ export default function ReviewPage() {
   const [tempFormData, setTempFormData] = useState<Partial<BookingFormData>>(getInitialFormData());
   const [isMounted, setIsMounted] = useState(false);
   const [userProfileLoaded, setUserProfileLoaded] = useState(false);
+  const [availableServices, setAvailableServices] = useState<Array<{ service_type: ServiceType; service_name: string }>>([]);
 
   // Function to populate form with user profile data
   const populateUserProfileData = (profile: { firstName: string | null; lastName: string | null; email: string; phone: string | null }, currentData: Partial<BookingFormData>) => {
@@ -297,8 +298,28 @@ export default function ReviewPage() {
         }
       }
       
-      // Fetch pricing config, extras, time slots, and cleaners/teams
+      // Fetch pricing config, extras, time slots, cleaners/teams, and services
       try {
+        // Fetch services first
+        const servicesData = await getServiceTypePricing();
+        if (servicesData.length > 0) {
+          // Valid service types from ServiceType union
+          const validServiceTypes: ServiceType[] = ["standard", "deep", "move-in-out", "airbnb", "office", "express", "carpet-cleaning"];
+          
+          const mappedServices = servicesData
+            .filter(svc => svc.is_active && validServiceTypes.includes(svc.service_type as ServiceType))
+            .map(svc => ({
+              service_type: svc.service_type as ServiceType,
+              service_name: svc.service_name,
+            }))
+            .sort((a, b) => {
+              const orderA = servicesData.find(s => s.service_type === a.service_type)?.display_order || 999;
+              const orderB = servicesData.find(s => s.service_type === b.service_type)?.display_order || 999;
+              return orderA - orderB;
+            });
+          setAvailableServices(mappedServices);
+        }
+        
         if (isTeamService) {
           const [pricing, additionalServicesData, timeSlotsData, teamsData] = await Promise.all([
             getPricingConfig(),
@@ -379,8 +400,8 @@ export default function ReviewPage() {
                 if (DEEP_SERVICES_ONLY.includes(service.id)) {
                   return isDeepOrMoveInOut;
                 }
-                // Standard extras for standard, airbnb, office, holiday, and carpet-cleaning
-                if (isStandardOrAirbnb || currentServiceType === 'office' || currentServiceType === 'holiday' || currentServiceType === 'carpet-cleaning') {
+                // Standard extras for standard, airbnb, office, express, and carpet-cleaning
+                if (isStandardOrAirbnb || currentServiceType === 'office' || currentServiceType === 'express' || currentServiceType === 'carpet-cleaning') {
                   return !DEEP_SERVICES_ONLY.includes(service.id);
                 }
                 return false;
@@ -508,6 +529,21 @@ export default function ReviewPage() {
     discountCodeAmount
   );
 
+  // Calculate monthly total for recurring bookings
+  const isRecurring = formData.frequency && formData.frequency !== "one-time";
+  let monthlyTotal = priceBreakdown.total;
+  let numberOfBookings = 1;
+  
+  if (isRecurring && formData.scheduledDate) {
+    const recurringDates = calculateRecurringDates(
+      formData.frequency as FrequencyType,
+      formData.scheduledDate,
+      1 // Only current month
+    );
+    numberOfBookings = recurringDates.length;
+    monthlyTotal = priceBreakdown.total * numberOfBookings;
+  }
+
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
     // Use formData for validation (always validate saved data, not temp)
@@ -548,8 +584,8 @@ export default function ReviewPage() {
         tip: tipAmount > 0 ? tipAmount : undefined,
       };
 
-      // Calculate final price
-      const finalPrice = priceBreakdown.total;
+      // Calculate final price (monthly total for recurring bookings)
+      const finalPrice = monthlyTotal;
 
       // Handle credit payment
       if (paymentMethod === "credits") {
@@ -741,8 +777,8 @@ export default function ReviewPage() {
           if (DEEP_SERVICES_ONLY.includes(service.id)) {
             return isDeepOrMoveInOut;
           }
-          // Standard extras for standard, airbnb, office, holiday, and carpet-cleaning
-          if (isStandardOrAirbnb || updates.service === 'office' || updates.service === 'holiday' || updates.service === 'carpet-cleaning') {
+          // Standard extras for standard, airbnb, office, express, and carpet-cleaning
+          if (isStandardOrAirbnb || updates.service === 'office' || updates.service === 'express' || updates.service === 'carpet-cleaning') {
             return !DEEP_SERVICES_ONLY.includes(service.id);
           }
           return false;
@@ -750,7 +786,7 @@ export default function ReviewPage() {
       );
       
       // Clear extras if service doesn't support them (but keep carpet-cleaning)
-      if (!isStandardOrAirbnb && updates.service !== 'office' && updates.service !== 'holiday' && updates.service !== 'carpet-cleaning') {
+      if (!isStandardOrAirbnb && updates.service !== 'office' && updates.service !== 'express' && updates.service !== 'carpet-cleaning') {
         updated.extras = (updated.extras || []).filter((id: string) => id === 'carpet-cleaning');
       }
     }
@@ -880,14 +916,21 @@ export default function ReviewPage() {
                       Service Type
                     </label>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {services.map((service) => (
-                        <ServiceCard
-                          key={service}
-                          service={service}
-                          isSelected={(tempFormData.service || "standard") === service}
-                          onClick={() => handleTempDataChange({ service })}
-                        />
-                      ))}
+                      {availableServices.length > 0 ? (
+                        availableServices.map((svc) => (
+                          <ServiceCard
+                            key={svc.service_type}
+                            service={svc.service_type}
+                            serviceName={svc.service_name}
+                            isSelected={(tempFormData.service || "standard") === svc.service_type}
+                            onClick={() => handleTempDataChange({ service: svc.service_type })}
+                          />
+                        ))
+                      ) : (
+                        <div className="col-span-full text-center text-gray-500 py-4">
+                          Loading services...
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -1442,41 +1485,65 @@ export default function ReviewPage() {
 
               <div className="mb-6">
                 <div className="text-3xl font-bold text-blue-600 mb-2">
-                  {formatPrice(priceBreakdown.total)}
+                  {formatPrice(monthlyTotal)}
                 </div>
                 <p className="text-sm text-gray-600">All fees included</p>
+                {isRecurring && numberOfBookings > 1 && (
+                  <p className="text-sm text-gray-500 mt-1">
+                    {numberOfBookings} bookings × {formatPrice(priceBreakdown.total)} per booking
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2 mb-6 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Service & rooms:</span>
-                  <span className="font-medium text-gray-900">
-                    {formatPrice(priceBreakdown.subtotal - priceBreakdown.frequencyDiscount)}
-                  </span>
-                </div>
-                {priceBreakdown.frequencyDiscount > 0 && (
-                  <div className="flex justify-between text-blue-600">
-                    <span>Frequency Discount:</span>
-                    <span>-{formatPrice(priceBreakdown.frequencyDiscount)}</span>
-                  </div>
-                )}
-                {priceBreakdown.discountCodeDiscount > 0 && (
-                  <div className="flex justify-between text-blue-600">
-                    <span>Discount Code:</span>
-                    <span>-{formatPrice(priceBreakdown.discountCodeDiscount)}</span>
-                  </div>
-                )}
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Service fee:</span>
-                  <span className="font-medium text-gray-900">
-                    +{formatPrice(priceBreakdown.serviceFee)}
-                  </span>
-                </div>
-                {priceBreakdown.tip > 0 && (
-                  <div className="flex justify-between text-blue-600">
-                    <span>Tip:</span>
-                    <span className="font-medium">+{formatPrice(priceBreakdown.tip)}</span>
-                  </div>
+                {isRecurring && numberOfBookings > 1 ? (
+                  <>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Per booking ({numberOfBookings} bookings):</span>
+                      <span className="font-medium text-gray-900">
+                        {formatPrice(priceBreakdown.total)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between border-t pt-2 mt-2">
+                      <span className="text-gray-600 font-semibold">Monthly total:</span>
+                      <span className="font-bold text-gray-900">
+                        {formatPrice(monthlyTotal)}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Service & rooms:</span>
+                      <span className="font-medium text-gray-900">
+                        {formatPrice(priceBreakdown.subtotal - priceBreakdown.frequencyDiscount)}
+                      </span>
+                    </div>
+                    {priceBreakdown.frequencyDiscount > 0 && (
+                      <div className="flex justify-between text-blue-600">
+                        <span>Frequency Discount:</span>
+                        <span>-{formatPrice(priceBreakdown.frequencyDiscount)}</span>
+                      </div>
+                    )}
+                    {priceBreakdown.discountCodeDiscount > 0 && (
+                      <div className="flex justify-between text-blue-600">
+                        <span>Discount Code:</span>
+                        <span>-{formatPrice(priceBreakdown.discountCodeDiscount)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Service fee:</span>
+                      <span className="font-medium text-gray-900">
+                        +{formatPrice(priceBreakdown.serviceFee)}
+                      </span>
+                    </div>
+                    {priceBreakdown.tip > 0 && (
+                      <div className="flex justify-between text-blue-600">
+                        <span>Tip:</span>
+                        <span className="font-medium">+{formatPrice(priceBreakdown.tip)}</span>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
 
@@ -1590,12 +1657,12 @@ export default function ReviewPage() {
                     <button
                       type="button"
                       onClick={() => setPaymentMethod("credits")}
-                      disabled={creditBalance < priceBreakdown.total}
+                      disabled={creditBalance < monthlyTotal}
                       className={`p-4 rounded-lg border-2 transition-all ${
                         paymentMethod === "credits"
                           ? "border-blue-500 bg-blue-50"
                           : "border-gray-200 bg-white hover:border-gray-300"
-                      } ${creditBalance < priceBreakdown.total ? "opacity-50 cursor-not-allowed" : ""}`}
+                      } ${creditBalance < monthlyTotal ? "opacity-50 cursor-not-allowed" : ""}`}
                     >
                       <Coins className="w-5 h-5 mx-auto mb-2 text-gray-600" />
                       <p className="font-medium text-sm text-gray-700">BokCred</p>
@@ -1608,12 +1675,12 @@ export default function ReviewPage() {
                       )}
                     </button>
                   </div>
-                  {paymentMethod === "credits" && creditBalance < priceBreakdown.total && (
+                  {paymentMethod === "credits" && creditBalance < monthlyTotal && (
                     <p className="mt-2 text-sm text-red-600">
-                      Insufficient credits. You need R{priceBreakdown.total.toFixed(2)} but only have R{creditBalance.toFixed(2)}
+                      Insufficient credits. You need R{monthlyTotal.toFixed(2)} but only have R{creditBalance.toFixed(2)}
                     </p>
                   )}
-                  {paymentMethod === "credits" && creditBalance >= priceBreakdown.total && (
+                  {paymentMethod === "credits" && creditBalance >= monthlyTotal && (
                     <p className="mt-2 text-sm text-blue-600">
                       ✓ You have sufficient credits to pay for this booking
                     </p>
@@ -1623,7 +1690,7 @@ export default function ReviewPage() {
 
               <div className="pt-4 border-t border-gray-200">
                 <p className="text-sm text-gray-600 mb-4">
-                  Amount due today: <span className="font-bold text-gray-900">{formatPrice(priceBreakdown.total)}</span>
+                  Amount due today: <span className="font-bold text-gray-900">{formatPrice(monthlyTotal)}</span>
                 </p>
                 {paymentMethod === "card" && (
                   <p className="text-xs text-gray-500 mb-4 flex items-center gap-1">
@@ -1654,7 +1721,7 @@ export default function ReviewPage() {
                 disabled={
                   isProcessing ||
                   editingSection !== null ||
-                  (paymentMethod === "credits" && (!user || creditBalance < priceBreakdown.total))
+                  (paymentMethod === "credits" && (!user || creditBalance < monthlyTotal))
                 }
                 className="px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
@@ -1666,9 +1733,9 @@ export default function ReviewPage() {
                 ) : editingSection ? (
                   "Please save changes first"
                 ) : paymentMethod === "credits" ? (
-                  `Confirm & Pay with Credits (R${priceBreakdown.total.toFixed(2)})`
+                  `Confirm & Pay with Credits (R${monthlyTotal.toFixed(2)})`
                 ) : (
-                  `Confirm & Pay ${formatPrice(priceBreakdown.total)}`
+                  `Confirm & Pay ${formatPrice(monthlyTotal)}`
                 )}
               </button>
             </div>

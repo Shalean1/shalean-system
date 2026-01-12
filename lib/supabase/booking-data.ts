@@ -861,7 +861,7 @@ export const FALLBACK_EXTRAS = [
 ];
 
 export const FALLBACK_TIME_SLOTS = [
-  "08:00", "08:30", "09:00", "09:30", "10:00", "10:30",
+  "07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30",
   "11:00", "11:30", "12:00", "12:30", "13:00", "13:30",
   "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"
 ];
@@ -892,7 +892,7 @@ export const FALLBACK_SERVICE_PRICING = {
   "move-in-out": 500,
   airbnb: 350,
   office: 300,
-  holiday: 450,
+  express: 450,
 };
 
 export const FALLBACK_ROOM_PRICING: Record<string, { bedroom: number; bathroom: number }> = {
@@ -901,7 +901,7 @@ export const FALLBACK_ROOM_PRICING: Record<string, { bedroom: number; bathroom: 
   "move-in-out": { bedroom: 160, bathroom: 220 },
   airbnb: { bedroom: 18, bathroom: 26 },
   office: { bedroom: 30, bathroom: 40 },
-  holiday: { bedroom: 30, bathroom: 40 },
+  express: { bedroom: 30, bathroom: 40 },
 };
 
 export const FALLBACK_SERVICE_CATEGORY_PRICING: Record<string, number> = {

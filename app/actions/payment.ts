@@ -4,6 +4,7 @@ import { BookingFormData } from "@/lib/types/booking";
 import { calculatePrice } from "@/lib/pricing";
 import { fetchPricingConfig } from "@/lib/pricing-server";
 import { validateDiscountCode } from "@/app/actions/discount";
+import { calculateRecurringDates } from "@/lib/utils/recurring-bookings";
 
 export interface PaymentInitResult {
   success: boolean;
@@ -93,13 +94,30 @@ export async function initializePayment(
     // Calculate final price breakdown with discount code
     const priceBreakdown = calculatePrice(bookingData, pricingConfig, discountCodeAmount);
     
+    // For recurring bookings, calculate total for all bookings in the current month
+    let totalAmount = priceBreakdown.total;
+    const isRecurring = bookingData.frequency !== "one-time";
+    
+    if (isRecurring && bookingData.scheduledDate) {
+      // Calculate all booking dates in the current month
+      const recurringDates = calculateRecurringDates(
+        bookingData.frequency,
+        bookingData.scheduledDate,
+        1 // Only current month
+      );
+      
+      // Multiply single booking price by number of bookings in the month
+      const numberOfBookings = recurringDates.length;
+      totalAmount = priceBreakdown.total * numberOfBookings;
+    }
+    
     // Generate payment reference
     const reference = `bokkie-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
     // Convert amount to cents (Paystack uses smallest currency unit)
     // ZAR amounts are multiplied by 100 to convert to cents
     // Round to ensure we have a valid integer (Paystack requirement)
-    const amountInCents = Math.round(priceBreakdown.total * 100);
+    const amountInCents = Math.round(totalAmount * 100);
 
     return {
       success: true,
