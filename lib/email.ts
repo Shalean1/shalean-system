@@ -78,6 +78,38 @@ function getFromEmail(): string {
 }
 
 /**
+ * Generate email headers for better deliverability
+ */
+function getEmailHeaders(toEmail: string, includeUnsubscribe: boolean = false): Record<string, string> {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL 
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://bokkiecleaning.co.za");
+  
+  const headers: Record<string, string> = {
+    "X-Mailer": "Bokkie Cleaning Services",
+    "Precedence": "bulk",
+    "X-Auto-Response-Suppress": "All",
+  };
+
+  // Add List-Unsubscribe header (required by many providers)
+  if (includeUnsubscribe) {
+    const unsubscribeUrl = `${baseUrl}/unsubscribe?email=${encodeURIComponent(toEmail)}`;
+    headers["List-Unsubscribe"] = `<${unsubscribeUrl}>`;
+    headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click";
+  }
+
+  return headers;
+}
+
+/**
+ * Generate unsubscribe URL for transactional emails
+ */
+function getUnsubscribeUrl(email: string): string {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL 
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://bokkiecleaning.co.za");
+  return `${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}`;
+}
+
+/**
  * Helper function to handle Resend API errors with better diagnostics
  */
 function handleResendError(error: any, context: string): Error {
@@ -173,10 +205,11 @@ function formatQuoteEmail(data: QuoteEmailData): string {
 
   return `
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>New Quote Request</title>
       </head>
       <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -216,6 +249,36 @@ function formatQuoteEmail(data: QuoteEmailData): string {
   `;
 }
 
+function formatQuoteEmailText(data: QuoteEmailData): string {
+  const serviceName = data.service ? serviceNames[data.service] || data.service : "Not specified";
+  const location = data.location === "other" 
+    ? (data.customLocation || "Not specified")
+    : data.location;
+  
+  const additionalServicesList = data.additionalServices.length > 0
+    ? data.additionalServices
+        .map(id => additionalServiceNames[id] || id)
+        .join(", ")
+    : "None";
+
+  return `New Quote Request
+
+Contact Information
+Name: ${data.firstName} ${data.lastName}
+Email: ${data.email}
+Phone: ${data.phone}
+
+Service Details
+Service: ${serviceName}
+Location: ${location}
+Bedrooms: ${data.bedrooms}
+Bathrooms: ${data.bathrooms}
+${data.additionalServices.length > 0 ? `Additional Services: ${additionalServicesList}` : ''}
+${data.note && data.note.trim() ? `\nAdditional Notes:\n${data.note}` : ''}
+
+This quote request was submitted from the Bokkie Cleaning Services website.`;
+}
+
 function formatCustomerConfirmationEmail(data: QuoteEmailData): string {
   const serviceName = data.service ? serviceNames[data.service] || data.service : "Not specified";
   const location = data.location === "other" 
@@ -228,12 +291,15 @@ function formatCustomerConfirmationEmail(data: QuoteEmailData): string {
         .join(", ")
     : "None";
 
+  const unsubscribeUrl = getUnsubscribeUrl(data.email);
+
   return `
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>Quote Request Confirmation</title>
       </head>
       <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -264,11 +330,52 @@ function formatCustomerConfirmationEmail(data: QuoteEmailData): string {
               Best regards,<br>
               <strong>The Bokkie Cleaning Services Team</strong>
             </p>
+            <p style="color: #999; font-size: 12px; margin-top: 20px;">
+              <a href="${unsubscribeUrl}" style="color: #999; text-decoration: underline;">Unsubscribe from these emails</a>
+            </p>
           </div>
         </div>
       </body>
     </html>
   `;
+}
+
+function formatCustomerConfirmationEmailText(data: QuoteEmailData): string {
+  const serviceName = data.service ? serviceNames[data.service] || data.service : "Not specified";
+  const location = data.location === "other" 
+    ? (data.customLocation || "Not specified")
+    : data.location;
+  
+  const additionalServicesList = data.additionalServices.length > 0
+    ? data.additionalServices
+        .map(id => additionalServiceNames[id] || id)
+        .join(", ")
+    : "None";
+
+  const unsubscribeUrl = getUnsubscribeUrl(data.email);
+
+  return `Thank You for Your Quote Request!
+
+Dear ${data.firstName},
+
+Thank you for requesting a quote from Bokkie Cleaning Services. We have received your request and will get back to you shortly.
+
+Your Quote Request Details
+Service: ${serviceName}
+Location: ${location}
+Bedrooms: ${data.bedrooms}
+Bathrooms: ${data.bathrooms}
+${data.additionalServices.length > 0 ? `Additional Services: ${additionalServicesList}` : ''}
+${data.note && data.note.trim() ? `Notes:\n${data.note}` : ''}
+
+Our team will review your request and contact you at ${data.email} or ${data.phone} within 24 hours.
+
+If you have any questions in the meantime, please don't hesitate to reach out to us.
+
+Best regards,
+The Bokkie Cleaning Services Team
+
+Unsubscribe: ${unsubscribeUrl}`;
 }
 
 export async function sendQuoteEmail(data: QuoteEmailData): Promise<void> {
@@ -303,6 +410,8 @@ export async function sendQuoteEmail(data: QuoteEmailData): Promise<void> {
       replyTo: data.email,
       subject: `New Quote Request from ${data.firstName} ${data.lastName}`,
       html: formatQuoteEmail(data),
+      text: formatQuoteEmailText(data),
+      headers: getEmailHeaders(toEmail, false),
     });
 
     if (result.error) {
@@ -349,6 +458,8 @@ export async function sendCustomerConfirmationEmail(data: QuoteEmailData): Promi
       to: toEmail,
       subject: `Quote Request Confirmation - Bokkie Cleaning Services`,
       html: formatCustomerConfirmationEmail(data),
+      text: formatCustomerConfirmationEmailText(data),
+      headers: getEmailHeaders(toEmail, true),
     });
 
     if (result.error) {
@@ -424,12 +535,15 @@ async function formatBookingConfirmationEmail(booking: Booking): Promise<string>
     console.error("Error calculating price breakdown in email:", error);
   }
 
+  const unsubscribeUrl = getUnsubscribeUrl(booking.email);
+
   return `
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>Booking Confirmation - ${booking.bookingReference}</title>
       </head>
       <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -517,11 +631,96 @@ async function formatBookingConfirmationEmail(booking: Booking): Promise<string>
               Best regards,<br>
               <strong>The Bokkie Cleaning Services Team</strong>
             </p>
+            <p style="color: #999; font-size: 12px; margin-top: 20px;">
+              <a href="${unsubscribeUrl}" style="color: #999; text-decoration: underline;">Unsubscribe from these emails</a>
+            </p>
           </div>
         </div>
       </body>
     </html>
   `;
+}
+
+function formatBookingConfirmationEmailText(booking: Booking, priceBreakdown: any): string {
+  const serviceName = getServiceName(booking.service);
+  const frequencyName = getFrequencyName(booking.frequency);
+  const address = `${booking.streetAddress}${booking.aptUnit ? `, ${booking.aptUnit}` : ""}, ${booking.suburb}, ${booking.city}`;
+  
+  const extrasNames: Record<string, string> = {
+    "inside-fridge": "Inside Fridge",
+    "inside-oven": "Inside Oven",
+    "inside-cabinets": "Inside Cabinets",
+    "interior-windows": "Interior Windows",
+    "interior-walls": "Interior Walls",
+    "laundry": "Laundry & Ironing",
+    "ironing": "Laundry & Ironing",
+  };
+  
+  const extrasList = booking.extras.length > 0
+    ? booking.extras.map(id => extrasNames[id] || id).join(", ")
+    : "None";
+
+  const scheduledDate = booking.scheduledDate 
+    ? new Date(booking.scheduledDate).toLocaleDateString("en-ZA", { 
+        weekday: "long", 
+        year: "numeric", 
+        month: "long", 
+        day: "numeric" 
+      })
+    : "Not scheduled";
+  
+  const scheduledTime = booking.scheduledTime || "Not specified";
+  const unsubscribeUrl = getUnsubscribeUrl(booking.email);
+
+  let discountText = "";
+  if (priceBreakdown && (priceBreakdown.frequencyDiscount > 0 || priceBreakdown.discountCodeDiscount > 0)) {
+    discountText = "\nDiscounts Applied:\n";
+    if (priceBreakdown.frequencyDiscount > 0) {
+      discountText += `${frequencyName} Discount: -${formatPrice(priceBreakdown.frequencyDiscount)}\n`;
+    }
+    if (priceBreakdown.discountCodeDiscount > 0) {
+      discountText += `Discount Code ${booking.discountCode ? `(${booking.discountCode.toUpperCase()})` : ''}: -${formatPrice(priceBreakdown.discountCodeDiscount)}\n`;
+    }
+  }
+
+  return `Booking Confirmed!
+
+Dear ${booking.firstName},
+
+Thank you for booking with Bokkie Cleaning Services! Your booking has been confirmed and payment has been received.
+
+Booking Reference: ${booking.bookingReference}
+
+Service Details
+Service: ${serviceName}
+Frequency: ${frequencyName}
+Bedrooms: ${booking.bedrooms}
+Bathrooms: ${booking.bathrooms}
+${extrasList !== "None" ? `Additional Services: ${extrasList}` : ''}
+
+Schedule
+Date: ${scheduledDate}
+Time: ${scheduledTime}
+
+Service Address
+${address}
+${booking.specialInstructions ? `\nSpecial Instructions:\n${booking.specialInstructions}` : ''}
+
+Payment Summary
+Total Amount Paid: ${formatPrice(booking.totalAmount)}
+${booking.paymentReference ? `Payment Reference: ${booking.paymentReference}\n` : ''}✓ Payment Confirmed${discountText}
+
+What's Next?
+Our team will contact you before your scheduled service date to confirm details and answer any questions.
+
+If you have any questions or need to make changes to your booking, please contact us at:
+Email: info@bokkiecleaning.co.za
+Phone: +27 72 416 2547
+
+Best regards,
+The Bokkie Cleaning Services Team
+
+Unsubscribe: ${unsubscribeUrl}`;
 }
 
 function formatBookingNotificationEmail(booking: Booking): string {
@@ -556,10 +755,11 @@ function formatBookingNotificationEmail(booking: Booking): string {
 
   return `
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>New Booking - ${booking.bookingReference}</title>
       </head>
       <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -618,6 +818,65 @@ function formatBookingNotificationEmail(booking: Booking): string {
   `;
 }
 
+function formatBookingNotificationEmailText(booking: Booking): string {
+  const serviceName = getServiceName(booking.service);
+  const frequencyName = getFrequencyName(booking.frequency);
+  const address = `${booking.streetAddress}${booking.aptUnit ? `, ${booking.aptUnit}` : ""}, ${booking.suburb}, ${booking.city}`;
+  
+  const extrasNames: Record<string, string> = {
+    "inside-fridge": "Inside Fridge",
+    "inside-oven": "Inside Oven",
+    "inside-cabinets": "Inside Cabinets",
+    "interior-windows": "Interior Windows",
+    "interior-walls": "Interior Walls",
+    "laundry": "Laundry & Ironing",
+    "ironing": "Laundry & Ironing",
+  };
+  
+  const extrasList = booking.extras.length > 0
+    ? booking.extras.map(id => extrasNames[id] || id).join(", ")
+    : "None";
+
+  const scheduledDate = booking.scheduledDate 
+    ? new Date(booking.scheduledDate).toLocaleDateString("en-ZA", { 
+        weekday: "long", 
+        year: "numeric", 
+        month: "long", 
+        day: "numeric" 
+      })
+    : "Not scheduled";
+  
+  const scheduledTime = booking.scheduledTime || "Not specified";
+
+  return `New Booking Received
+
+Booking Reference: ${booking.bookingReference}
+Total Amount: ${formatPrice(booking.totalAmount)}
+Payment Status: ${booking.paymentStatus === "completed" ? "Paid" : "Pending"}
+
+Customer Information
+Name: ${booking.firstName} ${booking.lastName}
+Email: ${booking.email}
+Phone: ${booking.phone}
+
+Service Details
+Service: ${serviceName}
+Frequency: ${frequencyName}
+Bedrooms: ${booking.bedrooms}
+Bathrooms: ${booking.bathrooms}
+${extrasList !== "None" ? `Additional Services: ${extrasList}` : ''}
+
+Schedule
+Date: ${scheduledDate}
+Time: ${scheduledTime}
+
+Service Address
+${address}
+${booking.specialInstructions ? `\nSpecial Instructions:\n${booking.specialInstructions}` : ''}
+
+Booking created: ${new Date(booking.createdAt).toLocaleString("en-ZA")}`;
+}
+
 export async function sendBookingConfirmationEmail(booking: Booking): Promise<void> {
   if (!process.env.RESEND_API_KEY) {
     throw new Error("RESEND_API_KEY is not configured");
@@ -637,12 +896,40 @@ export async function sendBookingConfirmationEmail(booking: Booking): Promise<vo
     apiKeyPrefix: process.env.RESEND_API_KEY?.substring(0, 10),
   });
 
+  // Calculate price breakdown for both HTML and text versions
+  let priceBreakdown = null;
+  try {
+    const pricingConfig = await fetchPricingConfig();
+    const initialPriceBreakdown = calculatePrice(booking, pricingConfig, 0);
+    
+    let discountCodeAmount = 0;
+    if (booking.discountCode && booking.discountCode.trim()) {
+      try {
+        const discountResult = await validateDiscountCode(
+          booking.discountCode.trim(),
+          initialPriceBreakdown.subtotal - initialPriceBreakdown.frequencyDiscount
+        );
+        if (discountResult.success) {
+          discountCodeAmount = discountResult.discountAmount;
+        }
+      } catch (error) {
+        console.error("Error validating discount code in email:", error);
+      }
+    }
+    
+    priceBreakdown = calculatePrice(booking, pricingConfig, discountCodeAmount);
+  } catch (error) {
+    console.error("Error calculating price breakdown in email:", error);
+  }
+
   try {
     const result = await resend.emails.send({
       from: fromEmail,
       to: toEmail,
       subject: `Booking Confirmation - ${booking.bookingReference} | Bokkie Cleaning Services`,
-      html: await formatBookingConfirmationEmail(booking),
+      html: formatBookingConfirmationEmail(booking, priceBreakdown),
+      text: formatBookingConfirmationEmailText(booking, priceBreakdown),
+      headers: getEmailHeaders(toEmail, true),
     });
 
     if (result.error) {
@@ -678,6 +965,8 @@ export async function sendBookingNotificationEmail(booking: Booking): Promise<vo
       replyTo: booking.email,
       subject: `New Booking - ${booking.bookingReference} | ${booking.firstName} ${booking.lastName}`,
       html: formatBookingNotificationEmail(booking),
+      text: formatBookingNotificationEmailText(booking),
+      headers: getEmailHeaders(toEmail, false),
     });
 
     if (result.error) {
@@ -707,10 +996,11 @@ export interface ContactEmailData {
 function formatContactEmail(data: ContactEmailData): string {
   return `
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>New Contact Form Submission</title>
       </head>
       <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -738,6 +1028,22 @@ function formatContactEmail(data: ContactEmailData): string {
       </body>
     </html>
   `;
+}
+
+function formatContactEmailText(data: ContactEmailData): string {
+  return `New Contact Form Submission
+
+Contact Information
+Name: ${data.name}
+Email: ${data.email}
+${data.phone ? `Phone: ${data.phone}` : ''}
+
+Message
+Subject: ${data.subject}
+
+${data.message}
+
+This contact form submission was received from the Bokkie Cleaning Services dashboard.`;
 }
 
 function formatContactConfirmationEmail(data: ContactEmailData): string {
@@ -812,6 +1118,8 @@ export async function sendContactEmail(data: ContactEmailData): Promise<void> {
       replyTo: data.email,
       subject: `Contact Form: ${data.subject}`,
       html: formatContactEmail(data),
+      text: formatContactEmailText(data),
+      headers: getEmailHeaders(toEmail, false),
     });
 
     if (result.error) {
@@ -858,6 +1166,8 @@ export async function sendContactConfirmationEmail(data: ContactEmailData): Prom
       to: toEmail,
       subject: `We've Received Your Message - Bokkie Cleaning Services`,
       html: formatContactConfirmationEmail(data),
+      text: formatContactConfirmationEmailText(data),
+      headers: getEmailHeaders(toEmail, true),
     });
 
     if (result.error) {
@@ -878,7 +1188,7 @@ export async function sendContactConfirmationEmail(data: ContactEmailData): Prom
 /**
  * Format payment link email for failed payment bookings
  */
-async function formatPaymentLinkEmail(booking: Booking): Promise<string> {
+function formatPaymentLinkEmail(booking: Booking): string {
   const serviceName = getServiceName(booking.service);
   const frequencyName = getFrequencyName(booking.frequency);
   const address = `${booking.streetAddress}${booking.aptUnit ? `, ${booking.aptUnit}` : ""}, ${booking.suburb}, ${booking.city}`;
@@ -886,16 +1196,18 @@ async function formatPaymentLinkEmail(booking: Booking): Promise<string> {
   // Get base URL from environment or use default
   // Try NEXT_PUBLIC_BASE_URL first, then VERCEL_URL, then default to localhost
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL 
-    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://bokkiecleaning.co.za");
   
   const paymentLink = `${baseUrl}/booking/pay/${booking.bookingReference}`;
+  const unsubscribeUrl = getUnsubscribeUrl(booking.email);
 
   return `
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>Complete Your Payment - ${booking.bookingReference}</title>
       </head>
       <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -947,11 +1259,56 @@ async function formatPaymentLinkEmail(booking: Booking): Promise<string> {
               Best regards,<br>
               <strong>The Bokkie Cleaning Services Team</strong>
             </p>
+            <p style="color: #999; font-size: 12px; margin-top: 20px;">
+              <a href="${unsubscribeUrl}" style="color: #999; text-decoration: underline;">Unsubscribe from these emails</a>
+            </p>
           </div>
         </div>
       </body>
     </html>
   `;
+}
+
+function formatPaymentLinkEmailText(booking: Booking): string {
+  const serviceName = getServiceName(booking.service);
+  const frequencyName = getFrequencyName(booking.frequency);
+  const address = `${booking.streetAddress}${booking.aptUnit ? `, ${booking.aptUnit}` : ""}, ${booking.suburb}, ${booking.city}`;
+  
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL 
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://bokkiecleaning.co.za");
+  
+  const paymentLink = `${baseUrl}/booking/pay/${booking.bookingReference}`;
+  const unsubscribeUrl = getUnsubscribeUrl(booking.email);
+
+  return `Complete Your Payment
+
+Dear ${booking.firstName},
+
+We noticed that your payment for booking ${booking.bookingReference} was not completed successfully.
+
+Booking Reference: ${booking.bookingReference}
+Service: ${serviceName}
+Total Amount: ${formatPrice(booking.totalAmount)}
+
+Complete Payment Now: ${paymentLink}
+
+Booking Details
+Service: ${serviceName}
+Frequency: ${frequencyName}
+Address: ${address}
+${booking.scheduledDate ? `Scheduled Date: ${new Date(booking.scheduledDate).toLocaleDateString("en-ZA", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}` : ''}
+${booking.scheduledTime ? `Scheduled Time: ${booking.scheduledTime}` : ''}
+
+Important: Please complete your payment to confirm your booking. Your booking will be confirmed once payment is received.
+
+If you have any questions or need assistance, please contact us at:
+Email: info@bokkiecleaning.co.za
+Phone: +27 72 416 2547
+
+Best regards,
+The Bokkie Cleaning Services Team
+
+Unsubscribe: ${unsubscribeUrl}`;
 }
 
 /**
@@ -973,7 +1330,9 @@ export async function sendPaymentLinkEmail(booking: Booking): Promise<void> {
       from: fromEmail,
       to: toEmail,
       subject: `Complete Your Payment - ${booking.bookingReference} | Bokkie Cleaning Services`,
-      html: await formatPaymentLinkEmail(booking),
+      html: formatPaymentLinkEmail(booking),
+      text: formatPaymentLinkEmailText(booking),
+      headers: getEmailHeaders(toEmail, true),
     });
 
     if (result.error) {
@@ -1002,10 +1361,11 @@ export interface SignupConfirmationEmailData {
 function formatSignupConfirmationEmail(data: SignupConfirmationEmailData): string {
   return `
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>Verify Your Account - Bokkie Cleaning Services</title>
       </head>
       <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -1051,13 +1411,35 @@ function formatSignupConfirmationEmail(data: SignupConfirmationEmailData): strin
   `;
 }
 
+function formatSignupConfirmationEmailText(data: SignupConfirmationEmailData): string {
+  return `Welcome to Bokkie Cleaning Services!
+
+Dear ${data.firstName},
+
+Thank you for signing up with Bokkie Cleaning Services! We're excited to have you on board.
+
+To complete your registration and activate your account, please verify your email address by clicking the link below:
+
+${data.confirmationLink}
+
+Important: This verification link will expire after 24 hours. If you didn't create an account, please ignore this email.
+
+If you have any questions, please contact us at:
+Email: info@bokkiecleaning.co.za
+Phone: +27 72 416 2547
+
+Best regards,
+The Bokkie Cleaning Services Team`;
+}
+
 function formatSignupNotificationEmail(data: SignupConfirmationEmailData): string {
   return `
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>New User Signup - Bokkie Cleaning Services</title>
       </head>
       <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -1081,6 +1463,17 @@ function formatSignupNotificationEmail(data: SignupConfirmationEmailData): strin
       </body>
     </html>
   `;
+}
+
+function formatSignupNotificationEmailText(data: SignupConfirmationEmailData): string {
+  return `New User Signup
+
+New Account Created
+Name: ${data.firstName} ${data.lastName}
+Email: ${data.email}
+Status: Pending Email Verification
+
+A new user has signed up and is awaiting email verification. They will be able to access their account once they verify their email address.`;
 }
 
 /**
@@ -1107,6 +1500,8 @@ export async function sendSignupConfirmationEmail(data: SignupConfirmationEmailD
       to: toEmail,
       subject: `Verify Your Account - Bokkie Cleaning Services`,
       html: formatSignupConfirmationEmail(data),
+      text: formatSignupConfirmationEmailText(data),
+      headers: getEmailHeaders(toEmail, false),
     });
 
     if (result.error) {
@@ -1148,6 +1543,8 @@ export async function sendSignupNotificationEmail(data: SignupConfirmationEmailD
       to: toEmail,
       subject: `New User Signup - ${data.firstName} ${data.lastName}`,
       html: formatSignupNotificationEmail(data),
+      text: formatSignupNotificationEmailText(data),
+      headers: getEmailHeaders(toEmail, false),
     });
 
     if (result.error) {
