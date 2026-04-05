@@ -55,9 +55,32 @@ function validateApiKey(apiKey: string | undefined): void {
 
 /**
  * Validate and get the from email address
+ * Returns plain email address only
  */
 function getFromEmail(): string {
-  const fromEmail = process.env.RESEND_FROM_EMAIL || "bookings@bokkiecleaning.co.za";
+  const envFromEmail = process.env.RESEND_FROM_EMAIL;
+  let fromEmail = envFromEmail || "bookings@bokkiecleaning.co.za";
+  
+  // Extract email if format is "Name <email@domain.com>"
+  if (fromEmail.includes("<") && fromEmail.includes(">")) {
+    const match = fromEmail.match(/<(.+?)>/);
+    if (match && match[1]) {
+      fromEmail = match[1].trim();
+    }
+  }
+  
+  // Never use noreply addresses — they hurt deliverability and trust (inbox providers prefer replyable senders)
+  if (fromEmail.toLowerCase().includes("noreply") || fromEmail.toLowerCase().includes("no-reply")) {
+    console.warn(`Warning: "noreply" address "${fromEmail}" was set; using bookings@bokkiecleaning.co.za for better deliverability.`);
+    fromEmail = "bookings@bokkiecleaning.co.za";
+  }
+  
+  // Log what email is being used for debugging
+  if (!envFromEmail) {
+    console.log("RESEND_FROM_EMAIL not set, using default: bookings@bokkiecleaning.co.za");
+  } else {
+    console.log(`Using RESEND_FROM_EMAIL from environment: ${envFromEmail}`);
+  }
   
   // Prevent using Resend's test email
   if (fromEmail.includes("onboarding@resend.dev") || fromEmail.includes("delivered@resend.dev")) {
@@ -74,7 +97,17 @@ function getFromEmail(): string {
     console.warn(`Warning: From email "${fromEmail}" may not be from a verified domain. Ensure "${domain}" is verified in Resend.`);
   }
   
+  console.log(`getFromEmail() returning: ${fromEmail}`);
   return fromEmail;
+}
+
+/**
+ * Get formatted from email with sender name
+ * Returns format: "Bokkie Cleaning Services <email@domain.com>"
+ */
+function getFormattedFromEmail(): string {
+  const email = getFromEmail();
+  return `Bokkie Cleaning Services <${email}>`;
 }
 
 /**
@@ -84,10 +117,14 @@ function getEmailHeaders(toEmail: string, includeUnsubscribe: boolean = false): 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL 
     || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://bokkiecleaning.co.za");
   
+  // Generate unique Message-ID for better tracking
+  const messageId = `<${Date.now()}-${Math.random().toString(36).substring(7)}@bokkiecleaning.co.za>`;
+  
   const headers: Record<string, string> = {
     "X-Mailer": "Bokkie Cleaning Services",
     "Precedence": "bulk",
     "X-Auto-Response-Suppress": "All",
+    "Message-ID": messageId,
   };
 
   // Add List-Unsubscribe header (required by many providers)
@@ -113,6 +150,46 @@ function getUnsubscribeUrl(email: string): string {
  * Helper function to handle Resend API errors with better diagnostics
  */
 function handleResendError(error: any, context: string): Error {
+  const fromEmail = getFromEmail();
+  const domain = fromEmail.split('@')[1] || "unknown";
+  
+  // Check for 422 Unprocessable Entity error (validation errors)
+  const is422Error = 
+    error?.status === 422 || 
+    error?.statusCode === 422 ||
+    error?.message?.includes("422") ||
+    error?.message?.toLowerCase().includes("unprocessable");
+  
+  if (is422Error) {
+    console.error("Resend 422 Validation Error Details:", {
+      context,
+      fromEmail,
+      domain,
+      errorMessage: error?.message,
+      errorStatus: error?.status || error?.statusCode,
+      errorDetails: JSON.stringify(error, null, 2),
+      envFromEmail: process.env.RESEND_FROM_EMAIL,
+      actualFromEmail: fromEmail,
+    });
+
+    return new Error(
+      `Resend API returned 422 Unprocessable Entity. This usually means:\n` +
+      `1. From email "${fromEmail}" is not verified or allowed in Resend\n` +
+      `2. Domain "${domain}" may not be fully verified\n` +
+      `3. Email address format may be invalid\n\n` +
+      `Current configuration:\n` +
+      `- RESEND_FROM_EMAIL env var: ${process.env.RESEND_FROM_EMAIL || "NOT SET (using default)"}\n` +
+      `- Actual from email being used: ${fromEmail}\n\n` +
+      `To fix this:\n` +
+      `1. Go to https://resend.com/domains\n` +
+      `2. Verify that "${domain}" is verified and shows "Verified" status\n` +
+      `3. Ensure "${fromEmail}" is allowed for sending (check domain settings)\n` +
+      `4. If using a different email, set RESEND_FROM_EMAIL=${fromEmail} in your environment variables\n` +
+      `5. Restart your application after making changes\n\n` +
+      `Original error: ${error?.message || JSON.stringify(error)}`
+    );
+  }
+
   // Check for validation errors about test emails or unverified domains
   const isValidationError = 
     error?.name === "validation_error" ||
@@ -121,20 +198,22 @@ function handleResendError(error: any, context: string): Error {
     error?.message?.toLowerCase().includes("onboarding@resend.dev");
   
   if (isValidationError) {
-    const fromEmail = process.env.RESEND_FROM_EMAIL || "bookings@bokkiecleaning.co.za";
-    const domain = fromEmail.split('@')[1] || "unknown";
-    
     console.error("Resend Domain Verification Error:", {
       context,
       fromEmail,
       domain,
       errorMessage: error?.message,
       errorDetails: JSON.stringify(error, null, 2),
+      envFromEmail: process.env.RESEND_FROM_EMAIL,
+      actualFromEmail: fromEmail,
     });
 
     return new Error(
       `Resend validation error: ${error?.message || JSON.stringify(error)}\n\n` +
       `This error means your domain "${domain}" is not verified in Resend.\n\n` +
+      `Current configuration:\n` +
+      `- RESEND_FROM_EMAIL env var: ${process.env.RESEND_FROM_EMAIL || "NOT SET (using default)"}\n` +
+      `- Actual from email being used: ${fromEmail}\n\n` +
       `To fix this:\n` +
       `1. Go to https://resend.com/domains\n` +
       `2. Verify your domain "${domain}" by adding the required DNS records\n` +
@@ -155,8 +234,6 @@ function handleResendError(error: any, context: string): Error {
   
   if (is403Error) {
     const apiKey = process.env.RESEND_API_KEY;
-    const fromEmail = getFromEmail();
-    const domain = fromEmail.split('@')[1] || "unknown";
     
     console.error("Resend 403 Forbidden Error Details:", {
       context,
@@ -169,6 +246,8 @@ function handleResendError(error: any, context: string): Error {
       errorMessage: error?.message,
       errorStatus: error?.status || error?.statusCode,
       errorDetails: JSON.stringify(error, null, 2),
+      envFromEmail: process.env.RESEND_FROM_EMAIL,
+      actualFromEmail: fromEmail,
     });
 
     return new Error(
@@ -177,6 +256,9 @@ function handleResendError(error: any, context: string): Error {
       `2. Domain not verified - Verify the domain "${domain}" in Resend dashboard\n` +
       `3. From email not allowed - Ensure "${fromEmail}" is from a verified domain\n` +
       `4. API key permissions - Ensure your API key has permission to send emails\n\n` +
+      `Current configuration:\n` +
+      `- RESEND_FROM_EMAIL env var: ${process.env.RESEND_FROM_EMAIL || "NOT SET (using default)"}\n` +
+      `- Actual from email being used: ${fromEmail}\n\n` +
       `Please check:\n` +
       `- Resend Dashboard: https://resend.com/domains (verify domain status)\n` +
       `- Resend API Keys: https://resend.com/api-keys (verify API key is active)\n` +
@@ -185,9 +267,23 @@ function handleResendError(error: any, context: string): Error {
     );
   }
 
-  // For other errors, return a generic error
+  // For other errors, return a generic error with from email info
+  console.error("Resend Error Details:", {
+    context,
+    fromEmail,
+    domain,
+    errorMessage: error?.message,
+    errorStatus: error?.status || error?.statusCode,
+    errorDetails: JSON.stringify(error, null, 2),
+    envFromEmail: process.env.RESEND_FROM_EMAIL,
+    actualFromEmail: fromEmail,
+  });
+
   return new Error(
-    `Failed to send email (${context}): ${error?.message || JSON.stringify(error)}`
+    `Failed to send email (${context}): ${error?.message || JSON.stringify(error)}\n\n` +
+    `Current configuration:\n` +
+    `- RESEND_FROM_EMAIL env var: ${process.env.RESEND_FROM_EMAIL || "NOT SET (using default)"}\n` +
+    `- Actual from email being used: ${fromEmail}`
   );
 }
 
@@ -219,8 +315,8 @@ function formatQuoteEmail(data: QuoteEmailData): string {
         <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; border: 1px solid #e0e0e0;">
           <h2 style="color: #0C53ED; margin-top: 0;">Contact Information</h2>
           <p><strong>Name:</strong> ${data.firstName} ${data.lastName}</p>
-          <p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
-          <p><strong>Phone:</strong> <a href="tel:${data.phone}">${data.phone}</a></p>
+          <p><strong>Email:</strong> ${data.email}</p>
+          <p><strong>Phone:</strong> ${data.phone}</p>
           
           <h2 style="color: #0C53ED; margin-top: 30px;">Service Details</h2>
           <p><strong>Service:</strong> ${serviceName}</p>
@@ -450,12 +546,15 @@ export async function sendCustomerConfirmationEmail(data: QuoteEmailData): Promi
     customerName: `${data.firstName} ${data.lastName}`,
     apiKeyPresent: !!process.env.RESEND_API_KEY,
     apiKeyPrefix: process.env.RESEND_API_KEY?.substring(0, 10),
+    envFromEmail: process.env.RESEND_FROM_EMAIL || "NOT SET (using default: bookings@bokkiecleaning.co.za)",
+    actualFromEmail: fromEmail,
   });
 
   try {
     const result = await resend.emails.send({
-      from: fromEmail,
+      from: getFormattedFromEmail(),
       to: toEmail,
+      replyTo: "info@bokkiecleaning.co.za",
       subject: `Quote Request Confirmation - Bokkie Cleaning Services`,
       html: formatCustomerConfirmationEmail(data),
       text: formatCustomerConfirmationEmailText(data),
@@ -478,7 +577,7 @@ export async function sendCustomerConfirmationEmail(data: QuoteEmailData): Promi
 }
 
 // Booking email templates
-async function formatBookingConfirmationEmail(booking: Booking): Promise<string> {
+function formatBookingConfirmationEmail(booking: Booking, priceBreakdown: any): string {
   const serviceName = getServiceName(booking.service);
   const frequencyName = getFrequencyName(booking.frequency);
   const address = `${booking.streetAddress}${booking.aptUnit ? `, ${booking.aptUnit}` : ""}, ${booking.suburb}, ${booking.city}`;
@@ -507,34 +606,6 @@ async function formatBookingConfirmationEmail(booking: Booking): Promise<string>
     : "Not scheduled";
   
   const scheduledTime = booking.scheduledTime || "Not specified";
-
-  // Calculate price breakdown to get discount information
-  let priceBreakdown = null;
-  try {
-    const pricingConfig = await fetchPricingConfig();
-    const initialPriceBreakdown = calculatePrice(booking, pricingConfig, 0);
-    
-    // Validate and apply discount code if provided
-    let discountCodeAmount = 0;
-    if (booking.discountCode && booking.discountCode.trim()) {
-      try {
-        const discountResult = await validateDiscountCode(
-          booking.discountCode.trim(),
-          initialPriceBreakdown.subtotal - initialPriceBreakdown.frequencyDiscount
-        );
-        if (discountResult.success) {
-          discountCodeAmount = discountResult.discountAmount;
-        }
-      } catch (error) {
-        console.error("Error validating discount code in email:", error);
-      }
-    }
-    
-    priceBreakdown = calculatePrice(booking, pricingConfig, discountCodeAmount);
-  } catch (error) {
-    console.error("Error calculating price breakdown in email:", error);
-  }
-
   const unsubscribeUrl = getUnsubscribeUrl(booking.email);
 
   return `
@@ -624,8 +695,8 @@ async function formatBookingConfirmationEmail(booking: Booking): Promise<string>
           <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
             <p style="color: #666; font-size: 14px;">
               If you have any questions or need to make changes to your booking, please contact us at:<br>
-              <strong>Email:</strong> info@bokkiecleaning.co.za<br>
-              <strong>Phone:</strong> +27 72 416 2547
+              <strong>Email:</strong> <a href="mailto:info@bokkiecleaning.co.za" style="color: #0C53ED;">info@bokkiecleaning.co.za</a><br>
+              <strong>Phone:</strong> <a href="tel:+27724162547" style="color: #0C53ED;">+27 72 416 2547</a>
             </p>
             <p style="color: #666; font-size: 14px; margin-top: 20px;">
               Best regards,<br>
@@ -776,8 +847,8 @@ function formatBookingNotificationEmail(booking: Booking): string {
           <h2 style="color: #0C53ED; margin-top: 0;">Customer Information</h2>
           <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
             <p><strong>Name:</strong> ${booking.firstName} ${booking.lastName}</p>
-            <p><strong>Email:</strong> <a href="mailto:${booking.email}">${booking.email}</a></p>
-            <p><strong>Phone:</strong> <a href="tel:${booking.phone}">${booking.phone}</a></p>
+            <p><strong>Email:</strong> ${booking.email}</p>
+            <p><strong>Phone:</strong> ${booking.phone}</p>
           </div>
           
           <h2 style="color: #0C53ED; margin-top: 30px;">Service Details</h2>
@@ -894,6 +965,8 @@ export async function sendBookingConfirmationEmail(booking: Booking): Promise<vo
     bookingReference: booking.bookingReference,
     apiKeyPresent: !!process.env.RESEND_API_KEY,
     apiKeyPrefix: process.env.RESEND_API_KEY?.substring(0, 10),
+    envFromEmail: process.env.RESEND_FROM_EMAIL || "NOT SET (using default: bookings@bokkiecleaning.co.za)",
+    actualFromEmail: fromEmail,
   });
 
   // Calculate price breakdown for both HTML and text versions
@@ -924,8 +997,9 @@ export async function sendBookingConfirmationEmail(booking: Booking): Promise<vo
 
   try {
     const result = await resend.emails.send({
-      from: fromEmail,
+      from: getFormattedFromEmail(),
       to: toEmail,
+      replyTo: "info@bokkiecleaning.co.za",
       subject: `Booking Confirmation - ${booking.bookingReference} | Bokkie Cleaning Services`,
       html: formatBookingConfirmationEmail(booking, priceBreakdown),
       text: formatBookingConfirmationEmailText(booking, priceBreakdown),
@@ -1010,8 +1084,8 @@ function formatContactEmail(data: ContactEmailData): string {
         <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; border: 1px solid #e0e0e0;">
           <h2 style="color: #0C53ED; margin-top: 0;">Contact Information</h2>
           <p><strong>Name:</strong> ${data.name}</p>
-          <p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
-          ${data.phone ? `<p><strong>Phone:</strong> <a href="tel:${data.phone}">${data.phone}</a></p>` : ''}
+          <p><strong>Email:</strong> ${data.email}</p>
+          ${data.phone ? `<p><strong>Phone:</strong> ${data.phone}</p>` : ''}
           
           <h2 style="color: #0C53ED; margin-top: 30px;">Message</h2>
           <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
@@ -1070,11 +1144,11 @@ function formatContactConfirmationEmail(data: ContactEmailData): string {
             <p style="white-space: pre-wrap; margin-top: 15px;">${data.message}</p>
           </div>
           
-          <p>Our team typically responds within 24 hours. If your inquiry is urgent, please call us at <strong>+27 72 416 2547</strong>.</p>
+          <p>Our team typically responds within 24 hours. If your inquiry is urgent, please call us at <a href="tel:+27724162547" style="color: #0C53ED;"><strong>+27 72 416 2547</strong></a>.</p>
           
           <div style="margin-top: 30px; padding: 15px; background-color: #e7f3ff; border-radius: 5px; border-left: 4px solid #0C53ED;">
             <p style="margin: 0;"><strong>Need Immediate Assistance?</strong></p>
-            <p style="margin: 5px 0 0 0;">Call us at <strong>+27 72 416 2547</strong> or email us at <strong>info@bokkiecleaning.co.za</strong></p>
+            <p style="margin: 5px 0 0 0;">Call us at <a href="tel:+27724162547" style="color: #0C53ED;"><strong>+27 72 416 2547</strong></a> or email us at <a href="mailto:info@bokkiecleaning.co.za" style="color: #0C53ED;"><strong>info@bokkiecleaning.co.za</strong></a></p>
           </div>
           
           <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
@@ -1158,12 +1232,15 @@ export async function sendContactConfirmationEmail(data: ContactEmailData): Prom
     customerName: data.name,
     apiKeyPresent: !!process.env.RESEND_API_KEY,
     apiKeyPrefix: process.env.RESEND_API_KEY?.substring(0, 10),
+    envFromEmail: process.env.RESEND_FROM_EMAIL || "NOT SET (using default: bookings@bokkiecleaning.co.za)",
+    actualFromEmail: fromEmail,
   });
 
   try {
     const result = await resend.emails.send({
-      from: fromEmail,
+      from: getFormattedFromEmail(),
       to: toEmail,
+      replyTo: "info@bokkiecleaning.co.za",
       subject: `We've Received Your Message - Bokkie Cleaning Services`,
       html: formatContactConfirmationEmail(data),
       text: formatContactConfirmationEmailText(data),
@@ -1252,8 +1329,8 @@ function formatPaymentLinkEmail(booking: Booking): string {
           <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
             <p style="color: #666; font-size: 14px;">
               If you have any questions or need assistance, please contact us at:<br>
-              <strong>Email:</strong> info@bokkiecleaning.co.za<br>
-              <strong>Phone:</strong> +27 72 416 2547
+              <strong>Email:</strong> <a href="mailto:info@bokkiecleaning.co.za" style="color: #0C53ED;">info@bokkiecleaning.co.za</a><br>
+              <strong>Phone:</strong> <a href="tel:+27724162547" style="color: #0C53ED;">+27 72 416 2547</a>
             </p>
             <p style="color: #666; font-size: 14px; margin-top: 20px;">
               Best regards,<br>
@@ -1327,8 +1404,9 @@ export async function sendPaymentLinkEmail(booking: Booking): Promise<void> {
 
   try {
     const result = await resend.emails.send({
-      from: fromEmail,
+      from: getFormattedFromEmail(),
       to: toEmail,
+      replyTo: "info@bokkiecleaning.co.za",
       subject: `Complete Your Payment - ${booking.bookingReference} | Bokkie Cleaning Services`,
       html: formatPaymentLinkEmail(booking),
       text: formatPaymentLinkEmailText(booking),
@@ -1397,8 +1475,8 @@ function formatSignupConfirmationEmail(data: SignupConfirmationEmailData): strin
           <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
             <p style="color: #666; font-size: 14px;">
               If you have any questions, please contact us at:<br>
-              <strong>Email:</strong> info@bokkiecleaning.co.za<br>
-              <strong>Phone:</strong> +27 72 416 2547
+              <strong>Email:</strong> <a href="mailto:info@bokkiecleaning.co.za" style="color: #0C53ED;">info@bokkiecleaning.co.za</a><br>
+              <strong>Phone:</strong> <a href="tel:+27724162547" style="color: #0C53ED;">+27 72 416 2547</a>
             </p>
             <p style="color: #666; font-size: 14px; margin-top: 20px;">
               Best regards,<br>
@@ -1450,7 +1528,7 @@ function formatSignupNotificationEmail(data: SignupConfirmationEmailData): strin
           <h2 style="color: #0C53ED; margin-top: 0;">New Account Created</h2>
           <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
             <p><strong>Name:</strong> ${data.firstName} ${data.lastName}</p>
-            <p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
+            <p><strong>Email:</strong> ${data.email}</p>
             <p><strong>Status:</strong> <span style="color: #ffc107; font-weight: bold;">Pending Email Verification</span></p>
           </div>
           
@@ -1492,12 +1570,15 @@ export async function sendSignupConfirmationEmail(data: SignupConfirmationEmailD
     from: fromEmail,
     to: toEmail,
     userName: `${data.firstName} ${data.lastName}`,
+    envFromEmail: process.env.RESEND_FROM_EMAIL || "NOT SET (using default: bookings@bokkiecleaning.co.za)",
+    actualFromEmail: fromEmail,
   });
 
   try {
     const result = await resend.emails.send({
-      from: fromEmail,
+      from: getFormattedFromEmail(),
       to: toEmail,
+      replyTo: "info@bokkiecleaning.co.za",
       subject: `Verify Your Account - Bokkie Cleaning Services`,
       html: formatSignupConfirmationEmail(data),
       text: formatSignupConfirmationEmailText(data),
