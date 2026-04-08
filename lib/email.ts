@@ -146,6 +146,32 @@ function getUnsubscribeUrl(email: string): string {
   return `${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}`;
 }
 
+function formatCleanerPreferenceForEmail(cleanerPreference?: string): string {
+  if (!cleanerPreference || cleanerPreference === "no-preference") {
+    return "No preference";
+  }
+
+  const knownPreferences: Record<string, string> = {
+    "natasha-m": "Natasha M",
+    "estery-p": "Estery P",
+    "beaul": "Beaul",
+    "team-a": "Team A",
+    "team-b": "Team B",
+    "team-c": "Team C",
+  };
+
+  if (knownPreferences[cleanerPreference]) {
+    return knownPreferences[cleanerPreference];
+  }
+
+  // Fallback for dynamic IDs (e.g. custom teams/cleaners from DB).
+  return cleanerPreference
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
 /**
  * Helper function to handle Resend API errors with better diagnostics
  */
@@ -606,6 +632,7 @@ function formatBookingConfirmationEmail(booking: Booking, priceBreakdown: any): 
     : "Not scheduled";
   
   const scheduledTime = booking.scheduledTime || "Not specified";
+  const cleanerPreference = formatCleanerPreferenceForEmail(booking.cleanerPreference);
   const unsubscribeUrl = getUnsubscribeUrl(booking.email);
 
   return `
@@ -634,6 +661,7 @@ function formatBookingConfirmationEmail(booking: Booking, priceBreakdown: any): 
           <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
             <p><strong>Service:</strong> ${serviceName}</p>
             <p><strong>Frequency:</strong> ${frequencyName}</p>
+            <p><strong>Selected Cleaner:</strong> ${cleanerPreference}</p>
             <p><strong>Bedrooms:</strong> ${booking.bedrooms}</p>
             <p><strong>Bathrooms:</strong> ${booking.bathrooms}</p>
             ${extrasList !== "None" ? `<p><strong>Additional Services:</strong> ${extrasList}</p>` : ''}
@@ -741,6 +769,7 @@ function formatBookingConfirmationEmailText(booking: Booking, priceBreakdown: an
     : "Not scheduled";
   
   const scheduledTime = booking.scheduledTime || "Not specified";
+  const cleanerPreference = formatCleanerPreferenceForEmail(booking.cleanerPreference);
   const unsubscribeUrl = getUnsubscribeUrl(booking.email);
 
   let discountText = "";
@@ -765,6 +794,7 @@ Booking Reference: ${booking.bookingReference}
 Service Details
 Service: ${serviceName}
 Frequency: ${frequencyName}
+Selected Cleaner: ${cleanerPreference}
 Bedrooms: ${booking.bedrooms}
 Bathrooms: ${booking.bathrooms}
 ${extrasList !== "None" ? `Additional Services: ${extrasList}` : ''}
@@ -823,6 +853,7 @@ function formatBookingNotificationEmail(booking: Booking): string {
     : "Not scheduled";
   
   const scheduledTime = booking.scheduledTime || "Not specified";
+  const cleanerPreference = formatCleanerPreferenceForEmail(booking.cleanerPreference);
 
   return `
     <!DOCTYPE html>
@@ -855,6 +886,7 @@ function formatBookingNotificationEmail(booking: Booking): string {
           <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
             <p><strong>Service:</strong> ${serviceName}</p>
             <p><strong>Frequency:</strong> ${frequencyName}</p>
+            <p><strong>Selected Cleaner:</strong> ${cleanerPreference}</p>
             <p><strong>Bedrooms:</strong> ${booking.bedrooms}</p>
             <p><strong>Bathrooms:</strong> ${booking.bathrooms}</p>
             ${extrasList !== "None" ? `<p><strong>Additional Services:</strong> ${extrasList}</p>` : ''}
@@ -918,6 +950,7 @@ function formatBookingNotificationEmailText(booking: Booking): string {
     : "Not scheduled";
   
   const scheduledTime = booking.scheduledTime || "Not specified";
+  const cleanerPreference = formatCleanerPreferenceForEmail(booking.cleanerPreference);
 
   return `New Booking Received
 
@@ -933,6 +966,7 @@ Phone: ${booking.phone}
 Service Details
 Service: ${serviceName}
 Frequency: ${frequencyName}
+Selected Cleaner: ${cleanerPreference}
 Bedrooms: ${booking.bedrooms}
 Bathrooms: ${booking.bathrooms}
 ${extrasList !== "None" ? `Additional Services: ${extrasList}` : ''}

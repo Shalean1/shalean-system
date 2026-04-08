@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, Mail, Phone, ArrowRight, ArrowLeft, Home, LayoutDashboard } from "lucide-react";
@@ -12,7 +13,7 @@ import { submitBooking } from "@/app/actions/submit-booking";
 import { validateDiscountCode } from "@/app/actions/discount";
 import { calculateRecurringDates } from "@/lib/utils/recurring-bookings";
 
-export default function ConfirmationPage() {
+function ConfirmationPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const paymentRef = searchParams.get("ref"); // This is the payment reference from Paystack
@@ -748,5 +749,22 @@ export default function ConfirmationPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ConfirmationPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading booking details...</p>
+          </div>
+        </div>
+      }
+    >
+      <ConfirmationPageContent />
+    </Suspense>
   );
 }

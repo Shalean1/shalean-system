@@ -9,7 +9,7 @@ import RebookButtonWrapper from "@/components/dashboard/RebookButtonWrapper";
 import CancelBookingButton from "@/components/dashboard/CancelBookingButton";
 import RescheduleButton from "@/components/dashboard/RescheduleButton";
 import Link from "next/link";
-import { ArrowLeft, Calendar, MapPin, Clock, User, Phone, Mail, Home, Building } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Clock, User, Phone, Mail, Home } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
@@ -103,6 +103,8 @@ export default async function BookingDetailPage({
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   };
+
+  const formatCurrency = (value: number) => `R${value.toFixed(2)}`;
 
   return (
     <div className="py-12">
@@ -343,6 +345,30 @@ export default async function BookingDetailPage({
         <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Pricing</h2>
           <div className="space-y-3">
+            {typeof booking.subtotal === "number" && (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Subtotal</span>
+                <span className="font-medium text-gray-900">{formatCurrency(booking.subtotal)}</span>
+              </div>
+            )}
+            {typeof booking.frequencyDiscount === "number" && booking.frequencyDiscount > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Frequency Discount</span>
+                <span className="font-medium text-blue-600">-{formatCurrency(booking.frequencyDiscount)}</span>
+              </div>
+            )}
+            {typeof booking.discountCodeDiscount === "number" && booking.discountCodeDiscount > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Discount Code Discount</span>
+                <span className="font-medium text-blue-600">-{formatCurrency(booking.discountCodeDiscount)}</span>
+              </div>
+            )}
+            {typeof booking.serviceFee === "number" && (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Service Fee</span>
+                <span className="font-medium text-gray-900">{formatCurrency(booking.serviceFee)}</span>
+              </div>
+            )}
             {booking.discountCode && (
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">Discount Code</span>
@@ -352,13 +378,13 @@ export default async function BookingDetailPage({
             {booking.tip && booking.tip > 0 && (
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">Tip for Cleaner</span>
-                <span className="font-medium text-blue-600">R{booking.tip.toFixed(2)}</span>
+                <span className="font-medium text-blue-600">{formatCurrency(booking.tip)}</span>
               </div>
             )}
             <div className="border-t border-gray-200 pt-3 flex justify-between items-center">
               <span className="text-lg font-semibold text-gray-900">Total Amount</span>
               <span className="text-2xl font-bold text-gray-900">
-                R{booking.totalAmount.toFixed(2)}
+                {formatCurrency(booking.totalAmount)}
               </span>
             </div>
             {booking.paymentReference && (
@@ -367,6 +393,53 @@ export default async function BookingDetailPage({
               </div>
             )}
           </div>
+        </div>
+
+        {/* Assignment & Progress */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Assignment & Progress</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <p className="text-gray-600 mb-1">Cleaner/Team Preference</p>
+              <p className="font-medium text-gray-900">
+                {booking.cleanerPreference ? formatCleanerPreference(booking.cleanerPreference) : "Not specified"}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-600 mb-1">Cleaner Response</p>
+              <p className="font-medium text-gray-900">
+                {booking.cleanerResponse
+                  ? booking.cleanerResponse.charAt(0).toUpperCase() + booking.cleanerResponse.slice(1)
+                  : "Pending"}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-600 mb-1">Job Progress</p>
+              <p className="font-medium text-gray-900">
+                {booking.jobProgress
+                  ? booking.jobProgress.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+                  : "Not started"}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-600 mb-1">Assigned Team</p>
+              <p className="font-medium text-gray-900">
+                {booking.teamId ? formatCleanerPreference(booking.teamId) : "Not assigned"}
+              </p>
+            </div>
+          </div>
+          {assignedCleaners.length > 0 && (
+            <div className="mt-4">
+              <p className="text-sm text-gray-600 mb-2">Assigned Cleaners</p>
+              <ul className="space-y-1">
+                {assignedCleaners.map((cleaner) => (
+                  <li key={cleaner.id} className="font-medium text-gray-900 text-sm">
+                    {cleaner.cleanerName}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         {/* Booking Info */}
@@ -388,6 +461,28 @@ export default async function BookingDetailPage({
               <p className="text-gray-600 mb-1">Booking ID</p>
               <p className="font-mono font-medium text-gray-900 text-xs break-all">
                 {booking.id}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-600 mb-1">Recurring Booking</p>
+              <p className="font-medium text-gray-900">{booking.isRecurring ? "Yes" : "No"}</p>
+            </div>
+            <div>
+              <p className="text-gray-600 mb-1">Recurring Sequence</p>
+              <p className="font-medium text-gray-900">
+                {typeof booking.recurringSequence === "number" ? booking.recurringSequence : "N/A"}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-600 mb-1">Recurring Group ID</p>
+              <p className="font-mono font-medium text-gray-900 text-xs break-all">
+                {booking.recurringGroupId || "N/A"}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-600 mb-1">Parent Booking ID</p>
+              <p className="font-mono font-medium text-gray-900 text-xs break-all">
+                {booking.parentBookingId || "N/A"}
               </p>
             </div>
           </div>
